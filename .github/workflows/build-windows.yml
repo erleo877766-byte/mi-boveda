@@ -41,7 +41,6 @@ jobs:
       - name: Generate pubspec.yaml
         run: |
           Copy-Item pubspec_description.yaml pubspec.yaml -Force
-          flutter pub get
           dart run tool\generate_pubspec.dart
           flutter pub get
 
