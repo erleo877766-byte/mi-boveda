@@ -1,6 +1,6 @@
 # cw_core
 
-Core abstractions and shared types for Cake Wallet modules.
+Core abstractions and shared types for Mi Bóveda modules.
 
 ## Highlights
 

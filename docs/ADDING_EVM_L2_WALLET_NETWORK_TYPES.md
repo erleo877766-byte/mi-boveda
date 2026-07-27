@@ -1,6 +1,6 @@
 # Guide: Adding a New L2 Network
 
-This guide provides step-by-step instructions for adding a new EVM-compatible L2 network to Cake Wallet.
+This guide provides step-by-step instructions for adding a new EVM-compatible L2 network to Mi Bóveda.
 
 ## Prerequisites
 

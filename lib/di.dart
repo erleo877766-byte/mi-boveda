@@ -365,7 +365,7 @@ Future<void> setup({
   getIt.registerLazySingleton(BitboxViewModel.new);
 
   getIt.registerLazySingleton(
-    () => TrezorConnect("ourwallet://trezor_connect", appName: "Our Wallet"),
+    () => TrezorConnect("miboveda://trezor_connect", appName: "Mi Bóveda"),
   );
 
   getIt.registerLazySingleton(() => TrezorConnectViewModel(getIt<TrezorConnect>()));

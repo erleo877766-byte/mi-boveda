@@ -1,4 +1,4 @@
-group 'com.cakewallet.cw_decred'
+group 'com.miboveda.cw_decred'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -28,7 +28,7 @@ android {
     compileSdkVersion 33
 
     if (project.android.hasProperty("namespace")) {
-        namespace 'com.cakewallet.cw_decred'
+        namespace 'com.miboveda.cw_decred'
     }
 
     compileOptions {

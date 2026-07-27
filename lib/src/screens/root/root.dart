@@ -115,7 +115,7 @@ class RootState extends State<Root> with WidgetsBindingObserver {
       handleDeepLinking(await getInitialUri());
 
       if (widget.initialQuickAction != null) {
-        final uri = Uri.parse('ourwallet://quickaction/${widget.initialQuickAction}');
+        final uri = Uri.parse('miboveda://quickaction/${widget.initialQuickAction}');
         handleDeepLinking(uri);
       }
     } catch (e) {

@@ -348,9 +348,9 @@ flutter:
           style: italic
 
 msix_config:
-  display_name: Cake Wallet
-  publisher_display_name: Cake Labs
-  identity_name: com.ourwallet.wallet
+  display_name: Mi Bóveda
+  publisher_display_name: Leonardo Noel Salazar Mendoza
+  identity_name: com.miboveda.wallet
   msix_version: 1.0.0.1
   logo_path: assets/images/app_logo.png
   trim_logo: false

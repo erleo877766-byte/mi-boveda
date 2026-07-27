@@ -10,6 +10,5 @@ fi
 DIR=$(dirname "$0")
 
 case $APP_ANDROID_TYPE in
-	"monero.com") $DIR/build_monero_all.sh ;;
-	"cakewallet") $DIR/build_monero_all.sh
+	"miboveda") $DIR/build_monero_all.sh ;;
 esac

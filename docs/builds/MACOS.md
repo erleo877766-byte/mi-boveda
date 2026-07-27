@@ -1,8 +1,8 @@
-# Building Cake Wallet for macOS
+# Building Mi Bóveda for macOS
 
 ## Requirements and Setup
 
-The following are the system requirements to build Cake Wallet for your macOS device.
+The following are the system requirements to build Mi Bóveda for your macOS device.
 
 ```txt
 macOS 15.3.1
@@ -62,31 +62,31 @@ Doctor summary (to see all details, run flutter doctor -v):
 ...
 ```
 
-### 6. Acquiring the Cake Wallet source code
+### 6. Acquiring the Mi Bóveda source code
 
-Download the latest release tag of Cake Wallet and enter the source code directory:
+Download the latest release tag of Mi Bóveda and enter the source code directory:
 
 ```zsh
-git clone https://github.com/cake-tech/cake_wallet.git --branch main
-cd cake_wallet/scripts/macos/
+git clone https://github.com/leonard0001991/mi-boveda.git --branch main
+cd mi-boveda/scripts/macos/
 ```
 
-NOTE: Replace `main` with the latest release tag available at <https://github.com/cake-tech/cake_wallet/releases/latest>.
+NOTE: Replace `main` with the latest release tag available at <https://github.com/leonard0001991/mi-boveda/releases/latest>.
 
-### 7. Setup and build Cake Wallet from source
+### 7. Setup and build Mi Bóveda from source
 
 We need to generate project settings like app name, app icon, package name, etc, including what specific variant of the app we want to build.
 
-To build Cake Wallet from source, run the following:
+To build Mi Bóveda from source, run the following:
 
 ```zsh
 source ./app_env.sh cakewallet
 ```
 
-For Monero.com, instead do:
+For mi-boveda, instead do:
 
 ```zsh
-source ./app_env.sh monero.com
+source ./app_env.sh mi-boveda
 ```
 
 Build the necessary libraries and their dependencies:
@@ -106,7 +106,7 @@ Then run the configuration script to setup app name, app icon, etc:
 
 ### 8. Prepare Flutter
 
-Change back to the root directory of the Cake Wallet source code and install Flutter package dependencies:
+Change back to the root directory of the Mi Bóveda source code and install Flutter package dependencies:
 
 ```zsh
 cd ../../

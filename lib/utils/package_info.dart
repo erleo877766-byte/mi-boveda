@@ -22,8 +22,8 @@ class PackageInfo {
         buildNumber: packageInfo.buildNumber);
   }
 
-  static const _defaultCWAppName = 'Cake Wallet';
-  static const _defaultCWAppPackageName = 'com.ourwallet.wallet';
+  static const _defaultCWAppName = 'Mi Bóveda';
+  static const _defaultCWAppPackageName = 'com.miboveda.wallet';
   static const _defaultCWAppVersion = '1.0.0';
   static const _defaultCWAppBuildNumber = '1';
 

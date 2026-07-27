@@ -1,12 +1,12 @@
 # Security Policy
 
-Cake Wallet is developed by **Cake Labs LLC**. We take the security and privacy of
+Mi Bóveda is developed by **Leonardo Noel Salazar Mendoza**. We take the security and privacy of
 our users seriously and welcome reports from security researchers.
 
-> **Cake Wallet is not affiliated with CAKE.com, Clockify, or security.cake.com.**
+> **Mi Bóveda is not affiliated with CAKE.com, Clockify, or security.cake.com.**
 > Those services belong to unrelated companies. The only official vulnerability
-> disclosure channels for Cake Wallet are the ones listed on this page and at
-> https://cakewallet.com/security.
+> disclosure channels for Mi Bóveda are the ones listed on this page and at
+> https://github.com/leonard0001991/mi-boveda/security.
 
 ## Reporting a vulnerability
 
@@ -16,12 +16,12 @@ funds and privacy at risk. Use one of the private channels below and we will
 coordinate a fix and disclosure with you.
 
 1. **GitHub private security advisory (preferred).**
-   [Report a vulnerability](https://github.com/cake-tech/cake_wallet/security/advisories/new).
+   [Report a vulnerability](https://github.com/leonard0001991/mi-boveda/security/advisories/new).
    This gives you a private, structured thread with the maintainers and is the
    fastest way to reach us.
-2. **Encrypted email.** Send details to **security@cakewallet.com**. For sensitive
+2. **Encrypted email.** Send details to **security@github.com/leonard0001991/mi-boveda**. For sensitive
    reports, please encrypt with our PGP key:
-   - Key: https://cakewallet.com/.well-known/cakewallet-security.asc
+   - Key: https://github.com/leonard0001991/mi-boveda/.well-known/cakewallet-security.asc
    - Fingerprint: `DC91 6520 0271 AC6A 0533  3D3C BFE7 D9A5 0E4D 3A0A`
 
 Both channels are monitored and automatically raise an alert in our internal
@@ -48,7 +48,7 @@ authorized. We will not pursue or support legal action against researchers who:
 - give us a reasonable opportunity to fix an issue before disclosing it publicly.
 
 If in doubt about whether an action is authorized, ask us first at
-security@cakewallet.com.
+security@github.com/leonard0001991/mi-boveda.
 
 ## What to expect
 
@@ -62,7 +62,7 @@ security@cakewallet.com.
 
 ## Scope
 
-**In scope:** the Cake Wallet and Monero.com applications and the code in this
+**In scope:** the Mi Bóveda and mi-boveda applications and the code in this
 repository and its sibling `cake-tech` repositories â€” anything that could lead to
 loss of funds, exposure of keys or seeds, a privacy leak, or a
 failed/incorrect transaction.
@@ -81,7 +81,7 @@ At our **sole discretion**, we may offer a reward for a valid report. To be
 eligible, a report must:
 
 - be submitted **privately** through one of the channels above (a GitHub private
-  security advisory or `security@cakewallet.com`) â€” anything disclosed publicly or
+  security advisory or `security@github.com/leonard0001991/mi-boveda`) â€” anything disclosed publicly or
   sent through other channels is not eligible; and
 - identify a genuine vulnerability with real impact on users â€” typically loss of
   funds, exposure of keys or seeds, a privacy leak, or a failed or incorrect
@@ -92,10 +92,10 @@ or other low-severity issues on our marketing websites, missing security headers
 hardening or best-practice suggestions, automated-scanner output without a working
 proof of concept, or already-known issues. There is no fixed bounty and no
 guaranteed payout; whether a report qualifies, and any amount, are determined
-solely by Cake Labs LLC.
+solely by Leonardo Noel Salazar Mendoza.
 
 ## Supported versions
 
 We do not maintain previous releases. Only the **latest release for each platform**
-is supported; security fixes are delivered in new versions. Please keep Cake Wallet
+is supported; security fixes are delivered in new versions. Please keep Mi Bóveda
 up to date.

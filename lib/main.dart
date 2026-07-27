@@ -99,7 +99,7 @@ Future<void> runAppWithZone({Key? topLevelKey}) async {
         }
 
         // Convert the shortcut type to a URI and add it to the stream
-        final uri = Uri.parse('ourwallet://quickaction/$shortcutType');
+        final uri = Uri.parse('miboveda://quickaction/$shortcutType');
         quickActionsStream.sink.add(uri);
       });
 
@@ -167,10 +167,10 @@ Future<void> runAppWithZone({Key? topLevelKey}) async {
     }
 
     if (!Platform.isWindows) {
-      var zcashPassword = await secureStorageShared.read(key: "com.cakewallet.cw_zcash/zec.db");
+      var zcashPassword = await secureStorageShared.read(key: "com.miboveda.cw_zcash/zec.db");
       if (zcashPassword == null || zcashPassword.isEmpty) {
         zcashPassword = generateKey().substring(0, 32);
-        secureStorageShared.write(key: "com.cakewallet.cw_zcash/zec.db", value: zcashPassword);
+        secureStorageShared.write(key: "com.miboveda.cw_zcash/zec.db", value: zcashPassword);
       }
       zcash?.unlockDatabase(zcashPassword);
     }

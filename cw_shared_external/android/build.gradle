@@ -1,4 +1,4 @@
-group 'com.cakewallet.cw_shared_external'
+group 'com.miboveda.cw_shared_external'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -28,7 +28,7 @@ android {
     compileSdkVersion 33
 
     if (project.android.hasProperty("namespace")) {
-        namespace 'com.cakewallet.cw_shared_external'
+        namespace 'com.miboveda.cw_shared_external'
     }
 
     compileOptions {

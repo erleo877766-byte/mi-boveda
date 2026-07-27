@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-const platform = const MethodChannel('com.ourwallet.wallet/legacy_wallet_migration');
+const platform = const MethodChannel('com.miboveda.wallet/legacy_wallet_migration');
 
 Future<String> decrypt(Uint8List bytes, {required String key, required String salt}) async =>
     (await platform.invokeMethod<String>('decrypt', {'bytes': bytes, 'key': key, 'salt': salt}))!;

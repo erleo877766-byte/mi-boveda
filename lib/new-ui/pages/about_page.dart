@@ -80,7 +80,7 @@ class _AboutPageState extends State<AboutPage> {
                       spacing: 8,
                       children: [
                         Text(
-                          "Cake Wallet",
+                          "Mi Bóveda",
                           style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
                         ),
                         Text(widget.appVersion,
@@ -110,14 +110,14 @@ class _AboutPageState extends State<AboutPage> {
                     ListItemRegularRow(
                         keyValue: "official website",
                         label: "Official Website",
-                        onTap: () => launchUrl(Uri.https("ourwallet.com")),
+                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10),
                     ListItemRegularRow(
                         keyValue: "docs",
                         label: "Cake Docs",
-                        onTap: () => launchUrl(Uri.https("ourdocs.com")),
+                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10)
@@ -126,21 +126,21 @@ class _AboutPageState extends State<AboutPage> {
                     ListItemRegularRow(
                         keyValue: "gh",
                         label: "GitHub",
-                        onTap: () => launchUrl(Uri.https("github.com", "cake-tech")),
+                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10),
                     ListItemRegularRow(
                         keyValue: "twitter",
                         label: "X (Twitter)",
-                        onTap: () => launchUrl(Uri.https("twitter.com", "ourwallet")),
+                        onTap: () => launchUrl(Uri.https("twitter.com", "miboveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10),
                     ListItemRegularRow(
                         keyValue: "tg",
                         label: "Telegram",
-                        onTap: () => launchUrl(Uri.https("t.me", "ourwallet")),
+                        onTap: () => launchUrl(Uri.https("t.me", "miboveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10)

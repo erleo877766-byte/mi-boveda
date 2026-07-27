@@ -13,8 +13,8 @@ jobs:
   build-android:
     runs-on: ubuntu-latest
     env:
-      STORE_PASS: ourwallet_release
-      KEY_PASS: ourwallet_release
+      STORE_PASS: miboveda_release
+      KEY_PASS: miboveda_release
 
     steps:
       - uses: actions/checkout@v4
@@ -40,13 +40,24 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Android SDK and NDK
-        uses: android-actions/setup-android@v3
+        run: |
+          mkdir -p ~/android-sdk
+          export ANDROID_HOME=~/android-sdk
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          unzip -q cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
+          mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+          rm cmdline-tools.zip
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
 
       - name: Install Android NDK and build tools
         run: |
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
-          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/28.2.13676358" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> $GITHUB_ENV
 
       - name: Install Rust targets
         run: |
@@ -112,7 +123,7 @@ jobs:
       - name: Configure app
         run: |
           pushd scripts/android
-            source ./app_env.sh cakewallet
+            source ./app_env.sh miboveda
             ./app_config.sh
           popd
 
@@ -136,7 +147,7 @@ jobs:
         run: |
           pushd /opt/generic_cache || mkdir -p /opt/generic_cache && pushd /opt/generic_cache
             if [[ ! -f key.jks ]]; then
-              keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias testKey -noprompt -dname "CN=OurWallet, OU=OurWallet, O=OurWallet, L=Unknown, S=Unknown, C=US" -storepass $STORE_PASS -keypass $KEY_PASS
+              keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias testKey -noprompt -dname "CN=Mi Boveda, OU=Mi Boveda, O=Mi Boveda, L=Unknown, S=Unknown, C=US" -storepass $STORE_PASS -keypass $KEY_PASS
             fi
           popd
           cp /opt/generic_cache/key.jks android/app/
@@ -155,7 +166,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ourwallet-android-apk
+          name: miboveda-android-apk
           path: |
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
             build/app/outputs/flutter-apk/app-x86_64-release.apk

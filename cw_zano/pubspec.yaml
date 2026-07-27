@@ -2,7 +2,7 @@ name: cw_zano
 description: A new flutter plugin project.
 version: 0.0.1
 publish_to: none
-homepage: https://ourwallet.com
+homepage: https://github.com/leonard0001991/mi-boveda
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

@@ -58,7 +58,7 @@ class VulnerableSeedsPopup extends StatelessWidget {
                                   maxHeight: MediaQuery.of(context).size.height * 0.7,
                                 ),
                                 child: Text(
-                                  "Your Bitcoin wallet(s) below use a legacy seed format that is vulnerable, which MAY result in you losing money from these wallet(s) if no action is taken.\nWe recommend that you IMMEDIATELY create wallet(s) in Cake Wallet and immediately transfer the funds to these wallet(s).\nVulnerable wallet name(s):\n\n[${affectedWalletNames.join(", ")}]\n\nFor assistance, please use the in-app support or email support@ourwallet.com",
+                                  "Your Bitcoin wallet(s) below use a legacy seed format that is vulnerable, which MAY result in you losing money from these wallet(s) if no action is taken.\nWe recommend that you IMMEDIATELY create wallet(s) in Mi Bóveda and immediately transfer the funds to these wallet(s).\nVulnerable wallet name(s):\n\n[${affectedWalletNames.join(", ")}]\n\nFor assistance, please use the in-app support or email erleo877766@gmail.com",
                                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                         decoration: TextDecoration.none,
                                         fontSize: 16.0,

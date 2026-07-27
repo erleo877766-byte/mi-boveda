@@ -1,6 +1,6 @@
 # cw_monero
 
-Monero wallet module for Cake Wallet, backed by native bindings to Monero’s wallet library and high-level Dart wrappers.
+Monero wallet module for Mi B�veda, backed by native bindings to Monero’s wallet library and high-level Dart wrappers.
 
 ## Features
 

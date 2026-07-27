@@ -5,11 +5,11 @@
 Pod::Spec.new do |s|
   s.name             = 'cw_decred'
   s.version          = '0.0.1'
-  s.summary          = 'Cake Wallet Decred'
-  s.description      = 'Cake Wallet wrapper over Decred project'
-  s.homepage         = 'http://cakewallet.com'
+  s.summary          = 'Mi Bóveda Decred'
+  s.description      = 'Mi Bóveda wrapper over Decred project'
+  s.homepage         = 'https://github.com/leonard0001991/mi-boveda'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Cake Wallet' => 'support@cakewallet.com' }
+  s.author           = { 'Leonardo Noel Salazar Mendoza' => 'erleo877766@gmail.com' }
 
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'

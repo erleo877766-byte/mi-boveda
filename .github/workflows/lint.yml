@@ -41,7 +41,7 @@ jobs:
 #      - name: configure git
 #        run: |
 #          git config --global --add safe.directory '*'
-#          git config --global user.email "ci@ourwallet.com"
+#          git config --global user.email "erleo877766@gmail.com"
 #          git config --global user.name "CakeWallet CI"
 #
 #      - name: Fetch prebuilt Torch

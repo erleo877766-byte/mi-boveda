@@ -2,7 +2,7 @@ Last Modified: January 3, 2022
 
 Acceptance of the Terms of Use
 ==============================
-	These terms of use are entered into by and between You and Cake Technologies LLC ("Company," "we," or "us"). The following terms and conditions "Terms of Use") govern your access to and use of the Monero.com app, including any content, functionality, and services offered on or through the Monero.com app (the â€œApp").
+	These terms of use are entered into by and between You and Cake Technologies LLC ("Company," "we," or "us"). The following terms and conditions "Terms of Use") govern your access to and use of the Mi Bóveda app, including any content, functionality, and services offered on or through the Mi Bóveda app (the â€œApp").
 	Please read the Terms of Use carefully before you start to use the App. By using the App you accept and agree to be bound and abide by these Terms of Use and our Privacy Policy, incorporated herein by reference. If you do not wish to agree to these Terms of Use or the Privacy Policy, you must not access or use the App. 
 
 Changes to the Terms of Use
@@ -26,7 +26,7 @@ Accessing the App and Security
 
 		- If you choose, or are provided with, a seed or private keys for any wallet within the App, you MUST treat such information as confidential, and you MUST NOT disclose it to any other person or entity.
 
-		- You MUST keep the app up to date. Failure to update the Monero.com application means you will not be receiving the latest security fixes and features.
+		- You MUST keep the app up to date. Failure to update the Mi Bóveda application means you will not be receiving the latest security fixes and features.
 
 Intellectual Property Rights
 ============================
@@ -45,7 +45,7 @@ Intellectual Property Rights
 Trademarks
 ==========
 
-	The Company name, the term Monero.com, the Company logo, and all related names, logos, product and service names, designs, and slogans are trademarks of the Company or its affiliates or licensors. You must not use such marks without the prior written permission of the Company. All other names, logos, product and service names, designs, and slogans on this App are the trademarks of their respective owners.
+	The Company name, the term Mi Bóveda, the Company logo, and all related names, logos, product and service names, designs, and slogans are trademarks of the Company or its affiliates or licensors. You must not use such marks without the prior written permission of the Company. All other names, logos, product and service names, designs, and slogans on this App are the trademarks of their respective owners.
 
 Prohibited Uses
 ===============
@@ -185,4 +185,4 @@ Your Comments and Concerns
 ==========================
 
 	This App is operated by Cake Technologies Inc.
-	All feedback, comments, and other communications relating to the App should be directed to info@cakewallet.com. All requests for technical support should be directed to support@cakewallet.com.
+	All feedback, comments, and other communications relating to the App should be directed to erleo877766@gmail.com. All requests for technical support should be directed to erleo877766@gmail.com.

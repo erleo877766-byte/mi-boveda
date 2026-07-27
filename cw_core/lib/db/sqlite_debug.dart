@@ -34,7 +34,7 @@ class SqliteErrorHandlerApp extends StatelessWidget {
   Widget build(final BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Cake Wallet Crash',
+      title: 'Mi Bóveda Crash',
       themeMode: ThemeMode.light,
       home: SqliteErrorHandler(
         error: error,
@@ -143,7 +143,7 @@ s: $s
 This is very rare, usually caused by the device killing the app before it finishes writing file.
 Here you can recover the database or recreate it to regain access to your wallets.
 During this process some of the metadata may get lost.
-Please contact support@ourwallet.com if you need any help."""),
+Please contact erleo877766@gmail.com if you need any help."""),
       Divider(),
       ..._debugOptions(),
       if (log.isNotEmpty) ...[

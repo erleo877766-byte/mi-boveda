@@ -1604,7 +1604,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
       if (error.errorMessage != null && error.errorMessage!.contains("no peers replied")) {
         return S.current.tx_commit_failed_no_peers;
       }
-      return "${S.current.tx_commit_failed}\nsupport@ourwallet.com${error.errorMessage != null ? "\n\n${error.errorMessage}" : ""}";
+      return "${S.current.tx_commit_failed}\nerleo877766@gmail.com${error.errorMessage != null ? "\n\n${error.errorMessage}" : ""}";
     }
     if (error is TransactionCommitFailedDustChange) {
       return S.current.tx_rejected_dust_change;

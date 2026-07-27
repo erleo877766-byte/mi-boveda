@@ -41,7 +41,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ourwallet.mweb
+        package: com.miboveda.mweb
         pluginClass: CwMwebPlugin
       ios:
         pluginClass: CwMwebPlugin

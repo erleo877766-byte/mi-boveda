@@ -1,8 +1,8 @@
-app-id: com.ourwallet.OurWallet
+app-id: com.miboveda.MiBoveda
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
-command: cake_wallet
+command: miboveda
 separate-locales: false
 finish-args:
   - --share=ipc
@@ -13,21 +13,21 @@ finish-args:
   - --share=network
   - --filesystem=home
 modules:
-  - name: cake_wallet
+  - name: miboveda
     buildsystem: simple
     build-commands:
-      - "cp -R bundle /app/cake_wallet"
-      - "chmod +x /app/cake_wallet/cake_wallet"
+      - "cp -R bundle /app/miboveda"
+      - "chmod +x /app/miboveda/miboveda"
       - "mkdir -p /app/bin"
-      - "ln -s /app/cake_wallet/cake_wallet /app/bin/cake_wallet"
+      - "ln -s /app/miboveda/miboveda /app/bin/miboveda"
       - "mkdir -p /app/share/icons/hicolor/scalable/apps"
-      - "cp ourwallet_icon_180.png /app/share/icons/hicolor/scalable/apps/com.ourwallet.OurWallet.png"
+      - "cp miboveda_icon_180.png /app/share/icons/hicolor/scalable/apps/com.miboveda.MiBoveda.png"
       - "mkdir -p /app/share/applications"
-      - "cp com.ourwallet.OurWallet.desktop /app/share/applications"
+      - "cp com.miboveda.MiBoveda.desktop /app/share/applications"
     sources:
       - type: dir
         path: build/linux/x64/release
       - type: file
-        path: assets/images/ourwallet_icon_180.png
+        path: assets/images/miboveda_icon_180.png
       - type: file
-        path: linux/com.ourwallet.OurWallet.desktop
+        path: linux/com.miboveda.MiBoveda.desktop

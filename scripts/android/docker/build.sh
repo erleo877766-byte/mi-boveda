@@ -103,7 +103,7 @@ build final $final_ver \
   --build-arg ZCASH_IMAGE="$(img zcash $zcash_ver)"
 
 echo "done: $(img final $final_ver)"
-echo $(img final $final_ver) > /tmp/cakewallet_docker
+echo $(img final $final_ver) > /tmp/miboveda_docker
 
 
 docker create --name temp_extract $(img final $final_ver) \

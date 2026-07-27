@@ -1,25 +1,25 @@
-# Building Cake Wallet for Android
+# Building Mi Bóveda for Android
 
 ## Requirements and Setup
 
-As we use Docker with a custom Dockerfile to build Cake Wallet, the only dependency for building Cake on your local host is the Docker Engine.
+As we use Docker with a custom Dockerfile to build Mi Bóveda, the only dependency for building Cake on your local host is the Docker Engine.
 
 You can find the latest instructions for installing Docker on your given OS on the official website:
 
 - <https://docs.docker.com/engine/install/>
 
-## Building Cake Wallet or Monero.com
+## Building Mi Bóveda or mi-boveda
 
 ### Using the pre-built builder image
 
-In order to build the latest version of Cake Wallet, simply run the following:
+In order to build the latest version of Mi Bóveda, simply run the following:
 
 ```bash
-git clone --branch main https://github.com/cake-tech/cake_wallet.git
-# NOTE: Replace `main` with the latest release tag available at https://github.com/cake-tech/cake_wallet/releases/latest.
-cd cake_wallet
-# docker build -t ghcr.io/cake-tech/cake_wallet:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly . # Uncomment to build the docker image yourself instead of pulling it from the registry
-docker run -v$(pwd):$(pwd) -w $(pwd) -i --rm ghcr.io/cake-tech/cake_wallet:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly bash -x << EOF
+git clone --branch main https://github.com/leonard0001991/mi-boveda.git
+# NOTE: Replace `main` with the latest release tag available at https://github.com/leonard0001991/mi-boveda/releases/latest.
+cd mi-boveda
+# docker build -t ghcr.io/leonard0001991/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly . # Uncomment to build the docker image yourself instead of pulling it from the registry
+docker run -v$(pwd):$(pwd) -w $(pwd) -i --rm ghcr.io/leonard0001991/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly bash -x << EOF
 set -x -e
 git config --global --add safe.directory '*'
 pushd scripts/android
@@ -29,7 +29,7 @@ pushd scripts/android
         ./build_bitbox_flutter.sh
     popd
     source ./app_env.sh cakewallet
-    # source ./app_env.sh monero.com # Uncomment this line to build monero.com
+    # source ./app_env.sh mi-boveda # Uncomment this line to build mi-boveda
     ./app_config.sh
     ./build_monero_all.sh # optional, ommit to not build monero
     ./build_decred.sh

@@ -1,4 +1,4 @@
-# Guide to Adding a New Wallet Type in Cake Wallet
+# Guide to Adding a New Wallet Type in Mi Bóveda
 
 ## Important: EVM-Compatible Wallets
 
@@ -1029,4 +1029,4 @@ Add:
 
 ---
 
-Copyright (C) 2018-2023 Cake Labs LLC
+Copyright (C) 2018-2023 Leonardo Noel Salazar Mendoza

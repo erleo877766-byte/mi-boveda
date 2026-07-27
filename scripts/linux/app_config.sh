@@ -1,6 +1,6 @@
 #!/bin/bash
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/functions.sh"
-CAKEWALLET="cakewallet"
+CAKEWALLET="miboveda"
 DIR=`pwd`
 
 if [ -z "$APP_LINUX_TYPE" ]; then

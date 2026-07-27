@@ -2,7 +2,7 @@ name: cw_tron
 description: A new Flutter package project.
 version: 0.0.1
 publish_to: none
-homepage: https://ourwallet.com
+homepage: https://github.com/leonard0001991/mi-boveda
 
 environment:
   sdk: '>=3.0.6 <4.0.0'

@@ -1,4 +1,4 @@
-name: Cake Wallet Linux
+name: Mi Bóveda Linux
 
 on: [pull_request]
 
@@ -33,7 +33,7 @@ jobs:
       - name: configure git
         run: |
           git config --global --add safe.directory '*'
-          git config --global user.email "ci@ourwallet.com"
+          git config --global user.email "erleo877766@gmail.com"
           git config --global user.name "CakeWallet CI"
       - name: Get the full commit message
         run: |
@@ -237,7 +237,7 @@ jobs:
           killall -9 ffmpeg || true
           sleep 5
           # Feel free to add your own public key if you wish
-          gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 6B3199AD9B3D23B8 # konstantin@ourwallet.com
+          gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 6B3199AD9B3D23B8 # erleo877766@gmail.com
           gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 35C8DBAFB8D9ACAC # cyjan@mrcyjanek.net
           gpg --trust-model always --encrypt --output /opt/screen_grab.mkv.gpg \
             --recipient 6B3199AD9B3D23B8 \

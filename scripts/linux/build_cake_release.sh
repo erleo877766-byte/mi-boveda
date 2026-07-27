@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# build_cake_release.sh - Script to build Cake Wallet for Linux
-# Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=cakewallet|monero.com]
+# build_cake_release.sh - Script to build Mi Bóveda for Linux
+# Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=miboveda]
 
 set -e
 
@@ -13,7 +13,7 @@ cd "$SCRIPT_DIR"
 # Default values
 BUILD_AMD64=false
 BUILD_ARM64=false
-APP_TYPE="cakewallet"
+APP_TYPE="miboveda"
 DOCKER_IMAGE="ghcr.io/cake-tech/cake_wallet:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly"
 
 # Parse arguments
@@ -34,7 +34,7 @@ do
         ;;
         *)
         echo "Unknown argument: $arg"
-        echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=cakewallet|monero.com]"
+        echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=miboveda]"
         exit 1
         ;;
     esac
@@ -45,13 +45,13 @@ cd ../..
 # Validate arguments
 if [[ "$BUILD_AMD64" == "false" && "$BUILD_ARM64" == "false" ]]; then
     echo "Error: At least one architecture (--amd64 or --arm64) must be specified."
-    echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=cakewallet|monero.com]"
+    echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=miboveda]"
     exit 1
 fi
 
-if [[ "$APP_TYPE" != "cakewallet" && "$APP_TYPE" != "monero.com" ]]; then
-    echo "Error: App type must be either 'cakewallet' or 'monero.com'"
-    echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=cakewallet|monero.com]"
+if [[ "$APP_TYPE" != "miboveda" && "$APP_TYPE" != "mi-boveda" ]]; then
+    echo "Error: App type must be either 'miboveda' or 'mi-boveda'"
+    echo "Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=miboveda]"
     exit 1
 fi
 
@@ -78,9 +78,9 @@ flutter build linux
 rm -rf build/linux/current
 cp -r build/linux/$flutter_arch build/linux/current
 rm -rf .flatpak-builder
-flatpak-builder --force-clean flatpak-build com.cakewallet.CakeWallet.yml
+flatpak-builder --force-clean flatpak-build com.miboveda.MiBoveda.yml
 flatpak build-export export flatpak-build
-flatpak build-bundle export build/linux/current/cake_wallet.flatpak com.cakewallet.CakeWallet
+flatpak build-bundle export build/linux/current/cake_wallet.flatpak com.miboveda.MiBoveda
 cp build/linux/current/cake_wallet.flatpak build/linux/$flutter_arch/
 EOF
 }

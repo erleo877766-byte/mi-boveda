@@ -39,27 +39,28 @@ jobs:
       - name: Configure Git
         run: |
           git config --global --add safe.directory '*'
-          git config --global user.email "ci@ourwallet.com"
-          git config --global user.name "OurWallet CI"
+          git config --global user.email "erleo877766@gmail.com"
+          git config --global user.name "Leonardo Salazar"
 
       - name: Fetch prebuilt Torch
         run: |
           cd scripts
           curl -L -o torch_dart.tar.gz https://github.com/MrCyjaneK/torch_dart/releases/download/v1.0.17/torch_dart-v1.0.17.tar.gz
-          tar -xzf torch_dart.tar.gz
-          del torch_dart.tar.gz
+          mkdir -p torch_dart
+          cd torch_dart && tar -xzf ../torch_dart.tar.gz && cd ..
+          rm torch_dart.tar.gz
 
       - name: Generate pubspec.yaml
         run: |
-          Copy-Item pubspec_description.yaml pubspec.yaml -Force
-          dart run tool\generate_pubspec.dart
+          cp pubspec_description.yaml pubspec.yaml
+          dart run tool/generate_pubspec.dart
           flutter pub get
 
       - name: Configure app
-        run: dart run tool\configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --dogecoin --base --arbitrum --bsc
+        run: dart run tool/configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --dogecoin --base --arbitrum --bsc
 
       - name: Generate secrets
-        run: dart run tool\generate_new_secrets.dart
+        run: dart run tool/generate_new_secrets.dart
 
       - name: Download prebuilt monero_c DLLs
         run: |
@@ -84,17 +85,16 @@ jobs:
 
       - name: Build generated code
         run: |
-          $cwcoins = @("cw_core", "cw_monero", "cw_bitcoin", "cw_evm", "cw_nano", "cw_bitcoin_cash", "cw_solana", "cw_tron", "cw_zcash")
-          foreach ($coin in $cwcoins) {
+          for coin in cw_core cw_monero cw_bitcoin cw_evm cw_nano cw_bitcoin_cash cw_solana cw_tron cw_zcash; do
             cd $coin
             flutter pub get
             dart run build_runner build --delete-conflicting-outputs
             cd ..
-          }
+          done
           dart run build_runner build --delete-conflicting-outputs
 
       - name: Generate localization
-        run: dart run tool\generate_localization.dart
+        run: dart run tool/generate_localization.dart
 
       - name: Build Windows
         run: flutter build windows --dart-define-from-file=env.json --release
@@ -102,16 +102,18 @@ jobs:
       - name: Package release
         run: |
           RELEASE_DIR="build/windows/x64/runner/Release"
-          mkdir -p build/OurWallet
-          cp -r "$RELEASE_DIR"/* build/OurWallet/
-          7z a OurWallet-windows.zip build/OurWallet/*
+          mkdir -p build/MiBoveda
+          cp -r "$RELEASE_DIR"/* build/MiBoveda/
+          cd build/MiBoveda
+          zip -r ../../MiBoveda-windows.zip .
+          cd ../..
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: ourwallet-windows-exe
+          name: miboveda-windows-exe
           path: |
-            OurWallet-windows.zip
+            MiBoveda-windows.zip
             build/windows/x64/runner/Release/*.exe
             build/windows/x64/runner/Release/*.dll
           if-no-files-found: error

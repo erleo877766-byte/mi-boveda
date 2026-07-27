@@ -1,8 +1,8 @@
-# Building Cake Wallet for Windows
+# Building Mi Bóveda for Windows
 
 ## Requirements and Setup
 
-The following are the system requirements to build Cake Wallet for your Windows PC.
+The following are the system requirements to build Mi Bóveda for your Windows PC.
 
 ```txt
 Windows 10 or later (64-bit), x86-64 based
@@ -56,31 +56,31 @@ Install Rust and other Rust-related dependencies using [rustup.rs](https://rustu
 wsl curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-### 5. Acquiring the Cake Wallet source code
+### 5. Acquiring the Mi Bóveda source code
 
-Download the latest release tag of Cake Wallet and enter the source code directory:
+Download the latest release tag of Mi Bóveda and enter the source code directory:
 
 ```powershell
-git clone https://github.com/cake-tech/cake_wallet.git --branch main
-cd cake_wallet
+git clone https://github.com/leonard0001991/mi-boveda.git --branch main
+cd mi-boveda
 ```
 
-NOTE: Replace `main` with the latest release tag available at <https://github.com/cake-tech/cake_wallet/releases/latest>.
+NOTE: Replace `main` with the latest release tag available at <https://github.com/leonard0001991/mi-boveda/releases/latest>.
 
 ### 6. Build Monero, monero_c, and dependencies
 
-To use Monero in Cake Wallet, you must build the Monero_C wrapper which will be used by monero.dart package.
+To use Monero in Mi Bóveda, you must build the Monero_C wrapper which will be used by monero.dart package.
 
 Run the following in a WSL terminal window (set the Git username and email as desired):
 
 ```powershell
 wsl
-git config --global user.email "builds@cakewallet.com"
+git config --global user.email "builds@github.com/leonard0001991/mi-boveda"
 git config --global user.name "builds"
 ./build_all.sh
 ```
 
-### 7. Configure and build Cake Wallet application
+### 7. Configure and build Mi Bóveda application
 
 To configure the application, run the following:
 
@@ -89,4 +89,4 @@ exit
 .\cakewallet.bat
 ```
 
-After running the script above, you should get `Cake Wallet.zip` in the project's root directory which will contain `CakeWallet.exe` and other needed files for running the application. Now you can extract files from `Cake Wallet.zip` archive and run the application.
+After running the script above, you should get `Mi Bóveda.zip` in the project's root directory which will contain `CakeWallet.exe` and other needed files for running the application. Now you can extract files from `Mi Bóveda.zip` archive and run the application.

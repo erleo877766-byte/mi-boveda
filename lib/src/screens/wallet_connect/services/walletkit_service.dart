@@ -71,11 +71,11 @@ abstract class WalletKitServiceBase with Store {
         projectId: secrets.walletConnectProjectId,
       ),
       metadata: const PairingMetadata(
-        name: 'Cake Wallet',
-        description: 'Cake Wallet',
-        url: 'https://ourwallet.com',
-        icons: ['https://ourwallet.com/assets/image/cake_logo.png'],
-        redirect: Redirect(native: 'ourwallet://'),
+name: 'Mi Bóveda',
+    description: 'Mi Bóveda',
+        url: 'https://github.com/leonard0001991/mi-boveda',
+        icons: ['https://github.com/leonard0001991/mi-boveda/assets/logo.png'],
+        redirect: Redirect(native: 'miboveda://'),
       ),
     );
 

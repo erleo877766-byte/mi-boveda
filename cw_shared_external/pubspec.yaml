@@ -2,7 +2,7 @@ name: cw_shared_external
 description: Shared external libraries for monero and haven
 version: 0.0.1
 author: Cake Walelt
-homepage: https://ourwallet.com
+homepage: https://github.com/leonard0001991/mi-boveda
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -20,7 +20,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ourwallet.cw_shared_external
+        package: com.miboveda.cw_shared_external
         pluginClass: CwSharedExternalPlugin
       ios:
         pluginClass: CwSharedExternalPlugin

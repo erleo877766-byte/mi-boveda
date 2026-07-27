@@ -46,8 +46,8 @@ class ReceiveQrCode extends StatelessWidget {
               opacity: largeQrMode ? 1 : 0,
               child: CakeImageWidget(
                 imageUrl: isLightMode
-                    ? "assets/new-ui/ourwallet-wordmark-light.svg"
-                    : "assets/new-ui/ourwallet-wordmark.svg",
+                    ? "assets/new-ui/miboveda-wordmark-light.svg"
+                    : "assets/new-ui/miboveda-wordmark.svg",
                 height: 45,
               )),
         ),

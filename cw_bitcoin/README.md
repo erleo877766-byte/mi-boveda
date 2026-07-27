@@ -1,6 +1,6 @@
 # cw_bitcoin
 
-Bitcoin-family Electrum wallet implementation used by Cake Wallet (BTC, LTC and derivatives).
+Bitcoin-family Electrum wallet implementation used by Mi Bóveda (BTC, LTC and derivatives).
 
 ## Features
 

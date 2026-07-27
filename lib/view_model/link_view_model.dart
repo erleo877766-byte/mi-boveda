@@ -29,7 +29,7 @@ class LinkViewModel {
   bool get isWalletConnectLink => currentLink?.authority == 'wc';
   bool get isNanoGptLink => currentLink?.scheme == 'nano-gpt';
   bool get isQuickActionLink =>
-      currentLink?.scheme == 'ourwallet' && currentLink?.host == 'quickaction';
+      currentLink?.scheme == 'miboveda' && currentLink?.host == 'quickaction';
 
   String? getRouteToGo() {
     if (isWalletConnectLink) {

@@ -1,6 +1,6 @@
 # cw_wownero
 
-Wownero wallet module for Cake Wallet, providing a Monero-family wallet with Wownero-specific APIs and bindings.
+Wownero wallet module for Mi Bóveda, providing a Monero-family wallet with Wownero-specific APIs and bindings.
 
 ## Features
 

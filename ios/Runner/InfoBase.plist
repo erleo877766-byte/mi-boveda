@@ -11,7 +11,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Cake Wallet</string>
+	<string>Mi Bóveda</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -35,7 +35,7 @@
             <string>y.at</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>cakewallet</string>
+                <string>miboveda</string>
             </array>
         </dict>
         <dict>

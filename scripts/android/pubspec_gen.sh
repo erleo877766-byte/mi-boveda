@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MONERO_COM=monero.com
-CAKEWALLET=cakewallet
+MONERO_COM=mi-boveda
+CAKEWALLET=miboveda
 HAVEN=haven
 CONFIG_ARGS=""
 

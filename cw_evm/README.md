@@ -1,6 +1,6 @@
 ## cw_evm
 
-Shared EVM-chain wallet foundation for Cake Wallet. Provides common client/wallet abstractions used by `cw_ethereum`, `cw_polygon`, and other EVM chains.
+Shared EVM-chain wallet foundation for Mi Bóveda. Provides common client/wallet abstractions used by `cw_ethereum`, `cw_polygon`, and other EVM chains.
 
 ### What it provides
 
@@ -48,5 +48,5 @@ Then wire into a `WalletService` similar to `EthereumWalletService`/`PolygonWall
 
 ### Additional information
 
-- Uses `web3dart` under the hood and integrates with Cake Walletâ€™s `cw_core` types.
+- Uses `web3dart` under the hood and integrates with Mi Bóvedaâ€™s `cw_core` types.
 - See `lib/` for the reference implementation details.

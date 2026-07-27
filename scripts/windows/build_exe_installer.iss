@@ -1,11 +1,11 @@
-#define MyAppName "Cake Wallet"
-#define MyAppVersion "6.3.0"
-#define MyAppPublisher "Cake Labs LLC"
-#define MyAppURL "https://cakewallet.com/"
-#define MyAppExeName "CakeWallet.exe"
+#define MyAppName "Mi Bóveda"
+#define MyAppVersion "1.0.0"
+#define MyAppPublisher "Leonardo Noel Salazar Mendoza"
+#define MyAppURL "https://github.com/leonard0001991/mi-boveda"
+#define MyAppExeName "MiBoveda.exe"
 
 [Setup]
-AppId=com.cakewallet.cakewallet
+AppId=com.miboveda.wallet
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -13,7 +13,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\CakeWallet
+DefaultDirName={autopf}\MiBoveda
 DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE.md
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)

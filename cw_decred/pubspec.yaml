@@ -2,8 +2,8 @@ name: cw_decred
 description: A new Flutter plugin project.
 version: 0.0.1
 publish_to: none
-author: Cake Wallet
-homepage: https://ourwallet.com
+author: Leonardo Noel Salazar Mendoza
+homepage: https://github.com/leonard0001991/mi-boveda
 
 environment:
   sdk: ">=3.2.0-0 <4.0.0"
@@ -43,7 +43,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ourwallet.cw_decred
+        package: com.miboveda.cw_decred
         pluginClass: CwDecredPlugin
       ios:
         pluginClass: CwDecredPlugin

@@ -9,7 +9,7 @@ PLATFORMS=($IOS $ANDROID $MACOS $LINUX)
 PLATFORM=$1
 
 if ! [[ " ${PLATFORMS[*]} " =~ " ${PLATFORM} " ]]; then
-    echo "specify platform: ./configure_cake_wallet.sh ios|android|macos|linux"
+    echo "specify platform: ./configure_miboveda.sh ios|android|macos|linux"
     exit 1
 fi
 
@@ -33,7 +33,7 @@ if [ "$PLATFORM" == "$LINUX" ]; then
     cd scripts/linux
 fi
 
-source ./app_env.sh cakewallet
+source ./app_env.sh miboveda
 ./app_config.sh
 cd ../.. && flutter pub get
 dart run tool/generate_localization.dart

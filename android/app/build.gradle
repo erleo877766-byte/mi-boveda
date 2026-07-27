@@ -56,7 +56,7 @@ android {
     }
 
 
-    namespace "com.cakewallet.cake_wallet"
+    namespace "com.miboveda.wallet"
 
     defaultConfig {
         applicationId appProperties['id']

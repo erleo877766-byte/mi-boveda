@@ -2,7 +2,7 @@ name: cw_wownero
 description: A new flutter plugin project.
 version: 0.0.1
 publish_to: none
-homepage: https://ourwallet.com
+homepage: https://github.com/leonard0001991/mi-boveda
 
 environment:
   sdk: ">=2.19.0 <3.0.0"

@@ -5,11 +5,11 @@ SRC_DIR_PATH="`pwd`/../../assets/images/ios_icons"
 mkdir -p "$DEST_DIR_PATH"
 
 case $APP_IOS_TYPE in
-	"monero.com")
+	"mi-boveda")
     ICON_DIRECTORY="monerocom-app.icon"
     ;;
-	"cakewallet")
-    ICON_DIRECTORY="cakewallet-app.icon"
+	"miboveda")
+    ICON_DIRECTORY="miboveda-app.icon"
     ;;
 esac
 

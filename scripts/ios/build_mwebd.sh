@@ -55,7 +55,7 @@ write_info_plist() {
     <key>CFBundleExecutable</key>
     <string>${framework_name}</string>
     <key>CFBundleIdentifier</key>
-    <string>com.cakewallet.${framework_name}</string>
+    <string>com.miboveda.${framework_name}</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

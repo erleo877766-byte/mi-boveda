@@ -1,6 +1,6 @@
 # Material 3 Theming System
 
-This directory contains the Material 3 (M3) theming implementation for Cake Wallet. The theming system is now fully based on Material 3 color tokens and patterns, with all custom theme extensions removed for simplicity, maintainability, and compliance with Material Design 3 guidelines.
+This directory contains the Material 3 (M3) theming implementation for Mi Bóveda. The theming system is now fully based on Material 3 color tokens and patterns, with all custom theme extensions removed for simplicity, maintainability, and compliance with Material Design 3 guidelines.
 
 ## Directory Structure
 

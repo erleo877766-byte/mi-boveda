@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.cakewallet.cake_wallet" "\0"
-            VALUE "FileDescription", "Cake Wallet" "\0"
+            VALUE "CompanyName", "com.miboveda.wallet" "\0"
+            VALUE "FileDescription", "Mi Bóveda" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Cake Wallet" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 Cake Wallet. All rights reserved." "\0"
-            VALUE "OriginalFilename", "Cake Wallet.exe" "\0"
-            VALUE "ProductName", "Cake Wallet" "\0"
+            VALUE "InternalName", "Mi Bóveda" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2018-2023 Cake Labs LLC. Modificaciones © 2026 Leonardo Noel Salazar Mendoza. Distribuido bajo licencia MIT." "\0"
+            VALUE "OriginalFilename", "Mi Bóveda.exe" "\0"
+            VALUE "ProductName", "Mi Bóveda" "\0"
             VALUE "ProductVersion",  VERSION_AS_STRING "\0"
         END
     END

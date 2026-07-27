@@ -15,8 +15,8 @@ get_current_branch() {
 update_app_properties() {
     local branch=$1
     local file_path="./android/app.properties"
-    universal_sed "s/^id=.*/id=com.ourwallet.$branch/" "$file_path"
-    universal_sed "s/^name=.*/name=$branch-Cake Wallet/" "$file_path"
+    universal_sed "s/^id=.*/id=com.miboveda.$branch/" "$file_path"
+    universal_sed "s/^name=.*/name=$branch-Mi Bóveda/" "$file_path"
 }
 
 # only update app.properties if getting the current branch was successful
