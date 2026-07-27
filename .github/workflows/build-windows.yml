@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -59,19 +63,21 @@ jobs:
 
       - name: Download prebuilt monero_c DLLs
         run: |
-          git clone --depth 1 https://github.com/mrcyjanek/monero_c.git scripts\monero_c
-          cd scripts\monero_c
+          git clone --depth 1 https://github.com/mrcyjanek/monero_c.git scripts/monero_c
+          cd scripts/monero_c
           git fetch --tags
-          $TAG = git describe --tags
-          mkdir -p "release\$TAG"
-          cd "release\$TAG"
+          TAG=$(git describe --tags)
+          mkdir -p "release/$TAG"
+          cd "release/$TAG"
           curl -L -o release-bundle.zip https://github.com/MrCyjaneK/monero_c/releases/download/v0.18.4.6-RC2/release-bundle.zip
-          7z x release-bundle.zip
-          if (Test-Path "v0.18.4.6-*") {
-            Move-Item v0.18.4.6-*\* .
-            Remove-Item v0.18.4.6-* -Recurse
-          }
-          Remove-Item release-bundle.zip
+          unzip -o release-bundle.zip
+          shopt -s nullglob
+          for inner in v0.18.4.6-*/; do
+            mv "$inner"* .
+            rmdir "$inner"
+          done
+          shopt -u nullglob
+          rm -f release-bundle.zip
 
       - name: Install Flutter dependencies
         run: flutter pub get
@@ -95,11 +101,10 @@ jobs:
 
       - name: Package release
         run: |
-          $releaseDir = "build\windows\x64\runner\Release"
-          $packageDir = "build\OurWallet"
-          if (Test-Path $packageDir) { Remove-Item $packageDir -Recurse -Force }
-          Copy-Item $releaseDir $packageDir -Recurse
-          Compress-Archive -Path "$packageDir\*" -DestinationPath "OurWallet-windows.zip" -Force
+          RELEASE_DIR="build/windows/x64/runner/Release"
+          mkdir -p build/OurWallet
+          cp -r "$RELEASE_DIR"/* build/OurWallet/
+          7z a OurWallet-windows.zip build/OurWallet/*
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
