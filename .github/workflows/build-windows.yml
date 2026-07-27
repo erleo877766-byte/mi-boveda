@@ -1,0 +1,113 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter 3.41.9
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.9'
+          channel: 'stable'
+
+      - name: Setup Go 1.24.1
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.1'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure Git
+        run: |
+          git config --global --add safe.directory '*'
+          git config --global user.email "ci@ourwallet.com"
+          git config --global user.name "OurWallet CI"
+
+      - name: Generate pubspec.yaml
+        run: |
+          Copy-Item pubspec_description.yaml pubspec.yaml -Force
+          flutter pub get
+          dart run tool\generate_pubspec.dart
+          flutter pub get
+
+      - name: Configure app
+        run: dart run tool\configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --dogecoin --base --arbitrum --bsc
+
+      - name: Generate secrets
+        run: dart run tool\generate_new_secrets.dart
+
+      - name: Fetch prebuilt Torch
+        run: |
+          cd scripts
+          curl -L -o torch_dart.tar.gz https://github.com/MrCyjaneK/torch_dart/releases/download/v1.0.17/torch_dart-v1.0.17.tar.gz
+          7z x torch_dart.tar.gz -oscripts -ttar
+          del torch_dart.tar.gz
+
+      - name: Download prebuilt monero_c DLLs
+        run: |
+          git clone --depth 1 https://github.com/mrcyjanek/monero_c.git scripts\monero_c
+          cd scripts\monero_c
+          git fetch --tags
+          $TAG = git describe --tags
+          mkdir -p "release\$TAG"
+          cd "release\$TAG"
+          curl -L -o release-bundle.zip https://github.com/MrCyjaneK/monero_c/releases/download/v0.18.4.6-RC2/release-bundle.zip
+          7z x release-bundle.zip
+          if (Test-Path "v0.18.4.6-*") {
+            Move-Item v0.18.4.6-*\* .
+            Remove-Item v0.18.4.6-* -Recurse
+          }
+          Remove-Item release-bundle.zip
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Build generated code
+        run: |
+          $cwcoins = @("cw_core", "cw_monero", "cw_bitcoin", "cw_evm", "cw_nano", "cw_bitcoin_cash", "cw_solana", "cw_tron", "cw_zcash")
+          foreach ($coin in $cwcoins) {
+            cd $coin
+            flutter pub get
+            dart run build_runner build --delete-conflicting-outputs
+            cd ..
+          }
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate localization
+        run: dart run tool\generate_localization.dart
+
+      - name: Build Windows
+        run: flutter build windows --dart-define-from-file=env.json --release
+
+      - name: Package release
+        run: |
+          $releaseDir = "build\windows\x64\runner\Release"
+          $packageDir = "build\OurWallet"
+          if (Test-Path $packageDir) { Remove-Item $packageDir -Recurse -Force }
+          Copy-Item $releaseDir $packageDir -Recurse
+          Compress-Archive -Path "$packageDir\*" -DestinationPath "OurWallet-windows.zip" -Force
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: ourwallet-windows-exe
+          path: |
+            OurWallet-windows.zip
+            build/windows/x64/runner/Release/*.exe
+            build/windows/x64/runner/Release/*.dll
+          if-no-files-found: error
