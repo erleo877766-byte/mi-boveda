@@ -1,4 +1,4 @@
-package com.cakewallet.cw_shared_external
+package com.miboveda.cw_shared_external
 
 import androidx.annotation.NonNull
 
