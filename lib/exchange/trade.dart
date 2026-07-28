@@ -28,7 +28,7 @@ class Trade extends HiveObject {
     this.fee = 0,
     this.txId = '',
     required this.createdAt,
-    this.state = const TradeState.pending(),
+    this.state = TradeState.pending,
     this.stateRaw = 0,
     this.payinAddress = '',
     this.payoutAddress = '',

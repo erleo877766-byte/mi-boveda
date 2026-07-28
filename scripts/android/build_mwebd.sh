@@ -50,3 +50,6 @@ CC=${NDK_BIN}/armv7a-linux-androideabi21-clang \
 go build -v -buildmode=c-shared -o ${ANDROID_OUT}/armeabi-v7a/libmweb.so .
 cd ../
 dart run ffigen --config ffigen_config.yaml
+
+# Fix Dart 3 class modifiers: ffigen generates plain classes that extend base Opaque
+sed -i 's/^class \(.*\) extends Opaque/base class \1 extends Opaque/' lib/generated_bindings.g.dart

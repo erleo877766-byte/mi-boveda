@@ -1,2 +1,11 @@
+# Prevent git from modifying binary/sensitive files
 *.arb binary
-*.arb linguist-generated=true
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.svg binary
+*.jar binary
+*.keystore binary
+*.jks binary
+*.zip binary
+*.tar.gz binary

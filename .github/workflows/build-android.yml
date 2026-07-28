@@ -69,14 +69,6 @@ jobs:
           done
           cargo install cargo-ndk
 
-      - name: Add empty secrets
-        run: |
-          for f in cw_bitcoin cw_evm cw_solana cw_nano cw_tron cw_core; do
-            mkdir -p $f/lib
-            echo "" > $f/lib/.secrets.g.dart
-          done
-          touch lib/.secrets.g.dart
-
       - name: Fetch prebuilt Torch
         run: |
           pushd scripts
@@ -141,6 +133,9 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Generate secrets
+        run: dart run tool/generate_new_secrets.dart
+
       - name: Generate platform code
         run: dart run tool/configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --wownero --zano --decred --dogecoin --base --zcash --arbitrum --bsc
 
@@ -148,6 +143,12 @@ jobs:
         run: |
           pushd scripts/android
             bash ./build_mwebd.sh
+          popd
+
+      - name: Build Decred
+        run: |
+          pushd scripts/android
+            bash ./build_decred.sh
           popd
 
       - name: Build generated code

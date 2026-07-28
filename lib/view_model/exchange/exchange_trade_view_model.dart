@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cake_wallet/core/execution_state.dart';
 import 'package:cake_wallet/exchange/trade.dart';
 import 'package:cw_core/payment_uris.dart';

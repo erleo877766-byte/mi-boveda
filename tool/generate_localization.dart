@@ -85,20 +85,24 @@ Future<void> main(List<String> args) async {
       output += '}' + '\n\n';
 
       localePath.forEach((key, dynamic value) {
-        inputContent = File(localePath[key].toString()).readAsStringSync(encoding: utf8);
-        config = json.decode(inputContent) as Map<String, dynamic>;
+        try {
+          inputContent = File(localePath[key].toString()).readAsStringSync(encoding: utf8);
+          config = json.decode(inputContent) as Map<String, dynamic>;
 
-        locales += "'$key', ";
+          locales += "'$key', ";
 
-        output += 'class \$$key extends S {' + '\n';
-        output += '  const \$$key();' + '\n';
+          output += 'class \$$key extends S {' + '\n';
+          output += '  const \$$key();' + '\n';
 
-        if (key != defaultLocale) {
-          output += textDirectionDeclaration;
-          output += localizedStrings(config: config, hasOverride: true);
+          if (key != defaultLocale) {
+            output += textDirectionDeclaration;
+            output += localizedStrings(config: config, hasOverride: true);
+          }
+
+          output += '}' + '\n\n';
+        } catch (e) {
+          print('Warning: Skipping locale $key: $e');
         }
-
-        output += '}' + '\n\n';
       });
 
       output += classDeclaration;
@@ -124,6 +128,7 @@ Future<void> main(List<String> args) async {
       await File(outputPath + localeListFileName).writeAsString(locales);
     } catch (e) {
       print(e.toString());
+      exit(1);
     }
   });
 }
