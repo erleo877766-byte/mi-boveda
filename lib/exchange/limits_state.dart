@@ -20,3 +20,5 @@ class LimitsError extends LimitsState {
 class LimitsLoading extends LimitsState {
   const LimitsLoading();
 }
+
+typedef LimitsIsLoading = LimitsLoading;
