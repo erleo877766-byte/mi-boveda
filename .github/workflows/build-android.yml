@@ -51,13 +51,12 @@ jobs:
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           rm cmdline-tools.zip
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-
-      - name: Install Android NDK and build tools
-        run: |
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> $GITHUB_ENV
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
       - name: Install Rust targets
         run: |
