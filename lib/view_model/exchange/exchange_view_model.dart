@@ -12,118 +12,50 @@ import 'package:cw_core/limits.dart';
 import 'package:cw_core/sync_status.dart';
 import 'package:cw_core/wallet_base.dart';
 import 'package:flutter/material.dart';
-import 'package:mobx/mobx.dart';
 
 part 'exchange_view_model.g.dart';
 
-class ExchangeViewModel = ExchangeViewModelBase with _$ExchangeViewModel;
+class ExchangeViewModel extends ExchangeViewModelBase {
+  ExchangeViewModel();
+}
 
-abstract class ExchangeViewModelBase with Store {
+abstract class ExchangeViewModelBase {
   ExchangeViewModelBase();
 
-  @observable
   CryptoCurrency depositCurrency = CryptoCurrency.xmr;
-
-  @observable
   CryptoCurrency receiveCurrency = CryptoCurrency.xmr;
-
-  @observable
   WalletBase? wallet;
-
-  @observable
   String depositAmount = '';
-
-  @observable
   String receiveAmount = '';
-
-  @observable
   String depositAddress = '';
-
-  @observable
   String receiveAddress = '';
-
-  @observable
   String receiveAddressExtraId = '';
-
-  @observable
   String? receiveAddressDisplayName;
-
-  @observable
   bool isFixedRateMode = false;
-
-  @observable
   bool isSendAllEnabled = false;
-
-  @observable
   bool isSendFromExternal = false;
-
-  @observable
   bool isReceiveAmountEntered = false;
-
-  @observable
   bool isReceiveAmountEditable = false;
-
-  @observable
   bool isDepositAddressEnabled = true;
-
-  @observable
   ExchangeTradeState tradeState = TradeIsCreating();
-
-  @observable
   double bestRate = 0.0;
-
-  @observable
   BestRateProviderInfo? bestRateProvider;
-
-  @observable
   dynamic forcedProvider;
-
-  @observable
   double forcedProviderRate = 0.0;
-
-  @observable
   dynamic providerDisplay;
-
-  @observable
   List<dynamic> providerList = [];
-
-  @observable
   List<dynamic> selectedProviders = [];
-
-  @observable
   SyncStatus status = SyncedSyncStatus();
-
-  @observable
   Limits limits = Limits(min: 0, max: 0);
-
-  @observable
   LimitsState limitsState = LimitsIsLoading();
-
-  @observable
   bool useDepositBaseUnit = false;
-
-  @observable
   bool useReceiveBaseUnit = false;
-
-  @observable
   bool hasAllAmount = false;
-
-  @observable
   bool forceDecentralizedExchanges = false;
-
-  @observable
   bool tradeStarted = false;
-
-  @observable
   bool hasDepositAmount = false;
-
-  @observable
   String depositAmountCanonical = '';
-
-  @observable
   String receiveAmountFiatFormatted = '';
-
-  @observable
   FiatCurrency fiat = FiatCurrency.usd;
 
   List<Currency> depositCurrencies = [];
