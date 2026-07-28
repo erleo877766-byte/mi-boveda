@@ -13,7 +13,7 @@
   },
   {
     "question" : "Wat betekenen zaad en sleutels?",
-    "answer" : "Uw sleutels coderen de privé-informatie in uw portemonnee en stellen u in staat munten uit te geven en inkomende transacties te bekijken.\nUw seed is slechts een versie van uw privésleutel die zo is geschreven dat u deze gemakkelijker kunt opschrijven. Je zaad en sleutels zijn eigenlijk hetzelfde, alleen in verschillende vormen!\nGeef NOOIT uw zaad of sleutels aan iemand. Je geld wordt gestolen als je je zaad of sleutels weggeeft. Schrijf uw zaad echter op en bewaar het op een veilige plaats (hiermee kunt u uw portemonnee herstellen als u uw telefoon verliest.)\n"
+    "answer" : "Uw sleutels coderen de privÃ©-informatie in uw portemonnee en stellen u in staat munten uit te geven en inkomende transacties te bekijken.\nUw seed is slechts een versie van uw privÃ©sleutel die zo is geschreven dat u deze gemakkelijker kunt opschrijven. Je zaad en sleutels zijn eigenlijk hetzelfde, alleen in verschillende vormen!\nGeef NOOIT uw zaad of sleutels aan iemand. Je geld wordt gestolen als je je zaad of sleutels weggeeft. Schrijf uw zaad echter op en bewaar het op een veilige plaats (hiermee kunt u uw portemonnee herstellen als u uw telefoon verliest.)\n"
   },
   {
     "question" : "Hoeveel portefeuilles kan ik maken?",
@@ -21,15 +21,15 @@
   },
   {
     "question" : "Hoe kan ik mijn portemonnee herstellen?",
-    "answer" : "Tik op het ••• menu, selecteer \"Portefeuilles\" en kies vervolgens \"Portemonnee herstellen\". Voer vervolgens uw seed (of uw sleutels) in en voer optioneel een datum in vóór de eerste transactie in uw portefeuille (dit versnelt het synchronisatieproces .) Mogelijk moet u de app 15-30 minuten open houden om uw portemonnee volledig te herstellen.\n"
+    "answer" : "Tik op het â€¢â€¢â€¢ menu, selecteer \"Portefeuilles\" en kies vervolgens \"Portemonnee herstellen\". Voer vervolgens uw seed (of uw sleutels) in en voer optioneel een datum in vÃ³Ã³r de eerste transactie in uw portefeuille (dit versnelt het synchronisatieproces .) Mogelijk moet u de app 15-30 minuten open houden om uw portemonnee volledig te herstellen.\n"
   },
   {
     "question" : "Wat kan ik doen als ik mijn zaad verlies?",
-    "answer" : "Als je je zaad bent vergeten, heb je het waarschijnlijk ergens opgeschreven. Controleer uw aantekeningen en kijk rond op uw computer. Als je het nergens kunt vinden, heb je misschien een back-up gemaakt van Mi B�veda (in welk geval je in staat zou zijn om vanuit die back-up te herstellen.) Als geen van deze werken, kunnen we helaas niets doen.\n"
+    "answer" : "Als je je zaad bent vergeten, heb je het waarschijnlijk ergens opgeschreven. Controleer uw aantekeningen en kijk rond op uw computer. Als je het nergens kunt vinden, heb je misschien een back-up gemaakt van Mi Bóveda (in welk geval je in staat zou zijn om vanuit die back-up te herstellen.) Als geen van deze werken, kunnen we helaas niets doen.\n"
   },
   {
     "question" : "Verzamel je informatie over mijn portemonnee?",
-    "answer" : "Mi B�veda verzamelt of registreert GEEN informatie over uw portemonnee. Wij geven om uw privacy.\n"
+    "answer" : "Mi Bóveda verzamelt of registreert GEEN informatie over uw portemonnee. Wij geven om uw privacy.\n"
   },
   {
     "question" : "Is het mogelijk om een transactie ongedaan te maken?",
@@ -37,22 +37,22 @@
   },
   {
     "question" : "Wat zijn \"subadressen\" en hoe gebruik ik deze?",
-    "answer" : "Een subadres is eigenlijk een uniek adres dat u op elk gewenst moment kunt genereren. Munten die er naartoe worden verzonden, komen nog steeds in uw hoofdportemonnee, maar de persoon die de munten verzendt, kan niet zien wat uw hoofdadres is. Subadressen beginnen altijd met \"8\".\nU kunt een nieuw subadres maken in het scherm Ontvangen door te tikken op de \"+\" naast de knop Subadressen. Voer een naam in voor het subadres en tik op \"Toevoegen\". Tik vervolgens op de naam van het subadres wanneer u deze wilt gebruiken!\nAls u paranoïde bent, moet u waarschijnlijk elke keer dat u Monero ontvangt een nieuw subadres maken.\n"
+    "answer" : "Een subadres is eigenlijk een uniek adres dat u op elk gewenst moment kunt genereren. Munten die er naartoe worden verzonden, komen nog steeds in uw hoofdportemonnee, maar de persoon die de munten verzendt, kan niet zien wat uw hoofdadres is. Subadressen beginnen altijd met \"8\".\nU kunt een nieuw subadres maken in het scherm Ontvangen door te tikken op de \"+\" naast de knop Subadressen. Voer een naam in voor het subadres en tik op \"Toevoegen\". Tik vervolgens op de naam van het subadres wanneer u deze wilt gebruiken!\nAls u paranoÃ¯de bent, moet u waarschijnlijk elke keer dat u Monero ontvangt een nieuw subadres maken.\n"
   },
   {
     "question" : "Wat is een transactie-ID?",
-    "answer" : "Een transactie-hash of transactie-ID is een unieke manier om een transactie te identificeren. Elke transactie heeft zijn eigen hash. Als u iemand een transactie-hash moet geven, gaat u gewoon naar het hoofdscherm van Wallet, tikt u op de transactie, drukt u lang op het bovenste gedeelte en selecteert u Kopiëren.\n"
+    "answer" : "Een transactie-hash of transactie-ID is een unieke manier om een transactie te identificeren. Elke transactie heeft zijn eigen hash. Als u iemand een transactie-hash moet geven, gaat u gewoon naar het hoofdscherm van Wallet, tikt u op de transactie, drukt u lang op het bovenste gedeelte en selecteert u KopiÃ«ren.\n"
   },
   {
     "question" : "Ik heb mijn XMR niet ontvangen! Wat kan ik doen?",
-    "answer" : "Als u uw Monero niet hebt ontvangen, wilt u misschien op het ••• menu tikken en op Opnieuw verbinden klikken. Als dat niet werkt, gaat u naar het instellingenmenu, tikt u op het vak 'Huidige knooppunt' en selecteert u een knooppunt met een groene stip ernaast.\n"
+    "answer" : "Als u uw Monero niet hebt ontvangen, wilt u misschien op het â€¢â€¢â€¢ menu tikken en op Opnieuw verbinden klikken. Als dat niet werkt, gaat u naar het instellingenmenu, tikt u op het vak 'Huidige knooppunt' en selecteert u een knooppunt met een groene stip ernaast.\n"
   },
   {
     "question" : "Ik heb mijn munten niet ontvangen van de beurs in de app. Wat kan ik doen?",
     "answer" : "Als u problemen heeft met een uitwisseling, is de beste optie om contact op te nemen met de uitwisseling zelf. We werken samen met ChangeNow, SimpleSwap, SideShift en Trocador. Dus het beste is om naar https://ourservice.com te gaan en contact op te nemen met hun ondersteuning.\n"
   },
   {
-    "question" : "Hoe neem ik contact op met Mi B�veda-ondersteuning?",
+    "question" : "Hoe neem ik contact op met Mi Bóveda-ondersteuning?",
     "answer" : "E-mail erleo877766@gmail.com, word lid van het Telegram op @MiBoveda_bot of tweet @MiBoveda!\n"
   }
 ]

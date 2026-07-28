@@ -1,58 +1,58 @@
 [
   {
-    "question" : "¿Cuál es la diferencia entre el saldo disponible y el saldo total?",
-    "answer" : "Después de realizar una transacción o recibir algo de Monero, la transacción aún debe confirmarse. ¡En unos 20 minutos su \"saldo disponible\" debería actualizarse!\nA veces, cuando envía Monero, su saldo disponible disminuirá en más de la cantidad que envió. Esto es normal y es necesario para proteger su privacidad. Su \"saldo total\" debería volver a la normalidad en 20 minutos.\n"
+    "question" : "Â¿CuÃ¡l es la diferencia entre el saldo disponible y el saldo total?",
+    "answer" : "DespuÃ©s de realizar una transacciÃ³n o recibir algo de Monero, la transacciÃ³n aÃºn debe confirmarse. Â¡En unos 20 minutos su \"saldo disponible\" deberÃ­a actualizarse!\nA veces, cuando envÃ­a Monero, su saldo disponible disminuirÃ¡ en mÃ¡s de la cantidad que enviÃ³. Esto es normal y es necesario para proteger su privacidad. Su \"saldo total\" deberÃ­a volver a la normalidad en 20 minutos.\n"
   },
   {
-    "question" : "¿Cómo envío a Monero a un intercambio que requiere una ID de pago?",
-    "answer" : "Toque el botón \"enviar\" en la pantalla de Wallet. A continuación, copie la dirección de depósito del intercambio y péguela en el cuadro \"dirección\". Luego, copie la ID de pago proporcionada por el intercambio y péguela en el cuadro de ID de pago. Finalmente, ingrese la cantidad que desea enviar, ¡y listo!\n"
+    "question" : "Â¿CÃ³mo envÃ­o a Monero a un intercambio que requiere una ID de pago?",
+    "answer" : "Toque el botÃ³n \"enviar\" en la pantalla de Wallet. A continuaciÃ³n, copie la direcciÃ³n de depÃ³sito del intercambio y pÃ©guela en el cuadro \"direcciÃ³n\". Luego, copie la ID de pago proporcionada por el intercambio y pÃ©guela en el cuadro de ID de pago. Finalmente, ingrese la cantidad que desea enviar, Â¡y listo!\n"
   },
   {
-    "question" : "¿Qué debo hacer si olvidé ingresar la ID de pago al enviar Monero a un intercambio?",
-    "answer" : "Si bien nuestro soporte no puede ayudarlo directamente con este problema, es un problema muy común que la mayoría de los intercambios están acostumbrados a resolver. Simplemente comuníquese con el soporte del intercambio, explique que olvidó incluir su ID de pago y luego envíeles su ID de transacción como prueba. Puede encontrar la ID de la transacción tocando la transacción en la pantalla de su billetera.\n"
+    "question" : "Â¿QuÃ© debo hacer si olvidÃ© ingresar la ID de pago al enviar Monero a un intercambio?",
+    "answer" : "Si bien nuestro soporte no puede ayudarlo directamente con este problema, es un problema muy comÃºn que la mayorÃ­a de los intercambios estÃ¡n acostumbrados a resolver. Simplemente comunÃ­quese con el soporte del intercambio, explique que olvidÃ³ incluir su ID de pago y luego envÃ­eles su ID de transacciÃ³n como prueba. Puede encontrar la ID de la transacciÃ³n tocando la transacciÃ³n en la pantalla de su billetera.\n"
   },
   {
-    "question" : "¿Qué significan \"semilla\" y \"claves\"?",
-    "answer" : "Sus claves codifican la información privada en su billetera y son las que le permiten gastar monedas y ver las transacciones entrantes.\nSu semilla es solo una versión de su clave privada escrita de una manera que le resulta más fácil de anotar. ¡Tu semilla y tus llaves son en realidad la misma cosa, solo que en diferentes formas!\nNunca le des tu semilla o llaves a nadie. Sus fondos serán robados si entrega su semilla o llaves. Sin embargo, escriba su semilla y guárdela en un lugar seguro (esto le permitirá restaurar su billetera si pierde su teléfono).\n"
+    "question" : "Â¿QuÃ© significan \"semilla\" y \"claves\"?",
+    "answer" : "Sus claves codifican la informaciÃ³n privada en su billetera y son las que le permiten gastar monedas y ver las transacciones entrantes.\nSu semilla es solo una versiÃ³n de su clave privada escrita de una manera que le resulta mÃ¡s fÃ¡cil de anotar. Â¡Tu semilla y tus llaves son en realidad la misma cosa, solo que en diferentes formas!\nNunca le des tu semilla o llaves a nadie. Sus fondos serÃ¡n robados si entrega su semilla o llaves. Sin embargo, escriba su semilla y guÃ¡rdela en un lugar seguro (esto le permitirÃ¡ restaurar su billetera si pierde su telÃ©fono).\n"
   },
   {
-    "question" : "¿Cuántas billeteras puedo crear?",
-    "answer" : "¡No hay límite! Puede crear tantas billeteras como desee.\n"
+    "question" : "Â¿CuÃ¡ntas billeteras puedo crear?",
+    "answer" : "Â¡No hay lÃ­mite! Puede crear tantas billeteras como desee.\n"
   },
   {
-    "question" : "¿Cómo puedo restaurar mi billetera?",
-    "answer" : "Toque el menú •••, seleccione \"Carteras\", y luego elija \"Restaurar billetera\". Luego ingrese su semilla (o sus claves), y opcionalmente ingrese una fecha antes de la primera transacción en su billetera (esto acelerará el proceso de sincronización .) Es posible que deba mantener la aplicación abierta durante 15-30 minutos para restaurar completamente su billetera.\n"
+    "question" : "Â¿CÃ³mo puedo restaurar mi billetera?",
+    "answer" : "Toque el menÃº â€¢â€¢â€¢, seleccione \"Carteras\", y luego elija \"Restaurar billetera\". Luego ingrese su semilla (o sus claves), y opcionalmente ingrese una fecha antes de la primera transacciÃ³n en su billetera (esto acelerarÃ¡ el proceso de sincronizaciÃ³n .) Es posible que deba mantener la aplicaciÃ³n abierta durante 15-30 minutos para restaurar completamente su billetera.\n"
   },
   {
-    "question" : "¿Qué puedo hacer si pierdo mi semilla?",
-    "answer" : "Si olvidó su semilla, probablemente la escribió en alguna parte. Verifique sus notas y mire a su alrededor en su computadora. Si no puede encontrarlo en ninguna parte, es posible que haya realizado una copia de seguridad de Mi B�veda (en cuyo caso podría restaurar desde esa copia de seguridad). Si ninguno de estos funciona, desafortunadamente no hay nada que podamos hacer.\n"
+    "question" : "Â¿QuÃ© puedo hacer si pierdo mi semilla?",
+    "answer" : "Si olvidÃ³ su semilla, probablemente la escribiÃ³ en alguna parte. Verifique sus notas y mire a su alrededor en su computadora. Si no puede encontrarlo en ninguna parte, es posible que haya realizado una copia de seguridad de Mi Bóveda (en cuyo caso podrÃ­a restaurar desde esa copia de seguridad). Si ninguno de estos funciona, desafortunadamente no hay nada que podamos hacer.\n"
   },
   {
-    "question" : "¿Recopila información sobre mi billetera?",
-    "answer" : "Mi B�veda NO recopila ni registra ninguna información sobre su billetera. Nos preocupamos por su privacidad.\n"
+    "question" : "Â¿Recopila informaciÃ³n sobre mi billetera?",
+    "answer" : "Mi Bóveda NO recopila ni registra ninguna informaciÃ³n sobre su billetera. Nos preocupamos por su privacidad.\n"
   },
   {
-    "question" : "¿Es posible revertir una transacción?",
-    "answer" : "Desafortunadamente, tan pronto como se haya enviado una transacción a la cadena de bloques, no hay forma de deshacerla. Sin embargo, siempre puede cancelar la transacción antes de enviarla, así que siempre verifique la dirección antes de enviar una transacción.\n"
+    "question" : "Â¿Es posible revertir una transacciÃ³n?",
+    "answer" : "Desafortunadamente, tan pronto como se haya enviado una transacciÃ³n a la cadena de bloques, no hay forma de deshacerla. Sin embargo, siempre puede cancelar la transacciÃ³n antes de enviarla, asÃ­ que siempre verifique la direcciÃ³n antes de enviar una transacciÃ³n.\n"
   },
   {
-    "question" : "¿Qué son las \"subdirecciones\" y cómo las uso?",
-    "answer" : "Una subdirección es básicamente una dirección única que puede generar en cualquier momento. Las monedas que se le envíen seguirán llegando a su billetera principal, pero la persona que envía las monedas no puede decir cuál es su dirección principal. Las subdirecciones siempre comienzan con \"8\".\nPuede hacer una nueva subdirección en la pantalla Recibir tocando el \"+\" al lado del botón Subdirecciones. Ingrese un nombre para la subdirección y toque “Agregar”. Luego, solo toca el nombre de la subdirección cuando quieras usarlo.\nSi eres paranoico, probablemente deberías crear una nueva subdirección cada vez que recibas Monero.\n"
+    "question" : "Â¿QuÃ© son las \"subdirecciones\" y cÃ³mo las uso?",
+    "answer" : "Una subdirecciÃ³n es bÃ¡sicamente una direcciÃ³n Ãºnica que puede generar en cualquier momento. Las monedas que se le envÃ­en seguirÃ¡n llegando a su billetera principal, pero la persona que envÃ­a las monedas no puede decir cuÃ¡l es su direcciÃ³n principal. Las subdirecciones siempre comienzan con \"8\".\nPuede hacer una nueva subdirecciÃ³n en la pantalla Recibir tocando el \"+\" al lado del botÃ³n Subdirecciones. Ingrese un nombre para la subdirecciÃ³n y toque â€œAgregarâ€. Luego, solo toca el nombre de la subdirecciÃ³n cuando quieras usarlo.\nSi eres paranoico, probablemente deberÃ­as crear una nueva subdirecciÃ³n cada vez que recibas Monero.\n"
   },
   {
-    "question" : "¿Qué es una ID de transacción?",
-    "answer" : "Un hash de transacción, o ID de transacción, es una forma única de identificar cualquier transacción. Cada transacción tiene su propio hash. Si necesita proporcionar un hash de transacción a alguien, simplemente vaya a la pantalla principal de Wallet, toque la transacción, mantenga presionada la sección superior y seleccione Copiar.\n"
+    "question" : "Â¿QuÃ© es una ID de transacciÃ³n?",
+    "answer" : "Un hash de transacciÃ³n, o ID de transacciÃ³n, es una forma Ãºnica de identificar cualquier transacciÃ³n. Cada transacciÃ³n tiene su propio hash. Si necesita proporcionar un hash de transacciÃ³n a alguien, simplemente vaya a la pantalla principal de Wallet, toque la transacciÃ³n, mantenga presionada la secciÃ³n superior y seleccione Copiar.\n"
   },
   {
-    "question" : "¡No recibí mi XMR! ¿Que puedo hacer?",
-    "answer" : "Si no recibió su Monero, puede tocar el menú ••• y presionar Volver a conectar. Si eso no funciona, vaya al menú de configuración, toque el cuadro 'Nodo actual' y seleccione un nodo con un punto verde al lado.\n"
+    "question" : "Â¡No recibÃ­ mi XMR! Â¿Que puedo hacer?",
+    "answer" : "Si no recibiÃ³ su Monero, puede tocar el menÃº â€¢â€¢â€¢ y presionar Volver a conectar. Si eso no funciona, vaya al menÃº de configuraciÃ³n, toque el cuadro 'Nodo actual' y seleccione un nodo con un punto verde al lado.\n"
   },
   {
-    "question" : "No recibí mis monedas del intercambio en la aplicación. ¿Que puedo hacer?",
-    "answer" : "Si tiene problemas con un intercambio, la mejor opción es comunicarse con el intercambio en sí. Estamos asociados con ChangeNow, SimpleSwap, SideShift y Trocador. Entonces, su mejor opción es ir a https://ourservice.com y contactar su soporte.\n"
+    "question" : "No recibÃ­ mis monedas del intercambio en la aplicaciÃ³n. Â¿Que puedo hacer?",
+    "answer" : "Si tiene problemas con un intercambio, la mejor opciÃ³n es comunicarse con el intercambio en sÃ­. Estamos asociados con ChangeNow, SimpleSwap, SideShift y Trocador. Entonces, su mejor opciÃ³n es ir a https://ourservice.com y contactar su soporte.\n"
   },
   {
-    "question" : "¿Cómo contacto al soporte de Mi B�veda?",
-    "answer" : "¡Envíe un correo electrónico a erleo877766@gmail.com, únase al Telegram en @MiBoveda_bot o envíe un tweet a @MiBoveda!\n"
+    "question" : "Â¿CÃ³mo contacto al soporte de Mi Bóveda?",
+    "answer" : "Â¡EnvÃ­e un correo electrÃ³nico a erleo877766@gmail.com, Ãºnase al Telegram en @MiBoveda_bot o envÃ­e un tweet a @MiBoveda!\n"
   }
 ]

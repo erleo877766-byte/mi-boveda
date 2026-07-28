@@ -1,58 +1,58 @@
 [
   {
-    "question" : "Jaka jest różnica między dostępnym saldem a pełnym saldem?",
-    "answer" : "Po dokonaniu transakcji lub otrzymaniu Monero transakcja nadal musi zostać potwierdzona. Za około 20 minut Twoje „dostępne saldo” powinno się zaktualizować!\nCzasami po wysłaniu Monero dostępne saldo zmniejsza się o więcej niż kwota wysłana. Jest to normalne i konieczne w celu ochrony Twojej prywatności. Twoja „pełna równowaga” powinna wrócić do normy za 20 minut.\n"
+    "question" : "Jaka jest rÃ³Å¼nica miÄ™dzy dostÄ™pnym saldem a peÅ‚nym saldem?",
+    "answer" : "Po dokonaniu transakcji lub otrzymaniu Monero transakcja nadal musi zostaÄ‡ potwierdzona. Za okoÅ‚o 20 minut Twoje â€ždostÄ™pne saldoâ€ powinno siÄ™ zaktualizowaÄ‡!\nCzasami po wysÅ‚aniu Monero dostÄ™pne saldo zmniejsza siÄ™ o wiÄ™cej niÅ¼ kwota wysÅ‚ana. Jest to normalne i konieczne w celu ochrony Twojej prywatnoÅ›ci. Twoja â€žpeÅ‚na rÃ³wnowagaâ€ powinna wrÃ³ciÄ‡ do normy za 20 minut.\n"
   },
   {
-    "question" : "Jak wysłać Monero na giełdę, która wymaga płatności ID?",
-    "answer" : "Naciśnij przycisk „wyślij” na ekranie portfela. Następnie skopiuj adres depozytu giełdy i wklej go w polu „adres”. Następnie skopiuj identyfikator płatności podany przez giełdę i wklej go w polu ID płatności. Na koniec wprowadź kwotę, którą chcesz wysłać, i możesz zacząć!\n"
+    "question" : "Jak wysÅ‚aÄ‡ Monero na gieÅ‚dÄ™, ktÃ³ra wymaga pÅ‚atnoÅ›ci ID?",
+    "answer" : "NaciÅ›nij przycisk â€žwyÅ›lijâ€ na ekranie portfela. NastÄ™pnie skopiuj adres depozytu gieÅ‚dy i wklej go w polu â€žadresâ€. NastÄ™pnie skopiuj identyfikator pÅ‚atnoÅ›ci podany przez gieÅ‚dÄ™ i wklej go w polu ID pÅ‚atnoÅ›ci. Na koniec wprowadÅº kwotÄ™, ktÃ³rÄ… chcesz wysÅ‚aÄ‡, i moÅ¼esz zaczÄ…Ä‡!\n"
   },
   {
-    "question" : "Co mam zrobić, jeśli zapomniałem wprowadzić ID płatności podczas wysyłania Monero na giełdę?",
-    "answer" : "Chociaż nasze wsparcie nie może bezpośrednio pomóc w rozwiązaniu tego problemu, jest to bardzo częsty problem, z którym korzysta większość giełd. Wystarczy skontaktować się z obsługą giełdy, wyjaśnić, że zapomniałeś podać ID płatności, a następnie przesłać im dowód transakcji. Możesz znaleźć ID transakcji, dotykając transakcji na ekranie portfela.\n"
+    "question" : "Co mam zrobiÄ‡, jeÅ›li zapomniaÅ‚em wprowadziÄ‡ ID pÅ‚atnoÅ›ci podczas wysyÅ‚ania Monero na gieÅ‚dÄ™?",
+    "answer" : "ChociaÅ¼ nasze wsparcie nie moÅ¼e bezpoÅ›rednio pomÃ³c w rozwiÄ…zaniu tego problemu, jest to bardzo czÄ™sty problem, z ktÃ³rym korzysta wiÄ™kszoÅ›Ä‡ gieÅ‚d. Wystarczy skontaktowaÄ‡ siÄ™ z obsÅ‚ugÄ… gieÅ‚dy, wyjaÅ›niÄ‡, Å¼e zapomniaÅ‚eÅ› podaÄ‡ ID pÅ‚atnoÅ›ci, a nastÄ™pnie przesÅ‚aÄ‡ im dowÃ³d transakcji. MoÅ¼esz znaleÅºÄ‡ ID transakcji, dotykajÄ…c transakcji na ekranie portfela.\n"
   },
   {
-    "question" : "Co oznaczają słowa „seed” i „keys”?",
-    "answer" : "Twoje klucze i fraza seed zawierają prywatne informacje o twoim portfelu i pozwalają wysyłać kryptowalutę oraz zobaczyć przychodzące transakcje.\nFraza „seed” to wersja twojego klucza prywatnego napisana w sposób, który łatwiej Ci zapisać. Wasze frazy seed i klucze są w rzeczywistości takie same, tylko w różnych formach zapisu!\nNigdy nie dawaj nikomu swojej frazy seed ani swoich kluczy. Twoje fundusze zostaną skradzione, jeśli upublicznisz frazę seed lub klucze. Zapisz jednak swoją frazę seed i przechowuj ją w bezpiecznym miejscu (pozwoli to przywrócić portfel, jeśli zgubisz telefon).\n"
+    "question" : "Co oznaczajÄ… sÅ‚owa â€žseedâ€ i â€žkeysâ€?",
+    "answer" : "Twoje klucze i fraza seed zawierajÄ… prywatne informacje o twoim portfelu i pozwalajÄ… wysyÅ‚aÄ‡ kryptowalutÄ™ oraz zobaczyÄ‡ przychodzÄ…ce transakcje.\nFraza â€žseedâ€ to wersja twojego klucza prywatnego napisana w sposÃ³b, ktÃ³ry Å‚atwiej Ci zapisaÄ‡. Wasze frazy seed i klucze sÄ… w rzeczywistoÅ›ci takie same, tylko w rÃ³Å¼nych formach zapisu!\nNigdy nie dawaj nikomu swojej frazy seed ani swoich kluczy. Twoje fundusze zostanÄ… skradzione, jeÅ›li upublicznisz frazÄ™ seed lub klucze. Zapisz jednak swojÄ… frazÄ™ seed i przechowuj jÄ… w bezpiecznym miejscu (pozwoli to przywrÃ³ciÄ‡ portfel, jeÅ›li zgubisz telefon).\n"
   },
   {
-    "question" : "Ile portfeli mogę utworzyć?",
-    "answer" : "Tu nie ma limitu! Możesz utworzyć dowolną liczbę portfeli.\n"
+    "question" : "Ile portfeli mogÄ™ utworzyÄ‡?",
+    "answer" : "Tu nie ma limitu! MoÅ¼esz utworzyÄ‡ dowolnÄ… liczbÄ™ portfeli.\n"
   },
   {
-    "question" : "Jak mogę przywrócić mój portfel?",
-    "answer" : "Stuknij menu •••, wybierz „Portfele”, a następnie „Przywróć portfel”. Następnie wprowadź dane początkowe (lub klucze) i opcjonalnie wprowadź datę przed pierwszą transakcją w portfelu (przyspieszy to proces synchronizacji .) Może być konieczne pozostawienie aplikacji otwartej przez 15-30 minut, aby całkowicie przywrócić portfel.\n"
+    "question" : "Jak mogÄ™ przywrÃ³ciÄ‡ mÃ³j portfel?",
+    "answer" : "Stuknij menu â€¢â€¢â€¢, wybierz â€žPortfeleâ€, a nastÄ™pnie â€žPrzywrÃ³Ä‡ portfelâ€. NastÄ™pnie wprowadÅº dane poczÄ…tkowe (lub klucze) i opcjonalnie wprowadÅº datÄ™ przed pierwszÄ… transakcjÄ… w portfelu (przyspieszy to proces synchronizacji .) MoÅ¼e byÄ‡ konieczne pozostawienie aplikacji otwartej przez 15-30 minut, aby caÅ‚kowicie przywrÃ³ciÄ‡ portfel.\n"
   },
   {
-    "question" : "Co mogę zrobić, jeśli zapomniałem frazę seed?",
-    "answer" : "Jeśli zapomniałeś swoją frazę seed, prawdopodobnie gdzieś je zapisałeś. Sprawdź swoje notatki i rozejrzyj się po komputerze. Jeśli nie możesz go nigdzie znaleźć, być może utworzono kopię zapasową Mi B�veda (w takim przypadku będziesz mógł przywrócić dane z tej kopii zapasowej). Jeśli żadna z tych czynności nie działa, niestety nic nie możemy zrobić.\n"
+    "question" : "Co mogÄ™ zrobiÄ‡, jeÅ›li zapomniaÅ‚em frazÄ™ seed?",
+    "answer" : "JeÅ›li zapomniaÅ‚eÅ› swojÄ… frazÄ™ seed, prawdopodobnie gdzieÅ› je zapisaÅ‚eÅ›. SprawdÅº swoje notatki i rozejrzyj siÄ™ po komputerze. JeÅ›li nie moÅ¼esz go nigdzie znaleÅºÄ‡, byÄ‡ moÅ¼e utworzono kopiÄ™ zapasowÄ… Mi Bóveda (w takim przypadku bÄ™dziesz mÃ³gÅ‚ przywrÃ³ciÄ‡ dane z tej kopii zapasowej). JeÅ›li Å¼adna z tych czynnoÅ›ci nie dziaÅ‚a, niestety nic nie moÅ¼emy zrobiÄ‡.\n"
   },
   {
-    "question" : "Czy zbieracie jakieś informacje o moim portfelu?",
-    "answer" : "Portfel Cake NIE gromadzi ani nie rejestruje żadnych informacji o Twoim portfelu. Dbamy o Twoją prywatność.\n"
+    "question" : "Czy zbieracie jakieÅ› informacje o moim portfelu?",
+    "answer" : "Portfel Cake NIE gromadzi ani nie rejestruje Å¼adnych informacji o Twoim portfelu. Dbamy o TwojÄ… prywatnoÅ›Ä‡.\n"
   },
   {
-    "question" : "Czy można cofnąć transakcję?",
-    "answer" : "Niestety, jak tylko transakcja zostanie przesłana do blockchain, nie ma możliwości jej cofnięcia. Zawsze możesz jednak anulować transakcję przed jej wysłaniem, dlatego zawsze dokładnie sprawdź adres przed wysłaniem transakcji.\n"
+    "question" : "Czy moÅ¼na cofnÄ…Ä‡ transakcjÄ™?",
+    "answer" : "Niestety, jak tylko transakcja zostanie przesÅ‚ana do blockchain, nie ma moÅ¼liwoÅ›ci jej cofniÄ™cia. Zawsze moÅ¼esz jednak anulowaÄ‡ transakcjÄ™ przed jej wysÅ‚aniem, dlatego zawsze dokÅ‚adnie sprawdÅº adres przed wysÅ‚aniem transakcji.\n"
   },
   {
-    "question" : "Co to są „podadresy” i jak z nich korzystać?",
-    "answer" : "Podadres jest w unikalnym adresem, który można wygenerować w dowolnym momencie. Monety wysłane do niego nadal będą pojawiać się w głównym portfelu, ale osoba wysyłająca monety nie zna Twojego głównego adresu. Podadresy zawsze zaczynają się od „8”.\nMożesz utworzyć nowy podadres na ekranie Odbieranie, dotykając „+” obok przycisku Podadresy. Wprowadź nazwę podadresu i dotknij „Dodaj”. Następnie dotknij nazwy podadresu, gdy chcesz go użyć!\nJeśli jesteś paranoikiem, prawdopodobnie za każdym razem, gdy otrzymasz Monero, powinieneś utworzyć nowy podadres.\n"
+    "question" : "Co to sÄ… â€žpodadresyâ€ i jak z nich korzystaÄ‡?",
+    "answer" : "Podadres jest w unikalnym adresem, ktÃ³ry moÅ¼na wygenerowaÄ‡ w dowolnym momencie. Monety wysÅ‚ane do niego nadal bÄ™dÄ… pojawiaÄ‡ siÄ™ w gÅ‚Ã³wnym portfelu, ale osoba wysyÅ‚ajÄ…ca monety nie zna Twojego gÅ‚Ã³wnego adresu. Podadresy zawsze zaczynajÄ… siÄ™ od â€ž8â€.\nMoÅ¼esz utworzyÄ‡ nowy podadres na ekranie Odbieranie, dotykajÄ…c â€ž+â€ obok przycisku Podadresy. WprowadÅº nazwÄ™ podadresu i dotknij â€žDodajâ€. NastÄ™pnie dotknij nazwy podadresu, gdy chcesz go uÅ¼yÄ‡!\nJeÅ›li jesteÅ› paranoikiem, prawdopodobnie za kaÅ¼dym razem, gdy otrzymasz Monero, powinieneÅ› utworzyÄ‡ nowy podadres.\n"
   },
   {
     "question" : "Co to jest ID transakcji?",
-    "answer" : "Skrót transakcji lub ID transakcji to unikalny sposób identyfikowania każdej transakcji. Każda transakcja ma swój własny skrót. Jeśli chcesz podać komuś skrót transakcji, po prostu przejdź do głównego ekranu Portfela, dotknij transakcji, naciśnij długo w górnej części i wybierz Kopiuj.\n"
+    "answer" : "SkrÃ³t transakcji lub ID transakcji to unikalny sposÃ³b identyfikowania kaÅ¼dej transakcji. KaÅ¼da transakcja ma swÃ³j wÅ‚asny skrÃ³t. JeÅ›li chcesz podaÄ‡ komuÅ› skrÃ³t transakcji, po prostu przejdÅº do gÅ‚Ã³wnego ekranu Portfela, dotknij transakcji, naciÅ›nij dÅ‚ugo w gÃ³rnej czÄ™Å›ci i wybierz Kopiuj.\n"
   },
   {
-    "question" : "Nie otrzymałem mojego XMR! Co mogę zrobić?",
-    "answer" : "Jeśli nie otrzymałeś Monero, możesz dotknąć menu ••• i nacisnąć Połącz ponownie. Jeśli to nie zadziała, przejdź do menu ustawień, dotknij pola „Bieżący węzeł” i wybierz węzeł z zieloną kropką obok niego.\n"
+    "question" : "Nie otrzymaÅ‚em mojego XMR! Co mogÄ™ zrobiÄ‡?",
+    "answer" : "JeÅ›li nie otrzymaÅ‚eÅ› Monero, moÅ¼esz dotknÄ…Ä‡ menu â€¢â€¢â€¢ i nacisnÄ…Ä‡ PoÅ‚Ä…cz ponownie. JeÅ›li to nie zadziaÅ‚a, przejdÅº do menu ustawieÅ„, dotknij pola â€žBieÅ¼Ä…cy wÄ™zeÅ‚â€ i wybierz wÄ™zeÅ‚ z zielonÄ… kropkÄ… obok niego.\n"
   },
   {
-    "question" : "Nie otrzymałem moich monet z wymiany w aplikacji. Co mogę zrobić?",
-    "answer" : "Jeśli masz problemy z wymianą, najlepszą opcją jest skontaktowanie się z samą wymianą. Współpracujemy z Changenow, Simpleswap, Sideshift i Trocador. Więc najlepszym rozwiązaniem jest przejście na https://ourservice.com i skontaktować się z ich obsługą.\n"
+    "question" : "Nie otrzymaÅ‚em moich monet z wymiany w aplikacji. Co mogÄ™ zrobiÄ‡?",
+    "answer" : "JeÅ›li masz problemy z wymianÄ…, najlepszÄ… opcjÄ… jest skontaktowanie siÄ™ z samÄ… wymianÄ…. WspÃ³Å‚pracujemy z Changenow, Simpleswap, Sideshift i Trocador. WiÄ™c najlepszym rozwiÄ…zaniem jest przejÅ›cie na https://ourservice.com i skontaktowaÄ‡ siÄ™ z ich obsÅ‚ugÄ….\n"
   },
   {
-    "question" : "Jak skontaktować się z obsługą Mi B�veda?",
-    "answer" : "Wyślij e-mail na adres erleo877766@gmail.com, dołącz do telegramu na @MiBoveda_bot lub tweet @MiBoveda!\n"
+    "question" : "Jak skontaktowaÄ‡ siÄ™ z obsÅ‚ugÄ… Mi Bóveda?",
+    "answer" : "WyÅ›lij e-mail na adres erleo877766@gmail.com, doÅ‚Ä…cz do telegramu na @MiBoveda_bot lub tweet @MiBoveda!\n"
   }
 ]

@@ -1,8 +1,8 @@
-# Building Mi B髒eda for macOS
+# Building Mi B贸veda for macOS
 
 ## Requirements and Setup
 
-The following are the system requirements to build Mi B髒eda for your macOS device.
+The following are the system requirements to build Mi B贸veda for your macOS device.
 
 ```txt
 macOS 15.3.1
@@ -56,15 +56,15 @@ The output of this command should appear like this, indicating successful instal
 
 ```zsh
 Doctor summary (to see all details, run flutter doctor -v):
-[鉁揮 Flutter (Channel stable, 3.27.4, on macOS 15.x.x)
+[芒艙鈥淽 Flutter (Channel stable, 3.27.4, on macOS 15.x.x)
 ...
-[鉁揮 Xcode - develop for iOS and macOS (Xcode 16.2)
+[芒艙鈥淽 Xcode - develop for iOS and macOS (Xcode 16.2)
 ...
 ```
 
-### 6. Acquiring the Mi B髒eda source code
+### 6. Acquiring the Mi B贸veda source code
 
-Download the latest release tag of Mi B髒eda and enter the source code directory:
+Download the latest release tag of Mi B贸veda and enter the source code directory:
 
 ```zsh
 git clone https://github.com/leonard0001991/mi-boveda.git --branch main
@@ -73,11 +73,11 @@ cd mi-boveda/scripts/macos/
 
 NOTE: Replace `main` with the latest release tag available at <https://github.com/leonard0001991/mi-boveda/releases/latest>.
 
-### 7. Setup and build Mi B髒eda from source
+### 7. Setup and build Mi B贸veda from source
 
 We need to generate project settings like app name, app icon, package name, etc, including what specific variant of the app we want to build.
 
-To build Mi B髒eda from source, run the following:
+To build Mi B贸veda from source, run the following:
 
 ```zsh
 source ./app_env.sh cakewallet
@@ -106,7 +106,7 @@ Then run the configuration script to setup app name, app icon, etc:
 
 ### 8. Prepare Flutter
 
-Change back to the root directory of the Mi B髒eda source code and install Flutter package dependencies:
+Change back to the root directory of the Mi B贸veda source code and install Flutter package dependencies:
 
 ```zsh
 cd ../../

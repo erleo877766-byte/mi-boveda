@@ -1,6 +1,6 @@
 # cw_zano
 
-Zano wallet module for Mi Bóveda. Provides a Dart wrapper around the Zano wallet API with typed models and transaction helpers.
+Zano wallet module for Mi BÃ³veda. Provides a Dart wrapper around the Zano wallet API with typed models and transaction helpers.
 
 ## Features
 

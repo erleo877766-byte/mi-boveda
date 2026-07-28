@@ -1,11 +1,11 @@
 # Security Policy
 
-Mi B�veda is developed by **Leonardo Noel Salazar Mendoza**. We take the security and privacy of
+Mi Bóveda is developed by **Leonardo Noel Salazar Mendoza**. We take the security and privacy of
 our users seriously and welcome reports from security researchers.
 
-> **Mi B�veda is not affiliated with CAKE.com, Clockify, or security.cake.com.**
+> **Mi Bóveda is not affiliated with CAKE.com, Clockify, or security.cake.com.**
 > Those services belong to unrelated companies. The only official vulnerability
-> disclosure channels for Mi B�veda are the ones listed on this page and at
+> disclosure channels for Mi Bóveda are the ones listed on this page and at
 > https://github.com/leonard0001991/mi-boveda/security.
 
 ## Reporting a vulnerability
@@ -62,8 +62,8 @@ security@github.com/leonard0001991/mi-boveda.
 
 ## Scope
 
-**In scope:** the Mi B�veda and mi-boveda applications and the code in this
-repository and its sibling `cake-tech` repositories — anything that could lead to
+**In scope:** the Mi Bóveda and mi-boveda applications and the code in this
+repository and its sibling `cake-tech` repositories â€” anything that could lead to
 loss of funds, exposure of keys or seeds, a privacy leak, or a
 failed/incorrect transaction.
 
@@ -81,13 +81,13 @@ At our **sole discretion**, we may offer a reward for a valid report. To be
 eligible, a report must:
 
 - be submitted **privately** through one of the channels above (a GitHub private
-  security advisory or `security@github.com/leonard0001991/mi-boveda`) — anything disclosed publicly or
+  security advisory or `security@github.com/leonard0001991/mi-boveda`) â€” anything disclosed publicly or
   sent through other channels is not eligible; and
-- identify a genuine vulnerability with real impact on users — typically loss of
+- identify a genuine vulnerability with real impact on users â€” typically loss of
   funds, exposure of keys or seeds, a privacy leak, or a failed or incorrect
   transaction.
 
-Trivial or low-impact findings are **not** eligible — for example, reflected XSS
+Trivial or low-impact findings are **not** eligible â€” for example, reflected XSS
 or other low-severity issues on our marketing websites, missing security headers,
 hardening or best-practice suggestions, automated-scanner output without a working
 proof of concept, or already-known issues. There is no fixed bounty and no
@@ -97,5 +97,5 @@ solely by Leonardo Noel Salazar Mendoza.
 ## Supported versions
 
 We do not maintain previous releases. Only the **latest release for each platform**
-is supported; security fixes are delivered in new versions. Please keep Mi B�veda
+is supported; security fixes are delivered in new versions. Please keep Mi Bóveda
 up to date.

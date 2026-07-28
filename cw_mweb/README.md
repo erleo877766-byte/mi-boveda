@@ -1,6 +1,6 @@
 # cw_mweb
 
-MimbleWimble Extension Blocks (MWEB) integration bridge for Mi Bóveda modules that support MWEB-enabled chains.
+MimbleWimble Extension Blocks (MWEB) integration bridge for Mi BÃ³veda modules that support MWEB-enabled chains.
 
 ## Features
 

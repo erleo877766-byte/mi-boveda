@@ -2,7 +2,7 @@ Last Modified: January 11, 2022
 
 Acceptance of the Terms of Use
 ==============================
-	These terms of use are entered into by and between You and Leonardo Noel Salazar Mendoza, a limited liability company formed under the laws of Nevis ("Company," "we," or "us"). The following terms and conditions "Terms of Use") govern your access to and use of the Mi B�veda and Mi B�veda apps, including any content, functionality, and services offered on or through the Mi B�veda app and the Mi B�veda app, as applicable (the “App").
+	These terms of use are entered into by and between You and Leonardo Noel Salazar Mendoza, a limited liability company formed under the laws of Nevis ("Company," "we," or "us"). The following terms and conditions "Terms of Use") govern your access to and use of the Mi Bóveda and Mi Bóveda apps, including any content, functionality, and services offered on or through the Mi Bóveda app and the Mi Bóveda app, as applicable (the â€œApp").
 	Please read the Terms of Use carefully before you start to use the App. By using the App you accept and agree to be bound and abide by these Terms of Use and our Privacy Policy, incorporated herein by reference. If you do not wish to agree to these Terms of Use or the Privacy Policy, you must not access or use the App.
 
 Changes to the Terms of Use
@@ -45,7 +45,7 @@ Intellectual Property Rights
 Trademarks
 ==========
 
-	The Company name, the term Mi B�veda, the Company logo, and all related names, logos, product and service names, designs, and slogans are trademarks of the Company or its affiliates or licensors. You must not use such marks without the prior written permission of the Company. All other names, logos, product and service names, designs, and slogans on this App are the trademarks of their respective owners.
+	The Company name, the term Mi Bóveda, the Company logo, and all related names, logos, product and service names, designs, and slogans are trademarks of the Company or its affiliates or licensors. You must not use such marks without the prior written permission of the Company. All other names, logos, product and service names, designs, and slogans on this App are the trademarks of their respective owners.
 
 Prohibited Uses
 ===============
@@ -100,7 +100,7 @@ Translations
 Risks Related to the use of the App
 ===================================
 
-	The App, the Company and the Company’s owners, partners, employees, contributors, and any affiliates will not be responsible for any losses, damages or claims arising from:
+	The App, the Company and the Companyâ€™s owners, partners, employees, contributors, and any affiliates will not be responsible for any losses, damages or claims arising from:
 
 		- Mistakes made by the user of any cryptocurrency-related software or service, e.g., forgotten passwords, payments sent to wrong cryptocurrency addresses, or accidental deletion of wallets;
 
@@ -134,7 +134,7 @@ Disclaimer of Warranties
 
 	YOUR USE OF THE APP, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE APP IS AT YOUR OWN RISK. THE APP, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE APP ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER THE COMPANY NOR ANY PERSON ASSOCIATED WITH THE COMPANY MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE APP. WITHOUT LIMITING THE FOREGOING, NEITHER THE COMPANY NOR ANYONE ASSOCIATED WITH THE COMPANY REPRESENTS OR WARRANTS THAT THE APP, ITS CONTENT, OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE APP WILL BE ACCURATE, RELIABLE, ERROR-FREE, OR UNINTERRUPTED, THAT DEFECTS WILL BE CORRECTED, THAT OUR SITE OR THE SERVER THAT MAKES IT AVAILABLE ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS, OR THAT THE APP OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE APP WILL OTHERWISE MEET YOUR NEEDS OR EXPECTATIONS. 
 
-	TO THE FULLEST EXTENT PROVIDED BY LAW, THE COMPANY HEREBY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, AND FITNESS FOR PARTICULAR PURPOSE. THE APP IS PROVIDED ON AN “AS IS” BASIS.
+	TO THE FULLEST EXTENT PROVIDED BY LAW, THE COMPANY HEREBY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, AND FITNESS FOR PARTICULAR PURPOSE. THE APP IS PROVIDED ON AN â€œAS ISâ€ BASIS.
 
 	THE FOREGOING DOES NOT AFFECT ANY WARRANTIES THAT CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.
 

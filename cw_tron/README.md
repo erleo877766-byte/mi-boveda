@@ -1,6 +1,6 @@
 ## cw_tron
 
-TRON wallet module for Mi Bóveda. Implements TRX and TRC-20 token support on top of `on_chain` (Tron), with transaction history and fee estimation via TronGrid.
+TRON wallet module for Mi BÃ³veda. Implements TRX and TRC-20 token support on top of `on_chain` (Tron), with transaction history and fee estimation via TronGrid.
 
 ### Features
 

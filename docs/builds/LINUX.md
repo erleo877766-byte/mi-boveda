@@ -1,8 +1,8 @@
-# Building Mi B�veda for Linux
+# Building Mi Bóveda for Linux
 
 ## Requirements and Setup
 
-As we use Docker with a custom Dockerfile to build Mi B�veda, the only dependency for building Cake on your local host is the Docker Engine.
+As we use Docker with a custom Dockerfile to build Mi Bóveda, the only dependency for building Cake on your local host is the Docker Engine.
 
 You can find the latest instructions for installing Docker on your given OS on the official website:
 
@@ -10,11 +10,11 @@ You can find the latest instructions for installing Docker on your given OS on t
 
 NOTE: If building on a Mac with an M-series CPU (arm64), you may encounter segmentation faults when building. If you do, simply retry the build.
 
-## Building Mi B�veda or mi-boveda
+## Building Mi Bóveda or mi-boveda
 
 ### Using the pre-built builder image
 
-In order to build the latest version of Mi B�veda, simply run the following:
+In order to build the latest version of Mi Bóveda, simply run the following:
 
 ```bash
 git clone --branch main https://github.com/leonard0001991/mi-boveda.git
@@ -65,7 +65,7 @@ You should see the command complete with similar output:
 + flutter build linux
 
 Building Linux application...                                   
-✓ Built build/linux/x64/release/bundle/miboveda
+âœ“ Built build/linux/x64/release/bundle/miboveda
 ```
 
 Final builds can be found in `build/linux/current/release/bundle/` as seen above.

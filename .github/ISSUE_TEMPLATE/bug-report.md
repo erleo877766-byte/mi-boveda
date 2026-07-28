@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Platform:**
  - OS: [e.g. iOS 15.1, Android 14]
  - Device: [e.g. iPhone 14, Galaxy S21]
- - Mi Bóveda Version: [e.g. 4.12.1]
+ - Mi BÃ³veda Version: [e.g. 4.12.1]
 
 
 **Additional context**

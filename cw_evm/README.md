@@ -1,18 +1,18 @@
 ## cw_evm
 
-Shared EVM-chain wallet foundation for Mi B�veda. Provides common client/wallet abstractions used by `cw_ethereum`, `cw_polygon`, and other EVM chains.
+Shared EVM-chain wallet foundation for Mi Bóveda. Provides common client/wallet abstractions used by `cw_ethereum`, `cw_polygon`, and other EVM chains.
 
 ### What it provides
 
 - `EVMChainClient` (Web3 + HTTP):
   - Connect to RPC (supports NowNodes short hosts with API key).
   - Read balance, gas price/base fee, estimate gas, send raw tx, watch tx.
-  - Sign native and ERC‑20 transactions; build approval calldata.
-  - Fetch ERC‑20 metadata (via Moralis) and balances.
+  - Sign native and ERCâ€‘20 transactions; build approval calldata.
+  - Fetch ERCâ€‘20 metadata (via Moralis) and balances.
 - `EVMChainWallet`:
-  - Derive keys from BIP‑39 or use private key / Ledger (`EvmLedgerCredentials`).
-  - EIP‑1559 fee calculation with priority presets; Polygon-specific tuning.
-  - ERC‑20 token box per wallet; add/remove tokens and maintain balances.
+  - Derive keys from BIPâ€‘39 or use private key / Ledger (`EvmLedgerCredentials`).
+  - EIPâ€‘1559 fee calculation with priority presets; Polygon-specific tuning.
+  - ERCâ€‘20 token box per wallet; add/remove tokens and maintain balances.
   - Transaction history assembly (external/internal + token transfers).
   - Message sign/verify helpers.
 - `EVMChainWalletService`: common create/open/restore/rename lifecycle.
@@ -48,5 +48,5 @@ Then wire into a `WalletService` similar to `EthereumWalletService`/`PolygonWall
 
 ### Additional information
 
-- Uses `web3dart` under the hood and integrates with Mi B�veda’s `cw_core` types.
+- Uses `web3dart` under the hood and integrates with Mi Bóvedaâ€™s `cw_core` types.
 - See `lib/` for the reference implementation details.

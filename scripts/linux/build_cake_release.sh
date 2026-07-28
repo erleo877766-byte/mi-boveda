@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# build_cake_release.sh - Script to build Mi Bóveda for Linux
+# build_cake_release.sh - Script to build Mi BÃ³veda for Linux
 # Usage: ./build_cake_release.sh --amd64 [--arm64] [--app=miboveda]
 
 set -e

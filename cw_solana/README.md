@@ -1,6 +1,6 @@
 ## cw_solana
 
-Solana wallet module for Mi Bóveda. Provides native SOL and SPL token support built on `on_chain/solana` with high-throughput RPC usage and safe transaction parsing.
+Solana wallet module for Mi BÃ³veda. Provides native SOL and SPL token support built on `on_chain/solana` with high-throughput RPC usage and safe transaction parsing.
 
 ### Features
 

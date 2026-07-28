@@ -1,6 +1,6 @@
 # Guide: Adding a New L2 Network
 
-This guide provides step-by-step instructions for adding a new EVM-compatible L2 network to Mi B�veda.
+This guide provides step-by-step instructions for adding a new EVM-compatible L2 network to Mi Bóveda.
 
 ## Prerequisites
 
@@ -69,7 +69,7 @@ _registerChain(
 **Notes**:
 - For **new chains**, use `WalletType.evm` (unified type)
 - For **backward compatibility** with existing wallets, you can map to an old `WalletType` (e.g., `WalletType.optimism` if it exists)
-- The registry automatically creates mappings: `chainId` → `WalletType`, `tag` → `chainId`, `caip2` → `chainId`
+- The registry automatically creates mappings: `chainId` â†’ `WalletType`, `tag` â†’ `chainId`, `caip2` â†’ `chainId`
 - If the chain uses a standard EVM client, you can use the default `EVMChainClient` (no custom client needed)
 
 ### Step 2: Add Native Currency (If New)
@@ -95,14 +95,14 @@ static const CryptoCurrency op = CryptoCurrency(
 - Add the currency icon to `assets/images/`
 - Update currency lists if needed (e.g., `all`, `fiat`, etc.)
 
-### Step 2b: Wire Currency ↔ chainId Mappings
+### Step 2b: Wire Currency â†” chainId Mappings
 
 The unified EVM and PayAnything flows rely on a **two-way mapping** between
 `CryptoCurrency` and `chainId`.
 
 **File**: `cw_core/lib/currency_for_wallet_type.dart`
 
-1. **Map `chainId` → `CryptoCurrency`** in `getCryptoCurrencyByChainId`:
+1. **Map `chainId` â†’ `CryptoCurrency`** in `getCryptoCurrencyByChainId`:
 
 ```dart
 CryptoCurrency getCryptoCurrencyByChainId(int chainId) {
@@ -123,7 +123,7 @@ CryptoCurrency getCryptoCurrencyByChainId(int chainId) {
 }
 ```
 
-2. **Map `CryptoCurrency` → `chainId`** in `getChainIdByCryptoCurrency`:
+2. **Map `CryptoCurrency` â†’ `chainId`** in `getChainIdByCryptoCurrency`:
 
 ```dart
 int? getChainIdByCryptoCurrency(CryptoCurrency currency) {
@@ -479,16 +479,16 @@ class Erc20Token extends CryptoCurrency {
 
 Once you've completed the steps above, the following will work automatically:
 
-✅ **Chain appears in dropdown** - The chain selection UI (`EvmSwitcher`) automatically shows your new chain from the registry  
-✅ **Wallet creation** - Users can create `WalletType.evm` wallets and switch to your chain  
-✅ **Chain switching** - Users can switch between chains seamlessly  
-✅ **All operations** - Balance fetching, transaction sending, etc. all work  
-✅ **Transaction filtering** - Transactions are automatically filtered by `chainId`  
-✅ **Node connection** - Automatic node connection when switching chains (uses `chainId` to find correct nodes)  
-✅ **Balance updates** - Automatic balance refresh when switching chains  
-✅ **ERC20 tokens** - Default tokens are automatically loaded  
-✅ **Transaction history** - Separate history files per chain  
-✅ **Backward compatibility** - Old wallet types continue to work
+âœ… **Chain appears in dropdown** - The chain selection UI (`EvmSwitcher`) automatically shows your new chain from the registry  
+âœ… **Wallet creation** - Users can create `WalletType.evm` wallets and switch to your chain  
+âœ… **Chain switching** - Users can switch between chains seamlessly  
+âœ… **All operations** - Balance fetching, transaction sending, etc. all work  
+âœ… **Transaction filtering** - Transactions are automatically filtered by `chainId`  
+âœ… **Node connection** - Automatic node connection when switching chains (uses `chainId` to find correct nodes)  
+âœ… **Balance updates** - Automatic balance refresh when switching chains  
+âœ… **ERC20 tokens** - Default tokens are automatically loaded  
+âœ… **Transaction history** - Separate history files per chain  
+âœ… **Backward compatibility** - Old wallet types continue to work
 
 ## Testing Checklist
 
@@ -570,20 +570,20 @@ Once you've completed the steps above, the following will work automatically:
 
 ### Key Points
 
-✅ **Use `WalletType.evm` for new chains** - No need to create new `WalletType` enum values  
-✅ **Everything is `chainId`-based** - All operations use `chainId`, not `walletType`  
-✅ **Registry-driven** - Chain configuration is centralized in `EvmChainRegistry`  
-✅ **Backward compatible** - Old wallet types (ethereum, polygon, base, arbitrum) still work  
-✅ **No proxy files needed** - The unified `evm` proxy handles all chains  
-✅ **Automatic chain switching** - Users can switch chains without creating new wallets  
+âœ… **Use `WalletType.evm` for new chains** - No need to create new `WalletType` enum values  
+âœ… **Everything is `chainId`-based** - All operations use `chainId`, not `walletType`  
+âœ… **Registry-driven** - Chain configuration is centralized in `EvmChainRegistry`  
+âœ… **Backward compatible** - Old wallet types (ethereum, polygon, base, arbitrum) still work  
+âœ… **No proxy files needed** - The unified `evm` proxy handles all chains  
+âœ… **Automatic chain switching** - Users can switch chains without creating new wallets  
 
 ### What You DON'T Need to Do
 
-❌ Create a new `WalletType` enum value (use `WalletType.evm`)  
-❌ Create a new proxy file (unified proxy handles all chains)  
-❌ Create a new wallet service (unified service handles all chains)  
-❌ Create a new wallet class (unified `EVMChainWallet` handles all chains)  
-❌ Update view models (they work with any EVM chain via proxy)  
-❌ Update UI components (chain switcher auto-populates from registry)  
+âŒ Create a new `WalletType` enum value (use `WalletType.evm`)  
+âŒ Create a new proxy file (unified proxy handles all chains)  
+âŒ Create a new wallet service (unified service handles all chains)  
+âŒ Create a new wallet class (unified `EVMChainWallet` handles all chains)  
+âŒ Update view models (they work with any EVM chain via proxy)  
+âŒ Update UI components (chain switcher auto-populates from registry)  
 
 **Key Point**: With the unified EVM architecture, adding new L2 chains is now much simpler - most chains only require Registry configuration and default tokens!

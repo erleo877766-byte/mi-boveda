@@ -1,6 +1,6 @@
 # cw_core
 
-Core abstractions and shared types for Mi Bóveda modules.
+Core abstractions and shared types for Mi BÃ³veda modules.
 
 ## Highlights
 

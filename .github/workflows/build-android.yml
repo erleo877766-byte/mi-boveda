@@ -94,7 +94,6 @@ jobs:
 
       - name: Build Zcash Lib
         run: |
-          chmod +x scripts/android/build_zcash.sh scripts/prepare_zcash.sh
           pushd scripts/android
             bash ./build_zcash.sh
           popd
@@ -110,7 +109,6 @@ jobs:
         run: |
           git config --global user.email "erleo877766@gmail.com"
           git config --global user.name "Leonardo Salazar"
-          chmod +x scripts/prepare_moneroc.sh
           bash scripts/prepare_moneroc.sh
           mkdir -p scripts/monero_c/release
           pushd scripts/monero_c/release
@@ -129,9 +127,11 @@ jobs:
             popd
           popd
 
+      - name: Fix script permissions
+        run: find scripts/ -name "*.sh" -exec chmod +x {} \;
+
       - name: Configure app
         run: |
-          chmod +x scripts/android/app_env.sh scripts/android/app_config.sh
           pushd scripts/android
             source ./app_env.sh miboveda
             bash ./app_config.sh
@@ -145,15 +145,12 @@ jobs:
 
       - name: Build mwebd
         run: |
-          chmod +x scripts/android/build_mwebd.sh
           pushd scripts/android
             bash ./build_mwebd.sh
           popd
 
       - name: Build generated code
-        run: |
-          chmod +x model_generator.sh
-          bash ./model_generator.sh async
+        run: bash ./model_generator.sh async
 
       - name: Generate key and key properties
         run: |
@@ -169,9 +166,7 @@ jobs:
         run: dart run tool/generate_localization.dart
 
       - name: Compile graphics
-        run: |
-          chmod +x compile_graphics.sh
-          bash ./compile_graphics.sh
+        run: bash ./compile_graphics.sh
 
       - name: Build APK
         run: |

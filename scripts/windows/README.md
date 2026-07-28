@@ -18,4 +18,4 @@ The Windows installer requires the Microsoft Visual C++ Redistributable for Visu
 
 Once you have downloaded the VC++ Redistributable installer, you can build the Windows installer by running the Inno Setup script.
 
-The installer will include the VC++ Redistributable and install it during the Mi Bóveda installation process.
+The installer will include the VC++ Redistributable and install it during the Mi BÃ³veda installation process.

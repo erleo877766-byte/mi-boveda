@@ -1,18 +1,18 @@
-# Building Mi B�veda for Android
+# Building Mi Bóveda for Android
 
 ## Requirements and Setup
 
-As we use Docker with a custom Dockerfile to build Mi B�veda, the only dependency for building Cake on your local host is the Docker Engine.
+As we use Docker with a custom Dockerfile to build Mi Bóveda, the only dependency for building Cake on your local host is the Docker Engine.
 
 You can find the latest instructions for installing Docker on your given OS on the official website:
 
 - <https://docs.docker.com/engine/install/>
 
-## Building Mi B�veda or mi-boveda
+## Building Mi Bóveda or mi-boveda
 
 ### Using the pre-built builder image
 
-In order to build the latest version of Mi B�veda, simply run the following:
+In order to build the latest version of Mi Bóveda, simply run the following:
 
 ```bash
 git clone --branch main https://github.com/leonard0001991/mi-boveda.git
@@ -52,9 +52,9 @@ You should see the command complete with similar output:
 
 ```bash
 Running Gradle task 'assembleRelease'...                          519.1s
-✓ Built build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk (56.3MB)
-✓ Built build/app/outputs/flutter-apk/app-arm64-v8a-release.apk (55.8MB)
-✓ Built build/app/outputs/flutter-apk/app-x86_64-release.apk (56.4MB)
+âœ“ Built build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk (56.3MB)
+âœ“ Built build/app/outputs/flutter-apk/app-arm64-v8a-release.apk (55.8MB)
+âœ“ Built build/app/outputs/flutter-apk/app-x86_64-release.apk (56.4MB)
 ```
 
 Final builds can be found in `build/app/outputs/flutter-apk/` as seen above.

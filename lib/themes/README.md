@@ -1,16 +1,16 @@
 # Material 3 Theming System
 
-This directory contains the Material 3 (M3) theming implementation for Mi B�veda. The theming system is now fully based on Material 3 color tokens and patterns, with all custom theme extensions removed for simplicity, maintainability, and compliance with Material Design 3 guidelines.
+This directory contains the Material 3 (M3) theming implementation for Mi Bóveda. The theming system is now fully based on Material 3 color tokens and patterns, with all custom theme extensions removed for simplicity, maintainability, and compliance with Material Design 3 guidelines.
 
 ## Directory Structure
 
 ```
 lib/themes/
-├── core/                # Theme state management and base theme logic
-├── theme_classes/       # Light and dark theme data definitions
-├── extensions/          # (Optional) Theme extensions for specific widgets/pages
-├── utils/               # Utilities for theme management
-└── README.md            # This file
+â”œâ”€â”€ core/                # Theme state management and base theme logic
+â”œâ”€â”€ theme_classes/       # Light and dark theme data definitions
+â”œâ”€â”€ extensions/          # (Optional) Theme extensions for specific widgets/pages
+â”œâ”€â”€ utils/               # Utilities for theme management
+â””â”€â”€ README.md            # This file
 ```
 
 ## Key Features

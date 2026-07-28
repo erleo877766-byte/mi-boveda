@@ -1,11 +1,11 @@
 # cw_bitcoin
 
-Bitcoin-family Electrum wallet implementation used by Mi B�veda (BTC, LTC and derivatives).
+Bitcoin-family Electrum wallet implementation used by Mi Bóveda (BTC, LTC and derivatives).
 
 ## Features
 
 - Electrum client and wallet with address/UTXO management and snapshots.
-- Derivation via BIP‑39; receive/change chains with per-coin configs.
+- Derivation via BIPâ€‘39; receive/change chains with per-coin configs.
 - Create/sign/broadcast transactions; PSBT helpers and payjoin support.
 - Transaction history, priorities, and size-based fee calculations.
 - Hardware wallet support for BTC/LTC.

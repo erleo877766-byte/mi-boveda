@@ -1,4 +1,4 @@
-# Guide to Adding a New Wallet Type in Mi Bóveda
+# Guide to Adding a New Wallet Type in Mi BÃ³veda
 
 ## Important: EVM-Compatible Wallets
 
