@@ -80,13 +80,14 @@ jobs:
 
       - name: Download prebuilt monero_c DLLs
         run: |
-          git clone --depth 1 https://github.com/mrcyjanek/monero_c.git scripts/monero_c
+          TAG="v0.18.4.6-RC2"
+          git clone https://github.com/mrcyjanek/monero_c.git scripts/monero_c
           cd scripts/monero_c
           git fetch --tags
-          TAG=$(git describe --tags)
+          git checkout $TAG || git checkout 5952bef2ec01b0b7e57c11613cbdc081dcd727c5
           mkdir -p "release/$TAG"
           cd "release/$TAG"
-          curl -L -o release-bundle.zip https://github.com/MrCyjaneK/monero_c/releases/download/v0.18.4.6-RC2/release-bundle.zip
+          curl -L -o release-bundle.zip https://github.com/MrCyjaneK/monero_c/releases/download/$TAG/release-bundle.zip
           unzip -o release-bundle.zip
           shopt -s nullglob
           for inner in v0.18.4.6-*/; do
