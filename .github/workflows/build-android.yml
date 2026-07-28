@@ -108,6 +108,8 @@ jobs:
 
       - name: Download prebuilt monero_c
         run: |
+          git config --global user.email "erleo877766@gmail.com"
+          git config --global user.name "Leonardo Salazar"
           chmod +x scripts/prepare_moneroc.sh
           bash scripts/prepare_moneroc.sh
           mkdir -p scripts/monero_c/release
