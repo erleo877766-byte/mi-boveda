@@ -142,7 +142,7 @@ jobs:
         run: flutter pub get
 
       - name: Generate platform code
-        run: dart run tool/configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --dogecoin --base --arbitrum --bsc
+        run: dart run tool/configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --wownero --zano --decred --dogecoin --base --zcash --arbitrum --bsc
 
       - name: Build mwebd
         run: |

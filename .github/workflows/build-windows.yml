@@ -100,6 +100,19 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Patch flutter_local_notifications_windows coroutine
+        run: |
+          PLUGIN_DIR=$(find "$LOCALAPPDATA/Pub/Cache/hosted" -name "flutter_local_notifications_windows-*" -maxdepth 2 -type d 2>/dev/null | head -1)
+          if [ -z "$PLUGIN_DIR" ]; then
+            PLUGIN_DIR=$(find "$HOME/.pub-cache/hosted" -name "flutter_local_notifications_windows-*" -maxdepth 2 -type d 2>/dev/null | head -1)
+          fi
+          if [ -n "$PLUGIN_DIR" ]; then
+            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" -o -name "CMakeLists.txt" \) -exec sed -i 's|experimental/coroutine|coroutine|g' {} + 2>/dev/null || true
+            echo "Patched $PLUGIN_DIR"
+          else
+            echo "flutter_local_notifications_windows not found - skipping patch"
+          fi
+
       - name: Build generated code
         run: |
           for coin in cw_core cw_monero cw_bitcoin cw_evm cw_nano cw_bitcoin_cash cw_solana cw_tron cw_zcash; do

@@ -11,9 +11,10 @@ class Trade extends HiveObject {
   final String to;
   final double amount;
   final double fee;
-  final String txId;
+  String txId;
   final DateTime createdAt;
   TradeState state;
+  int stateRaw;
   final String payinAddress;
   final String payoutAddress;
   final String? walletId;
@@ -28,6 +29,7 @@ class Trade extends HiveObject {
     this.txId = '',
     required this.createdAt,
     this.state = const TradeState.pending(),
+    this.stateRaw = 0,
     this.payinAddress = '',
     this.payoutAddress = '',
     this.walletId,

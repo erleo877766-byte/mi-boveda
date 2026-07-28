@@ -59,12 +59,8 @@ class LinkViewModel {
 
     if (isNanoGptLink) {
       switch (currentLink?.authority ?? '') {
-        case "exchange":
-          return Routes.exchange;
         case "send":
           return Routes.send;
-        case "buy":
-          return Routes.buySellPage;
       }
     }
 
@@ -86,12 +82,8 @@ class LinkViewModel {
 
     if (isNanoGptLink) {
       switch (currentLink?.authority ?? '') {
-        case "exchange":
-          return PaymentRequest.fromUri(currentLink);
         case "send":
           return {"paymentRequest": PaymentRequest.fromUri(currentLink)};
-        case "buy":
-          return true;
       }
     }
 
@@ -138,9 +130,7 @@ class LinkViewModel {
       }
 
       if (isNanoGptLink) {
-        if (route == Routes.buySellPage || route == Routes.exchange) {
-          await _errorToast(S.current.nano_gpt_thanks_message, fontSize: 14);
-        }
+        await _errorToast(S.current.nano_gpt_thanks_message, fontSize: 14);
       }
 
       // Quick actions must reset navigation to Dashboard → TargetPage

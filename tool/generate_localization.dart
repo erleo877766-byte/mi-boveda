@@ -78,14 +78,14 @@ Future<void> main(List<String> args) async {
       output += part1;
       output += textDirectionDeclaration;
 
-      var inputContent = File(localePath[defaultLocale].toString()).readAsStringSync();
+      var inputContent = File(localePath[defaultLocale].toString()).readAsStringSync(encoding: utf8);
       var config = json.decode(inputContent) as Map<String, dynamic>;
 
       output += localizedStrings(config: config, hasOverride: false);
       output += '}' + '\n\n';
 
       localePath.forEach((key, dynamic value) {
-        inputContent = File(localePath[key].toString()).readAsStringSync();
+        inputContent = File(localePath[key].toString()).readAsStringSync(encoding: utf8);
         config = json.decode(inputContent) as Map<String, dynamic>;
 
         locales += "'$key', ";

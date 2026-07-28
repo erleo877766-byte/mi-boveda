@@ -12,6 +12,7 @@ abstract class TradeState {
   static const sending = _TradeStateSending();
 
   int get index;
+  int get raw => index;
 }
 
 class _TradeStatePending extends TradeState {
