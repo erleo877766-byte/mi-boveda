@@ -131,9 +131,10 @@ jobs:
 
       - name: Configure app
         run: |
+          chmod +x scripts/android/app_env.sh scripts/android/app_config.sh
           pushd scripts/android
             source ./app_env.sh miboveda
-            ./app_config.sh
+            bash ./app_config.sh
           popd
 
       - name: Install Flutter dependencies
