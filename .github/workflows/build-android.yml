@@ -67,9 +67,11 @@ jobs:
 
       - name: Add empty secrets
         run: |
-          for f in lib cw_bitcoin cw_evm cw_solana cw_nano cw_tron cw_core; do
+          for f in cw_bitcoin cw_evm cw_solana cw_nano cw_tron cw_core; do
+            mkdir -p $f/lib
             echo "" > $f/lib/.secrets.g.dart
           done
+          touch lib/.secrets.g.dart
 
       - name: Fetch prebuilt Torch
         run: |

@@ -48,8 +48,8 @@ jobs:
           rm -rf reown_flutter reown_flutter.tar.gz
           curl -L -o reown_flutter.tar.gz https://github.com/cake-tech/reown_flutter/releases/download/v0.0.4/reown_flutter-v0.0.4.tar.gz
           mkdir -p reown_flutter
-          cd reown_flutter && tar -xzf ../reown_flutter.tar.gz && cd ..
-          rm reown_flutter.tar.gz
+          cd reown_flutter && tar -xzf ../reown_flutter.tar.gz --exclude='*symlink*' || true
+          rm -f ../reown_flutter.tar.gz
 
       - name: Fetch prebuilt Torch
         run: |
