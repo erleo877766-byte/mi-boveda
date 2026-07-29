@@ -12,7 +12,7 @@ class TradeDetailsListCardItem {
   final String id;
   final String createdAt;
   final String pair;
-  final VoidCallback? onTap;
+  final dynamic onTap;
 }
 
 class TradeDetailsStandardListCard extends StatelessWidget {
@@ -29,7 +29,7 @@ class TradeDetailsStandardListCard extends StatelessWidget {
   final String create;
   final String pair;
   final MaterialThemeBase currentTheme;
-  final VoidCallback? onTap;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
