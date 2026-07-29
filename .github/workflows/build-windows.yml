@@ -144,6 +144,8 @@ jobs:
 
       - name: Build Windows
         run: flutter build windows --dart-define-from-file=env.json --release
+        env:
+          CXXFLAGS: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING
 
       - name: Package release
         run: |
