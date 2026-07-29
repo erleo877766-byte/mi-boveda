@@ -117,7 +117,7 @@ jobs:
           fi
           if [ -n "$PLUGIN_DIR" ]; then
             # Prepend #define to every source file to ensure it's defined before any system includes
-            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) | while read f; do
+            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | while IFS= read -r -d '' f; do
               if ! head -20 "$f" | grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING"; then
                 sed -i '1i #define _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING' "$f"
               fi
