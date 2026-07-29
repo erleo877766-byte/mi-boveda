@@ -41,6 +41,8 @@ class Routes {
   static const tradeHistory = '/trade_history';
   static const tradeDetails = '/trade_details';
   static const orderDetails = '/order_details';
+  static const exchange = '/exchange';
+  static const buySellPage = '/buy';
   static const settings = '/settings';
   static const desktop_settings_page = '/desktop_settings_page';
   static const empty_no_route = '/empty_no_route';
@@ -112,6 +114,7 @@ class Routes {
   static const devSocketHealthLogs = '/dev/socket_health_logs';
   static const devNetworkRequests = '/dev/network_requests';
   static const devQRTools = '/dev/qr_tools';
+  static const devExchangeProviderLogs = '/dev/exchange_provider_logs';
 
   static const signPage = '/sign_page';
   static const connectDevices = '/device/connect';

@@ -10,9 +10,12 @@ abstract class TradeState {
   static const traded = _TradeStateComplete();
   static const failed = _TradeStateFailed();
   static const sending = _TradeStateSending();
+  static const expired = _TradeStateFailed();
+  static const notFound = _TradeStateFailed();
 
   int get index;
   int get raw => index;
+  String get title => 'TradeState';
 }
 
 class _TradeStatePending extends TradeState {

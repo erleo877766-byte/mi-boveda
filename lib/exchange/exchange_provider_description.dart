@@ -26,6 +26,8 @@ class ExchangeProviderDescription extends HiveObject {
   final String title;
   final int raw;
 
+  String get image => '';
+
   ExchangeProviderDescription._(this.title, this.raw);
 
   static ExchangeProviderDescription fromRaw(int raw) =>

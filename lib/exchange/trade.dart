@@ -42,6 +42,23 @@ class Trade extends HiveObject {
   String amountFormatted() => amount.toStringAsFixed(8);
   String receiveAmountFormatted() => (amount - fee).toStringAsFixed(8);
 
+  String get inputAddress => '';
+  double get receiveAmount => 0;
+  String get outputTransaction => '';
+  int get chainId => 0;
+  dynamic get routerData => null;
+  String get sourceTokenAddress => '';
+  dynamic get routerValue => null;
+  int get sourceTokenAmountRaw => 0;
+  int get sourceTokenDecimals => 0;
+  bool get isSendAll => false;
+  bool get needToRegisterInSwapXyz => false;
+  String get providerId => '';
+  dynamic get router => null;
+  String get memo => '';
+
+  static Future<List<Trade>> getAll() async => [];
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'provider': provider.raw,

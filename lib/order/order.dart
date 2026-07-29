@@ -38,6 +38,11 @@ class Order extends HiveObject {
   OrderSourceDescription get source => OrderSourceDescription.unknown;
 
   String amountFormatted() => '';
+  String get transferId => '';
 }
 
-enum OrderState { pending, completed, failed }
+enum OrderState {
+  pending, completed, failed;
+
+  String get title => name;
+}

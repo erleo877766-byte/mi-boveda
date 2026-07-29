@@ -515,6 +515,8 @@ abstract class BalanceViewModelBase with Store {
   @observable
   bool isShowCard;
 
+  void get disableIntroCakePayCard => null;
+
   ReactionDisposer? _onCurrentWalletChangeReaction;
 
   @action

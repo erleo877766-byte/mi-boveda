@@ -19,8 +19,8 @@ abstract class ExchangeTradeViewModelBase with Store {
   Trade trade = Trade(
     id: '',
     provider: throw UnimplementedError(),
-    from: '',
-    to: '',
+    from: CryptoCurrency.btc,
+    to: CryptoCurrency.btc,
     amount: 0,
     createdAt: DateTime.now(),
   );
