@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:cake_wallet/src/screens/transaction_details/transaction_details_list_item.dart';
 
 class StandartListItem extends TransactionDetailsListItem {
@@ -18,5 +17,5 @@ class StandartListItem extends TransactionDetailsListItem {
   String get pair => '';
 
   @override
-  void Function(BuildContext) get onTap => (_) {};
+  dynamic get onTap => null;
 }

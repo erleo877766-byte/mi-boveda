@@ -11,5 +11,5 @@ abstract class TransactionDetailsListItem {
   String get id => '';
   String get createdAt => '';
   String get pair => '';
-  void Function(BuildContext) get onTap => (_) {};
+  dynamic get onTap => null;
 }
