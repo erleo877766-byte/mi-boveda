@@ -12,7 +12,7 @@ class TradeDetailsListCardItem {
   final String id;
   final String createdAt;
   final String pair;
-  final void Function(BuildContext) onTap;
+  final VoidCallback? onTap;
 }
 
 class TradeDetailsStandardListCard extends StatelessWidget {

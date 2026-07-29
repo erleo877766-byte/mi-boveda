@@ -118,16 +118,16 @@ jobs:
           if [ -n "$PLUGIN_DIR" ]; then
             # Prepend #define to every source file to ensure it's defined before any system includes
             find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | while IFS= read -r -d '' f; do
-              if ! head -20 "$f" | grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING"; then
-                sed -i '1i #define _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING' "$f"
+              if ! head -20 "$f" | grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"; then
+                sed -i '1i #define _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS' "$f"
               fi
             done
             # Also replace experimental/coroutine with coroutine
             find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -exec sed -i 's|experimental/coroutine|coroutine|g' {} + 2>/dev/null || true
             # Add to CMakeLists.txt as well
             for cmake_file in $(find "$PLUGIN_DIR" -name "CMakeLists.txt" -type f); do
-              if ! grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING" "$cmake_file"; then
-                sed -i '1i add_definitions(-D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING)' "$cmake_file"
+              if ! grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS" "$cmake_file"; then
+                sed -i '1i add_definitions(-D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)' "$cmake_file"
               fi
             done
             echo "Patched $PLUGIN_DIR"
