@@ -100,47 +100,47 @@ abstract class TradeFilterStoreBase with Store {
 
   @action
   void toggleDisplayExchange(ExchangeProviderDescription provider) {
-    switch (provider) {
-      case ExchangeProviderDescription.changeNow:
+    switch (provider.raw) {
+      case 1:
         displayChangeNow = !displayChangeNow;
         break;
-      case ExchangeProviderDescription.sideShift:
+      case 5:
         displaySideShift = !displaySideShift;
         break;
-      case ExchangeProviderDescription.simpleSwap:
+      case 4:
         displaySimpleSwap = !displaySimpleSwap;
         break;
-      case ExchangeProviderDescription.trocador:
+      case 6:
         displayTrocador = !displayTrocador;
         break;
-      case ExchangeProviderDescription.exolix:
+      case 7:
         displayExolix = !displayExolix;
         break;
-      case ExchangeProviderDescription.chainflip:
+      case 12:
         displayChainflip = !displayChainflip;
         break;
-      case ExchangeProviderDescription.thorChain:
+      case 8:
         displayThorChain = !displayThorChain;
         break;
-      case ExchangeProviderDescription.letsExchange:
+      case 10:
         displayLetsExchange = !displayLetsExchange;
         break;
-      case ExchangeProviderDescription.stealthEx:
+      case 11:
         displayStealthEx = !displayStealthEx;
         break;
-      case ExchangeProviderDescription.xoSwap:
+      case 13:
         displayXOSwap = !displayXOSwap;
         break;
-      case ExchangeProviderDescription.swapTrade:
+      case 9:
         displaySwapTrade = !displaySwapTrade;
         break;
-      case ExchangeProviderDescription.swapsXyz:
+      case 14:
         displaySwapXyz = !displaySwapXyz;
         break;
-      case ExchangeProviderDescription.nearIntents:
+      case 15:
         displayNearIntents = !displayNearIntents;
         break;
-      case ExchangeProviderDescription.all:
+      case 0:
         final newValue = !displayAllTrades;
         displayChangeNow = newValue;
         displaySideShift = newValue;
