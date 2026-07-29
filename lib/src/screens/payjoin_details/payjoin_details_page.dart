@@ -1,6 +1,6 @@
-import 'package:cake_wallet/generated/i18n.dart';
+﻿import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/src/screens/base_page.dart';
-import 'package:cake_wallet/src/screens/trade_details/trade_details_list_card.dart';
+import 'package:cake_wallet/src/screens/trade_details/trade_details_list_card.dart' hide TradeDetailsStandardListCard;
 import 'package:cake_wallet/src/screens/trade_details/trade_details_status_item.dart';
 import 'package:cake_wallet/src/widgets/list_row.dart';
 import 'package:cake_wallet/src/widgets/standard_list.dart';

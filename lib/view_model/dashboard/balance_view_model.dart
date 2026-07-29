@@ -1,4 +1,4 @@
-import 'package:cake_wallet/bitcoin/bitcoin.dart';
+﻿import 'package:cake_wallet/bitcoin/bitcoin.dart';
 import 'package:cake_wallet/core/utilities.dart';
 import 'package:cake_wallet/entities/balance_display_mode.dart';
 import 'package:cake_wallet/entities/calculate_fiat_amount.dart';
@@ -19,6 +19,7 @@ import 'package:cake_wallet/store/app_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';
 import 'package:cake_wallet/store/settings_store.dart';
 import 'package:cw_core/balance.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cw_core/crypto_currency.dart';
 import 'package:cw_core/erc20_token.dart';
 import 'package:cw_core/spl_token.dart';
@@ -270,16 +271,16 @@ abstract class BalanceViewModelBase with Store {
           key,
           BalanceRecord(
             raw: value,
-            availableBalance: '●●●●●●',
+            availableBalance: 'â—â—â—â—â—â—',
             additionalBalance: '',
             frozenBalance: '',
-            secondAvailableBalance: '●●●●●●',
-            secondAdditionalBalance: '●●●●●●',
-            fiatAdditionalBalanceRaw: '●●●●●',
-            fiatAvailableBalanceRaw: '●●●●●',
+            secondAvailableBalance: 'â—â—â—â—â—â—',
+            secondAdditionalBalance: 'â—â—â—â—â—â—',
+            fiatAdditionalBalanceRaw: 'â—â—â—â—â—',
+            fiatAvailableBalanceRaw: 'â—â—â—â—â—',
             fiatFrozenBalanceRaw: '',
-            fiatSecondAvailableBalanceRaw: '●●●●●',
-            fiatSecondAdditionalBalanceRaw: '●●●●●',
+            fiatSecondAvailableBalanceRaw: 'â—â—â—â—â—',
+            fiatSecondAdditionalBalanceRaw: 'â—â—â—â—â—',
             asset: key,
             secondAsset: secondAsset,
             fiatCurrency: isFiatDisabled ? null : fiatCurrency,
@@ -489,7 +490,7 @@ abstract class BalanceViewModelBase with Store {
   @computed
   String get combinedFiatBalance {
     if (displayMode == BalanceDisplayMode.hiddenBalance) {
-      return "●●●●●";
+      return "â—â—â—â—â—";
     }
 
     double ret = 0.0;
@@ -515,7 +516,7 @@ abstract class BalanceViewModelBase with Store {
   @observable
   bool isShowCard;
 
-  void get disableIntroCakePayCard => null;
+  VoidCallback? get disableIntroCakePayCard => null;
 
   ReactionDisposer? _onCurrentWalletChangeReaction;
 

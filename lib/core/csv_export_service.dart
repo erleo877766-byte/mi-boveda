@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/src/screens/backup/backup_page.dart';
@@ -40,7 +40,7 @@ class CsvExportService {
     'confirmations',
   ];
 
-  static const _utf8Bom = '﻿';
+  static const _utf8Bom = 'ï»¿';
 
   String buildCsvContent(List<ActionListItem> items) {
     final buf = StringBuffer();
@@ -112,9 +112,9 @@ class CsvExportService {
       trade.payoutAddress ?? '',
       trade.state.title,
       trade.memo ?? '',
-      trade.amount,
+      trade.amount.toString(),
       trade.from?.name ?? '',
-      trade.receiveAmount ?? '',
+      trade.receiveAmount,
       trade.to?.name ?? '',
       trade.id,
       trade.provider.title,

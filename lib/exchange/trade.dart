@@ -1,4 +1,4 @@
-import 'package:cw_core/crypto_currency.dart';
+﻿import 'package:cw_core/crypto_currency.dart';
 import 'package:hive/hive.dart';
 import 'exchange_provider_description.dart';
 import 'trade_state.dart';
@@ -19,6 +19,7 @@ class Trade extends HiveObject {
   final String payinAddress;
   final String payoutAddress;
   final String? walletId;
+  final String receiveAmount;
 
   Trade({
     required this.id,
@@ -34,6 +35,7 @@ class Trade extends HiveObject {
     this.payinAddress = '',
     this.payoutAddress = '',
     this.walletId,
+    this.receiveAmount = '',
   });
 
   static const boxName = 'Trades';
@@ -43,7 +45,6 @@ class Trade extends HiveObject {
   String receiveAmountFormatted() => (amount - fee).toStringAsFixed(8);
 
   String get inputAddress => '';
-  double get receiveAmount => 0;
   String get outputTransaction => '';
   int get chainId => 0;
   dynamic get routerData => null;

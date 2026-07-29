@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:cake_wallet/bitcoin/bitcoin.dart';
 import 'package:cake_wallet/core/address_resolver/parsed_address.dart';
@@ -726,7 +726,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
             // Smart Swap (Requires Approval)
             if (selector == swapAndExecuteSig) {
               final requiredAmount =
-                  BigInt.tryParse((trade.sourceTokenAmountRaw ?? '0').replaceAll('n', '')) ??
+                  BigInt.tryParse(trade.sourceTokenAmountRaw.toString().replaceAll('n', '')) ??
                       BigInt.zero;
 
               final needsApproval = tokenContract.isNotEmpty && requiredAmount > BigInt.zero

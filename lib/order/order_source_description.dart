@@ -1,5 +1,5 @@
 enum OrderSourceDescription {
-  unknown;
+  unknown, order;
 
   String get title => name;
 

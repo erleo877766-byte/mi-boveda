@@ -1,4 +1,4 @@
-class Routes {
+﻿class Routes {
   static const welcome = '/welcome';
   static const welcomeWallet = '/welcome_create_restore_wallet';
   static const welcomePage = '/welcome_page';
@@ -71,6 +71,7 @@ class Routes {
   static const mwebLogs = '/mweb_logs';
   static const mwebNode = '/mweb_node';
   static const connectionSync = '/connection_sync_page';
+  static const supportLiveChat = '/support/live_chat';
   static const securityBackupPage = '/security_and_backup_page';
   static const securityBackupDuressPin = '/security_and_backup_duress_pin';
   static const setupDuressPin = '/setup_duress_pin';
