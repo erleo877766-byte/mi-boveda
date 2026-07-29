@@ -26,7 +26,7 @@ abstract class AnonpayDetailsViewModelBase with Store {
       {required this.anonPayApi,
       required AnonpayInvoiceInfo anonpayInvoiceInfo,
       required this.themeStore})
-      : items = ObservableList<StandartListItem>(),
+      :         items = ObservableList<dynamic>(),
         invoiceDetail = anonpayInvoiceInfo {
     _updateItems();
     _updateInvoiceDetail();
@@ -37,7 +37,7 @@ abstract class AnonpayDetailsViewModelBase with Store {
   final ThemeStore themeStore;
   final AnonpayInvoiceInfo invoiceDetail;
 
-  final ObservableList<StandartListItem> items;
+  final ObservableList<dynamic> items;
 
   Timer? timer;
 

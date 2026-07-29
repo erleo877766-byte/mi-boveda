@@ -13,6 +13,7 @@ import 'package:cake_wallet/entities/exchange_api_mode.dart';
 import 'package:cake_wallet/evm/evm.dart';
 
 import 'package:cake_wallet/core/auth_service.dart';
+import 'package:cake_wallet/core/trade_monitor.dart';
 import 'package:cake_wallet/core/backup_service_v3.dart';
 import 'package:cake_wallet/core/key_service.dart';
 import 'package:cake_wallet/core/new_wallet_arguments.dart';
@@ -154,6 +155,10 @@ import 'package:cake_wallet/src/screens/welcome/welcome_page.dart';
 import 'package:cake_wallet/src/widgets/bottom_sheet/swap_confirmation_bottom_sheet.dart';
 import 'package:cake_wallet/src/widgets/bottom_sheet/swap_details_bottom_sheet.dart';
 import 'package:cake_wallet/store/anonpay/anonpay_transactions_store.dart';
+import 'package:cake_wallet/store/dashboard/orders_store.dart';
+import 'package:cake_wallet/store/dashboard/trade_filter_store.dart';
+import 'package:cake_wallet/store/dashboard/trades_store.dart';
+import 'package:cake_wallet/store/dashboard/order_filter_store.dart';
 import 'package:cake_wallet/store/app_store.dart';
 import 'package:cake_wallet/store/authentication_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';

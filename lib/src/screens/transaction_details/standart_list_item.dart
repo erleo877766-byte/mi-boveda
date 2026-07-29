@@ -6,4 +6,16 @@ class StandartListItem extends TransactionDetailsListItem {
     required String super.value,
     super.key,
   });
+
+  @override
+  String get id => '';
+
+  @override
+  String get createdAt => '';
+
+  @override
+  String get pair => '';
+
+  @override
+  void Function(BuildContext) get onTap => (_) {};
 }

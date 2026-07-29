@@ -26,7 +26,7 @@ abstract class PayjoinDetailsViewModelBase with Store {
     this.transactionInfo, {
     required this.payjoinSessionSource,
     required this.themeStore,
-  })  : items = ObservableList<TransactionDetailsListItem>(),
+  })  :         items = ObservableList<dynamic>(),
         payjoinSession = payjoinSessionSource.get(payjoinSessionId)! {
     listener = payjoinSessionSource.watch().listen((e) {
       if (e.key == payjoinSessionId) _updateItems();
@@ -42,7 +42,7 @@ abstract class PayjoinDetailsViewModelBase with Store {
   @observable
   late PayjoinSession payjoinSession;
 
-  final ObservableList<TransactionDetailsListItem> items;
+  final ObservableList<dynamic> items;
 
   late final StreamSubscription<BoxEvent> listener;
 

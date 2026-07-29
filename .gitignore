@@ -86,6 +86,9 @@ cw_monero/cw_monero/android/.cxx/
 # Generated dart files
 **/*.g.dart
 
+# Track ffigen-generated bindings (not build_runner output)
+!cw_mweb/lib/generated_bindings.g.dart
+
 android/key.properties
 android/app/key.jks
 

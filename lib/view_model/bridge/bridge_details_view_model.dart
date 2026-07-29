@@ -21,7 +21,7 @@ abstract class BridgeDetailsViewModelBase with Store {
     required BridgeTransfer transferForDetails,
     required this.bridgeTransfersStore,
     required this.walletId,
-  })  : items = ObservableList<TransactionDetailsListItem>(),
+  })  :         items = ObservableList<dynamic>(),
         transfer = _findTransferInStore(
                 bridgeTransfersStore.bridgeTransfers, transferForDetails.id, walletId) ??
             transferForDetails {
@@ -51,7 +51,7 @@ abstract class BridgeDetailsViewModelBase with Store {
   BridgeTransfer transfer;
 
   @observable
-  ObservableList<TransactionDetailsListItem> items;
+  ObservableList<dynamic> items;
 
   Timer? timer;
 
