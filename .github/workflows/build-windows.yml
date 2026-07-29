@@ -12,6 +12,8 @@ defaults:
 jobs:
   build-windows:
     runs-on: windows-latest
+    env:
+      CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING
 
     steps:
       - uses: actions/checkout@v4
@@ -116,8 +118,9 @@ jobs:
             PLUGIN_DIR=$(find "$HOME/.pub-cache/hosted" -name "flutter_local_notifications_windows-*" -maxdepth 2 -type d 2>/dev/null | head -1)
           fi
           if [ -n "$PLUGIN_DIR" ]; then
-            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" -o -name "CMakeLists.txt" \) -exec sed -i 's|experimental/coroutine|coroutine|g' {} + 2>/dev/null || true
-            # Also add deprecation silence define for newer MSVC (VS 2022 v18+)
+            # Replace experimental/coroutine with coroutine in source files
+            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -exec sed -i 's|experimental/coroutine|coroutine|g' {} + 2>/dev/null || true
+            # Add deprecation silence define to all CMakeLists.txt in the plugin
             for cmake_file in $(find "$PLUGIN_DIR" -name "CMakeLists.txt" -type f); do
               if ! grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING" "$cmake_file"; then
                 sed -i '1i add_definitions(-D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNING)' "$cmake_file"
