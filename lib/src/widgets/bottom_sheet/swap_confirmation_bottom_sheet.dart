@@ -5,7 +5,7 @@ class SwapConfirmationBottomSheet extends BaseBottomSheet {
   SwapConfirmationBottomSheet({required super.titleText, required super.footerType, required super.maxHeight});
 
   @override
-  Widget build(BuildContext context) {
+  Widget contentWidget(BuildContext context) {
     return Container();
   }
 }

@@ -52,5 +52,6 @@ cd ../
 dart run ffigen --config ffigen_config.yaml
 
 # Fix Dart 3 class modifiers: ffigen generates plain classes that extend base Opaque/Struct
-sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends Opaque/base class \1 extends Opaque/' lib/generated_bindings.g.dart
-sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends Struct/base class \1 extends Struct/' lib/generated_bindings.g.dart
+# ffigen uses ffi.Opaque and ffi.Struct which are 'base' types in Dart 3
+sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends ffi\.Opaque/base class \1 extends ffi.Opaque/' lib/generated_bindings.g.dart
+sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends ffi\.Struct/base class \1 extends ffi.Struct/' lib/generated_bindings.g.dart

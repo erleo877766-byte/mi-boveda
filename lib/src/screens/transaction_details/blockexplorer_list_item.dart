@@ -1,5 +1,5 @@
 import 'package:cake_wallet/src/screens/transaction_details/transaction_details_list_item.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 class BlockExplorerListItem extends TransactionDetailsListItem {
   BlockExplorerListItem({
@@ -8,5 +8,5 @@ class BlockExplorerListItem extends TransactionDetailsListItem {
     required this.onTap,
     Key? key,
   }) : super(title: title, value: value, key: key);
-  final Function() onTap;
+  final void Function(BuildContext) onTap;
 }

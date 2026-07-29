@@ -146,7 +146,7 @@ class CryptoBalanceWidget extends StatelessWidget {
                     title: S.of(context).introducing_cake_pay,
                     subTitle: S.of(context).cake_pay_learn_more,
                     borderColor: Theme.of(context).colorScheme.outline,
-                    closeCard: dashboardViewModel.balanceViewModel.disableIntroCakePayCard);
+                    closeCard: () => dashboardViewModel.balanceViewModel.disableIntroCakePayCard?.call());
               }
               return Container();
             },

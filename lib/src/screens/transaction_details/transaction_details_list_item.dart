@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/widgets.dart';
 
 abstract class TransactionDetailsListItem {
   TransactionDetailsListItem({required this.title, required this.value, this.key});
