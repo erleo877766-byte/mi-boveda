@@ -130,11 +130,16 @@ jobs:
             bash ./app_config.sh
           popd
 
+      - name: Add empty secrets
+        run: |
+          touch lib/.secrets.g.dart
+          for f in cw_bitcoin cw_evm cw_solana cw_nano cw_tron; do
+            mkdir -p $f/lib
+            touch $f/lib/.secrets.g.dart
+          done
+
       - name: Install Flutter dependencies
         run: flutter pub get
-
-      - name: Generate secrets
-        run: dart run tool/generate_new_secrets.dart
 
       - name: Generate platform code
         run: dart run tool/configure.dart --monero --bitcoin --ethereum --polygon --nano --bitcoinCash --solana --tron --wownero --zano --decred --dogecoin --base --zcash --arbitrum --bsc
@@ -153,6 +158,9 @@ jobs:
 
       - name: Build generated code
         run: bash ./model_generator.sh async
+
+      - name: Generate secrets
+        run: dart run tool/generate_new_secrets.dart
 
       - name: Generate key and key properties
         run: |

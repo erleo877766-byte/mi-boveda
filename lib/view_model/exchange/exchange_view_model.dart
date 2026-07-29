@@ -13,8 +13,6 @@ import 'package:cw_core/sync_status.dart';
 import 'package:cw_core/wallet_base.dart';
 import 'package:flutter/material.dart';
 
-part 'exchange_view_model.g.dart';
-
 class ExchangeViewModel extends ExchangeViewModelBase {
   ExchangeViewModel();
 }

@@ -236,14 +236,6 @@ Future<void> initializeAppConfigs({bool loadWallet = true}) async {
     CakeHive.registerAdapter(TemplateAdapter());
   }
 
-  if (!CakeHive.isAdapterRegistered(ExchangeTemplate.typeId)) {
-    CakeHive.registerAdapter(ExchangeTemplateAdapter());
-  }
-
-  if (!CakeHive.isAdapterRegistered(Order.typeId)) {
-    CakeHive.registerAdapter(OrderAdapter());
-  }
-
   if (!CakeHive.isAdapterRegistered(UnspentCoinsInfo.typeId)) {
     CakeHive.registerAdapter(UnspentCoinsInfoAdapter());
   }
@@ -305,11 +297,9 @@ Future<void> initializeAppConfigs({bool loadWallet = true}) async {
     loadWallet: loadWallet,
     sharedPreferences: await SharedPreferences.getInstance(),
     contactSource: contacts,
-    ordersSource: orders,
     unspentCoinsInfoSource: unspentCoinsInfoSource,
     // fiatConvertationService: fiatConvertationService,
     templates: templates,
-    exchangeTemplates: exchangeTemplates,
     transactionDescriptions: transactionDescriptions,
     secureStorage: secureStorage,
     payjoinSessionSource: payjoinSessionSource,
@@ -323,10 +313,10 @@ Future<void> initialSetup({
   required bool loadWallet,
   required SharedPreferences sharedPreferences,
   required Box<Contact> contactSource,
-  required Box<Order> ordersSource,
+  // required Box<Order> ordersSource,
   // required FiatConvertationService fiatConvertationService,
   required Box<Template> templates,
-  required Box<ExchangeTemplate> exchangeTemplates,
+  // required Box<ExchangeTemplate> exchangeTemplates,
   required Box<TransactionDescription> transactionDescriptions,
   required SecureStorage secureStorage,
   required Box<AnonpayInvoiceInfo> anonpayInvoiceInfo,
@@ -345,9 +335,7 @@ Future<void> initialSetup({
   );
   await setup(
     contactSource: contactSource,
-    ordersSource: ordersSource,
     templates: templates,
-    exchangeTemplates: exchangeTemplates,
     transactionDescriptionBox: transactionDescriptions,
     anonpayInvoiceInfoSource: anonpayInvoiceInfo,
     unspentCoinsInfoSource: unspentCoinsInfoSource,
@@ -396,9 +384,9 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
                 : Routes.login;
         final currentTheme = appStore.themeStore.currentTheme;
         final statusBarBrightness =
-            currentTheme.type == currentTheme.isDark ? Brightness.light : Brightness.dark;
+            currentTheme.isDark ? Brightness.dark : Brightness.light;
         final statusBarIconBrightness =
-            currentTheme.type == currentTheme.isDark ? Brightness.light : Brightness.dark;
+            currentTheme.isDark ? Brightness.dark : Brightness.light;
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
             statusBarColor: statusBarColor,
             statusBarBrightness: statusBarBrightness,

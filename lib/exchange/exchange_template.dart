@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 
 class ExchangeTemplate extends HiveObject {
   static const exchangeTemplateTypeId = 0;
+  static const typeId = exchangeTemplateTypeId;
 
   static const boxName = 'ExchangeTemplates';
   static const boxKey = 0;

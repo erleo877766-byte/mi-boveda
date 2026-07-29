@@ -40,6 +40,7 @@ class Routes {
   static const showKeys = '/show_keys';
   static const tradeHistory = '/trade_history';
   static const tradeDetails = '/trade_details';
+  static const orderDetails = '/order_details';
   static const settings = '/settings';
   static const desktop_settings_page = '/desktop_settings_page';
   static const empty_no_route = '/empty_no_route';

@@ -51,5 +51,6 @@ go build -v -buildmode=c-shared -o ${ANDROID_OUT}/armeabi-v7a/libmweb.so .
 cd ../
 dart run ffigen --config ffigen_config.yaml
 
-# Fix Dart 3 class modifiers: ffigen generates plain classes that extend base Opaque
-sed -i 's/^class \(.*\) extends Opaque/base class \1 extends Opaque/' lib/generated_bindings.g.dart
+# Fix Dart 3 class modifiers: ffigen generates plain classes that extend base Opaque/Struct
+sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends Opaque/base class \1 extends Opaque/' lib/generated_bindings.g.dart
+sed -i 's/^class \([a-zA-Z_][a-zA-Z0-9_]*\) extends Struct/base class \1 extends Struct/' lib/generated_bindings.g.dart

@@ -1,3 +1,4 @@
+import 'package:cw_core/crypto_currency.dart';
 import 'package:hive/hive.dart';
 import 'exchange_provider_description.dart';
 import 'trade_state.dart';
@@ -7,8 +8,8 @@ class Trade extends HiveObject {
 
   final String id;
   final ExchangeProviderDescription provider;
-  final String from;
-  final String to;
+  final CryptoCurrency from;
+  final CryptoCurrency to;
   final double amount;
   final double fee;
   String txId;
@@ -38,11 +39,14 @@ class Trade extends HiveObject {
   static const boxName = 'Trades';
   static const boxKey = 0;
 
+  String amountFormatted() => amount.toStringAsFixed(8);
+  String receiveAmountFormatted() => (amount - fee).toStringAsFixed(8);
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'provider': provider.raw,
-    'from': from,
-    'to': to,
+    'from': from.title,
+    'to': to.title,
     'amount': amount,
     'fee': fee,
     'txId': txId,

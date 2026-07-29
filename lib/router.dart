@@ -723,7 +723,10 @@ Route<dynamic> createRoute(RouteSettings settings) {
       final title = args.first as String;
       final url = args[1] as Uri;
       return CupertinoPageRoute<void>(
-          builder: (_) => getIt.get<WebViewPage>(param1: title, param2: url));
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: Text(title)),
+            body: Center(child: Text(url.toString())),
+          ));
 
     case Routes.advancedPrivacySettings:
       final args = settings.arguments as Map<String, dynamic>;

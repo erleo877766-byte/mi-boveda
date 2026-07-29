@@ -4,12 +4,12 @@ import 'package:cake_wallet/src/screens/trade_details/trade_details_list_card.da
 import 'package:cake_wallet/src/screens/trade_details/trade_details_status_item.dart';
 import 'package:cake_wallet/src/widgets/list_row.dart';
 import 'package:cake_wallet/src/widgets/standard_list.dart';
-import 'package:cake_wallet/src/widgets/standard_list_card.dart';
 import 'package:cake_wallet/src/widgets/standard_list_status_row.dart';
 import 'package:cake_wallet/utils/show_bar.dart';
 import 'package:cake_wallet/view_model/anonpay_details_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cake_wallet/themes/core/material_base_theme.dart';
 
 class AnonpayDetailsPage extends BasePage {
   AnonpayDetailsPage({required this.anonpayDetailsViewModel});
@@ -56,7 +56,7 @@ class _AnonpayDetailsPageBodyState extends State<AnonpayDetailsPageBody> {
               id: item.id,
               create: item.createdAt,
               pair: item.pair,
-              currentTheme: widget.anonpayDetailsViewModel.themeStore.currentTheme.type,
+              currentTheme: widget.anonpayDetailsViewModel.themeStore.currentTheme,
               onTap: item.onTap,
             );
           }

@@ -341,6 +341,11 @@ Future<void> setup({
   getIt.registerSingleton<AnonpayTransactionsStore>(
       AnonpayTransactionsStore(anonpayInvoiceInfoSource: _anonpayInvoiceInfoSource));
   getIt.registerSingleton<SeedSettingsStore>(SeedSettingsStore());
+  getIt.registerSingleton<TradeMonitor>(TradeMonitor());
+  getIt.registerSingleton<TradesStore>(TradesStore());
+  getIt.registerSingleton<OrdersStore>(OrdersStore());
+  getIt.registerSingleton<TradeFilterStore>(TradeFilterStore());
+  getIt.registerSingleton<OrderFilterStore>(OrderFilterStore());
 
   getIt.registerFactoryParam<HardwareWalletViewModel, HardwareWalletType, void>((type, _) {
     switch (type) {
