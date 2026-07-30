@@ -187,7 +187,7 @@ jobs:
 
       - name: Build APK
         run: |
-          flutter build apk --dart-define=hasDevOptions=true --release --no-split-per-abi
+          flutter build apk --dart-define=hasDevOptions=true --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
