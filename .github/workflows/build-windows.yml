@@ -157,7 +157,7 @@ jobs:
           mkdir -p build/MiBoveda
           cp -r "$RELEASE_DIR"/* build/MiBoveda/
           cd build/MiBoveda
-          zip -r ../../MiBoveda-windows.zip .
+          7z a -tzip ../../MiBoveda-windows.zip .
           cd ../..
 
       - name: Upload EXE
