@@ -102,7 +102,11 @@ jobs:
           git reset --hard
 
       - name: Build bitbox_flutter
-        run: bash scripts/build_bitbox_flutter.sh
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          export PATH=$PATH:$(go env GOPATH)/bin
+          gomobile init
+          bash scripts/build_bitbox_flutter.sh
 
       - name: Download prebuilt monero_c
         run: |
