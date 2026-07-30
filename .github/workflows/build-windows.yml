@@ -149,7 +149,7 @@ jobs:
         run: dart run tool/generate_localization.dart
 
       - name: Build Windows
-        run: flutter build windows --dart-define-from-file=env.json --release
+        run: flutter build windows --dart-define-from-file=env.json --release --no-pub
 
       - name: Package release
         run: |
