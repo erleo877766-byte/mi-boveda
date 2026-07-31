@@ -12,19 +12,18 @@ import 'package:url_launcher/url_launcher.dart';
 // written by people who happened to read my slack message in 2025
 // whoever works on this codebase in the future, feel free to add your own mark here
 const List<String> aboutPageEasterEggs = [
-  "Designed in (S)pain",
+  "Creado con cariño por Erleo",
   "Proudly managing over 🤷‍♂️ XMR",
-  "The cake is not a lie 🍰",
+  "Tu bóveda, tus llaves 🗝️",
   "I don’t play soccer because I enjoy the sport. I’m just doing it for kicks.",
   "Markets in red? Big deal.\nWhat color is the grass outside?",
   "Conquered Web3, now working on Web6-7",
   "Proud owner of none of your funds\n(we are not impressed)",
-  "*writing down my seedphrase*\ncake cake cake cake cake cake cake ca...",
+  "*writing down my seedphrase*\nmía mía mía mía mía mía mía...",
   "Don't forget to actually use your crypto to pay for stuff in the real world 🙂",
   "A chain of blocks? That's preposterous!",
   "IOU a hug <3",
-  "Warning: up to 4.8% programmed by cats",
-  "We love collecting your data <3\nWe're just really incompetent at it"
+  "Warning: up to 4.8% programmed by cats"
 ];
 
 class AboutPage extends StatefulWidget {
@@ -102,6 +101,31 @@ class _AboutPageState extends State<AboutPage> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Creado por Erleo",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "Desarrollado por Leonardo Noel Salazar Mendoza",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 32),
@@ -116,7 +140,7 @@ class _AboutPageState extends State<AboutPage> {
                         trailingIconSize: 10),
                     ListItemRegularRow(
                         keyValue: "docs",
-                        label: "Cake Docs",
+                        label: "Documentación",
                         onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
