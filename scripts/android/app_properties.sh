@@ -9,4 +9,4 @@ fi
 
 touch $APP_PROPERTIES_PATH
 
-echo -e "id=${APP_ANDROID_BUNDLE_ID}\nname=${APP_ANDROID_NAME}" > $APP_PROPERTIES_PATH
+printf "id=%s\nname=%s\n" "${APP_ANDROID_BUNDLE_ID}" "${APP_ANDROID_NAME}" > $APP_PROPERTIES_PATH

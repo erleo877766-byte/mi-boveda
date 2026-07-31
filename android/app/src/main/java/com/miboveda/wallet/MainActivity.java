@@ -1,4 +1,4 @@
-package com.cakewallet.haven;
+package com.miboveda.wallet;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.WindowManager;
@@ -23,6 +24,7 @@ import java.security.SecureRandom;
 
 public class MainActivity extends FlutterFragmentActivity {
     final String UTILS_CHANNEL = "com.cake_wallet/native_utils";
+    boolean isAppSecure = false;
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -46,6 +48,14 @@ public class MainActivity extends FlutterFragmentActivity {
                     byte bytes[] = new byte[count];
                     random.nextBytes(bytes);
                     handler.post(() -> result.success(bytes));
+                    break;
+                case "setIsAppSecure":
+                    isAppSecure = call.argument("isAppSecure");
+                    if (isAppSecure) {
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+                    } else {
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                    }
                     break;
                 case "disableBatteryOptimization":
                     disableBatteryOptimization();

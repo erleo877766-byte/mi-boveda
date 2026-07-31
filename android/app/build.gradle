@@ -31,7 +31,9 @@ if (keystorePropertiesFile.exists()) {
 def appProperties = new Properties()
 def appPropertiesFile = rootProject.file('app.properties')
 if (appPropertiesFile.exists()) {
-    appProperties.load(new FileInputStream(appPropertiesFile))
+    appPropertiesFile.withReader('UTF-8') { reader ->
+        appProperties.load(reader)
+    }
 }
 
 android {

@@ -1,4 +1,4 @@
-package com.monero.app;
+package com.miboveda.wallet;
 
 import io.flutter.app.FlutterApplication;
 
