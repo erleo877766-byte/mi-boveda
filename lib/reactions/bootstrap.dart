@@ -15,6 +15,7 @@ import 'package:cake_wallet/store/settings_store.dart';
 import 'package:cake_wallet/store/authentication_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';
 import 'package:cake_wallet/core/node_switching_service.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/utils/feature_flag.dart';
 
 Future<void> bootstrapOffline() async {
@@ -46,4 +47,6 @@ void bootstrapOnline(GlobalKey<NavigatorState> navigatorKey, {required bool load
   if (FeatureFlag.isAutomaticNodeSwitchingEnabled) {
     getIt.get<NodeSwitchingService>().startHealthCheckTimer();
   }
+
+  getIt.get<CerebroService>().start();
 }

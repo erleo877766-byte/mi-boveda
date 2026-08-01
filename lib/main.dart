@@ -6,6 +6,7 @@ import 'package:cake_wallet/anonpay/anonpay_invoice_info.dart';
 import 'package:cake_wallet/app_scroll_behavior.dart';
 import 'package:cake_wallet/core/auth_service.dart';
 import 'package:cake_wallet/core/background_sync.dart';
+import 'package:cake_wallet/core/cerebro_node_sync.dart';
 import 'package:cake_wallet/core/node_switching_service.dart';
 import 'package:cake_wallet/core/reset_service.dart';
 import 'package:cake_wallet/core/secure_storage.dart';
@@ -279,7 +280,12 @@ Future<void> initializeAppConfigs({bool loadWallet = true}) async {
       encryptionKey: transactionDescriptionsBoxKey);
   await performTradeHiveMigration(secureStorage);
   await performNodeHiveMigration();
-  await validateBuiltinNodes();
+  final cerebroNodes = await cerebroNodesFromCache();
+  if (cerebroNodes != null && cerebroNodes.isNotEmpty) {
+    await syncBuiltinNodesFromCerebro(cerebroNodes);
+  } else {
+    await validateBuiltinNodes();
+  }
 
   final orders = await CakeHive.openBox<Order>(Order.boxName, encryptionKey: ordersBoxKey);
   final templates = await CakeHive.openBox<Template>(Template.boxName);

@@ -1156,6 +1156,18 @@ abstract class SettingsStoreBase with Store {
   Future<void> setShouldShowReceiveWarning(bool value) async =>
       _sharedPreferences.setBool(PreferencesKey.shouldShowReceiveWarning, value);
 
+  String get cerebroServerUrl =>
+      _sharedPreferences.getString(PreferencesKey.cerebroServerUrl) ?? '';
+
+  Future<void> setCerebroServerUrl(String value) async =>
+      _sharedPreferences.setString(PreferencesKey.cerebroServerUrl, value);
+
+  String get cerebroApiKey =>
+      _sharedPreferences.getString(PreferencesKey.cerebroApiKey) ?? '';
+
+  Future<void> setCerebroApiKey(String value) async =>
+      _sharedPreferences.setString(PreferencesKey.cerebroApiKey, value);
+
   static Future<SettingsStore> load(
       {required bool isBitcoinBuyEnabled,
       FiatCurrency initialFiatCurrency = FiatCurrency.usd,

@@ -9,6 +9,7 @@ import 'package:cake_wallet/new-ui/pages/bridge/bridge_history_page.dart';
 import 'package:cake_wallet/new-ui/pages/bridge/bridge_network_page.dart';
 import 'package:cake_wallet/new-ui/pages/bridge/bridge_receiving_wallet_page.dart';
 import 'package:cake_wallet/new-ui/pages/coin_control_page.dart';
+import 'package:cake_wallet/new-ui/pages/cerebro_settings_page.dart';
 import 'package:cake_wallet/new-ui/pages/addresses_page.dart';
 import 'package:cake_wallet/new-ui/pages/lightning_username_page.dart';
 import 'package:cake_wallet/new-ui/pages/send_page.dart';
@@ -566,6 +567,11 @@ Route<dynamic> createRoute(RouteSettings settings) {
     case Routes.connectionSync:
       return handleRouteWithPlatformAwareness(
         (context) => getIt.get<ConnectionSyncPage>(),
+      );
+
+    case Routes.cerebroSettings:
+      return handleRouteWithPlatformAwareness(
+        (context) => const CerebroSettingsPage(),
       );
 
     case Routes.securityBackupPage:

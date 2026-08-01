@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:cake_wallet/core/cerebro_node_sync.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/core/new_wallet_arguments.dart';
 import 'package:cake_wallet/core/new_wallet_type_arguments.dart';
+import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/reactions/wallet_utils.dart';
 import 'package:cake_wallet/routes.dart';
@@ -102,13 +105,18 @@ class WalletTypeFormState extends State<WalletTypeForm> {
 
   @override
   void initState() {
+    final cerebro = getIt.get<CerebroService>();
     types = filteredTypes = availableWalletTypes
         .where((element) =>
             !widget.isHardwareWallet ||
             DeviceConnectionType.supportedConnectionTypes(
                     element, widget.hardwareWalletType!, Platform.isIOS)
                 .isNotEmpty)
-        .toList();
+        .where((element) {
+      final symbol = walletTypeToCerebroSymbol(element);
+      if (symbol == null) return true;
+      return cerebro.isCoinEnabled(symbol);
+    }).toList();
     super.initState();
   }
 

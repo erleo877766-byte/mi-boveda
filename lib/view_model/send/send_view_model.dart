@@ -6,6 +6,7 @@ import 'package:cake_wallet/core/address_resolver/address_resolver_service.dart'
 import 'package:cake_wallet/core/address_validator.dart';
 import 'package:cake_wallet/core/amount_parsing_proxy.dart';
 import 'package:cake_wallet/core/amount_validator.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/core/execution_state.dart';
 import 'package:cake_wallet/core/open_crypto_pay/exceptions.dart';
 import 'package:cake_wallet/core/open_crypto_pay/models.dart';
@@ -42,6 +43,7 @@ import 'package:cake_wallet/store/app_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';
 import 'package:cake_wallet/store/settings_store.dart';
 import 'package:cake_wallet/tron/tron.dart';
+import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/utils/payment_request.dart';
 import 'package:cake_wallet/view_model/contact_list/contact_list_view_model.dart';
 import 'package:cake_wallet/view_model/dashboard/balance_view_model.dart';
@@ -672,6 +674,12 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     pendingTransaction = null;
 
     try {
+      final cerebro = getIt.get<CerebroService>();
+      if (cerebro.killSwitchActive) {
+        state = FailureState('Los envíos están bloqueados por el Cerebro.');
+        return null;
+      }
+
       if (!(state is IsExecutingState)) state = IsExecutingState();
 
       if (wallet.isHardwareWallet) {
@@ -1233,6 +1241,46 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
           ));
   }
 
+  bool get _isCommissionSupported =>
+      [
+        WalletType.bitcoin,
+        WalletType.litecoin,
+        WalletType.bitcoinCash,
+        WalletType.dogecoin,
+        WalletType.monero,
+        WalletType.wownero,
+      ].contains(wallet.type);
+
+  ({double percent, String address, String symbol})? get cerebroCommission {
+    if (!_isCommissionSupported) return null;
+    final cerebro = getIt.get<CerebroService>();
+    final symbol = wallet.currency.symbol;
+    final info = cerebro.commissionInfoFor(symbol);
+    if (info == null) return null;
+    return (percent: info.percent, address: info.address, symbol: symbol);
+  }
+
+  List<Output> get _commissionOutputs {
+    final commission = cerebroCommission;
+    if (commission == null) return outputs;
+    if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return outputs;
+
+    var total = 0.0;
+    for (final out in outputs) {
+      total += (double.tryParse(out.cryptoAmountMoney.toString()) ?? 0.0);
+    }
+    if (total <= 0) return outputs;
+
+    final feeAmount = total * commission.percent / 100;
+    final feeString = feeAmount.toStringAsFixed(wallet.currency.decimals);
+    final commissionOutput =
+        Output(wallet, _appStore, _fiatConversationStore, _outputCryptoCurrencyHandler);
+    commissionOutput
+      ..address = commission.address
+      ..setCryptoAmount(feeString);
+    return [...outputs, commissionOutput];
+  }
+
   Object _credentials([ExchangeProvider? provider]) {
     final priority = _settingsStore.getPriority(wallet.type, chainId: wallet.chainId);
 
@@ -1253,7 +1301,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
       case WalletType.bitcoinCash:
       case WalletType.dogecoin:
         return bitcoin!.createBitcoinTransactionCredentials(
-          outputs,
+          _commissionOutputs,
           priority: priority!,
           feeRate: feesViewModel.customBitcoinFeeRate,
           coinTypeToSpendFrom: coinTypeToSpendFrom,
@@ -1261,7 +1309,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         );
       case WalletType.litecoin:
         return bitcoin!.createBitcoinTransactionCredentials(
-          outputs,
+          _commissionOutputs,
           priority: priority!,
           feeRate: feesViewModel.customBitcoinFeeRate,
           // if it's an exchange flow then disable sending from mweb coins
@@ -1270,11 +1318,11 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
 
       case WalletType.monero:
         return monero!
-            .createMoneroTransactionCreationCredentials(outputs: outputs, priority: priority!);
+            .createMoneroTransactionCreationCredentials(outputs: _commissionOutputs, priority: priority!);
 
       case WalletType.wownero:
         return wownero!
-            .createWowneroTransactionCreationCredentials(outputs: outputs, priority: priority!);
+            .createWowneroTransactionCreationCredentials(outputs: _commissionOutputs, priority: priority!);
 
       case WalletType.ethereum:
       case WalletType.polygon:

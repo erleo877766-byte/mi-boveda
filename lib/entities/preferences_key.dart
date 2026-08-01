@@ -145,4 +145,8 @@ class PreferencesKey {
   static const backgroundImage = 'background_image';
   static const mwebAdDismissed = "mweb_ad_dismissed";
   static const balanceHideCounter = "balance_hide_counter";
+  static const cerebroServerUrl = 'cerebro_server_url';
+  static const cerebroApiKey = 'cerebro_api_key';
+  static const cerebroLastConfig = 'cerebro_last_config';
+  static const cerebroLastSync = 'cerebro_last_sync';
 }

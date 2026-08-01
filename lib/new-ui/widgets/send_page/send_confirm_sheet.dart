@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cake_wallet/core/address_validator.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/core/utilities.dart';
 import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/entities/contact.dart';
@@ -416,10 +417,34 @@ class SendTransactionDetails extends StatelessWidget {
                   ],
                 ),
               ),
+              if (sendViewModel.cerebroCommission != null)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Icon(Icons.sell_outlined,
+                          color: Theme.of(context).colorScheme.onTertiaryContainer),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Costo por servicio: ${sendViewModel.cerebroCommission!.percent}% "
+                          "de la cantidad enviada (${sendViewModel.cerebroCommission!.symbol}). "
+                          "El importe se añade como una salida adicional en la misma transacción.",
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: Theme.of(context).colorScheme.onTertiaryContainer),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               SendConfirmBottomWidget(sendViewModel: sendViewModel),
               if (Platform.isAndroid) // spacing between bottom widget and system navbar
-                SizedBox(),
-            ],
+                SizedBox(),            ],
           ),
         ),
       );
