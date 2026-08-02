@@ -13,6 +13,7 @@ class CerebroConfig {
     required this.globalEnabled,
     required this.fallbackFeePercent,
     required this.minCommissionPercent,
+    required this.adminCommissionExemption,
     required this.minAppVersion,
     required this.coins,
     required this.nodes,
@@ -23,6 +24,7 @@ class CerebroConfig {
   final bool globalEnabled;
   final double fallbackFeePercent;
   final double minCommissionPercent;
+  final bool adminCommissionExemption;
   final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
   final List<CerebroNode> nodes;
@@ -40,6 +42,8 @@ class CerebroConfig {
       fallbackFeePercent: (json['fallbackFeePercent'] as num?)?.toDouble() ?? 0.5,
       minCommissionPercent:
           (json['minCommissionPercent'] as num?)?.toDouble() ?? 0.5,
+      adminCommissionExemption:
+          json['adminCommissionExemption'] as bool? ?? true,
       minAppVersion: json['minAppVersion'] as String? ?? '',
       coins: coins,
       nodes: (json['nodes'] as List? ?? [])
@@ -86,6 +90,12 @@ class CerebroService extends ChangeNotifier {
       return cached.minAppVersion;
     }
     return '';
+  }
+
+  bool get adminCommissionExemption {
+    if (connected && config != null) return config!.adminCommissionExemption;
+    final cached = _cachedConfig;
+    return cached?.adminCommissionExemption ?? true;
   }
 
   void start() {
@@ -148,35 +158,44 @@ class CerebroService extends ChangeNotifier {
   }
 
   bool coinHasCommission(String symbol) {
-    if (!connected || config == null || !config!.globalEnabled) return false;
-    final percent = feePercentFor(symbol);
-    final address = feeAddressFor(symbol);
-    return percent != null && percent > 0 && address.isNotEmpty;
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    if (source == null) return false;
+    final coin = source.coins[symbol];
+    final percent = (coin?['feePercent'] as num?)?.toDouble() ?? 0;
+    final address = (coin?['feeAddress'] as String? ?? '').trim();
+    if (address.isEmpty) return false;
+    if (connected && config != null) return percent > 0;
+    final effective = percent > 0 ? percent : source.fallbackFeePercent;
+    return effective > 0;
   }
+
+  bool get hasReceivedConfig => config != null || _cachedConfig != null;
 
   List<Map<String, dynamic>> get activeAnnouncements {
     final source = (connected && config != null) ? config! : _cachedConfig;
     return source?.announcements ?? const [];
   }
 
-  ({double percent, String address})? _commissionFor(Map<String, dynamic>? coin) {
-    if (coin == null) return null;
-    final percent = (coin['feePercent'] as num?)?.toDouble() ?? 0;
-    final address = coin['feeAddress'] as String? ?? '';
-    if (percent <= 0 || address.isEmpty) return null;
-    return (percent: percent, address: address);
-  }
-
   ({double percent, String address})? commissionInfoFor(String symbol) {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    if (source == null) return null;
+
+    final coin = source.coins[symbol];
+    final address = ((coin?['feeAddress'] as String?) ?? '').trim();
+    if (address.isEmpty) return null;
+
+    final percent = (coin?['feePercent'] as num?)?.toDouble() ?? 0;
+
+    // Cerebro conectado: respetar el valor exacto por moneda (0% = sin comisión).
     if (connected && config != null) {
-      return _commissionFor(config!.coins[symbol]);
+      return percent > 0 ? (percent: percent, address: address) : null;
     }
-    if (!isConfigured) return null;
-    final cached = _cachedConfig;
-    if (cached != null) {
-      return _commissionFor(cached.coins[symbol]);
-    }
-    return null;
+
+    // Sin conexión: respaldo. Si la moneda no tiene porcentaje definido
+    // (>0), usa la comisión de respaldo global. La dirección nunca cambia.
+    final effective = percent > 0 ? percent : source.fallbackFeePercent;
+    if (effective <= 0) return null;
+    return (percent: effective, address: address);
   }
 
   CerebroConfig? get _cachedConfig {

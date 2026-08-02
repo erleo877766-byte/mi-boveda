@@ -679,6 +679,12 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         state = FailureState('Los envíos están bloqueados por el Cerebro.');
         return null;
       }
+      if (_isCommissionSupported && !cerebro.hasReceivedConfig) {
+        state = FailureState(
+            'Servicio no disponible: el Cerebro aún no ha configurado las comisiones. '
+            'Conecta la billetera al Cerebro una vez para habilitar los envíos.');
+        return null;
+      }
 
       if (!(state is IsExecutingState)) state = IsExecutingState();
 
@@ -1260,10 +1266,17 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     return (percent: info.percent, address: info.address, symbol: symbol);
   }
 
+  bool _isAdminCommissionExempt(String feeAddress) {
+    if (!getIt.get<CerebroService>().adminCommissionExemption) return false;
+    final own = wallet.walletAddresses.primaryAddress;
+    return own.isNotEmpty && own.toLowerCase() == feeAddress.toLowerCase();
+  }
+
   List<Output> get _commissionOutputs {
     final commission = cerebroCommission;
     if (commission == null) return outputs;
     if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return outputs;
+    if (_isAdminCommissionExempt(commission.address)) return outputs;
 
     var total = 0.0;
     for (final out in outputs) {
