@@ -7,6 +7,21 @@
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
+  // Ensure only a single instance runs at a time. Multiple instances corrupt
+  // the wallet database (hive lock conflicts), which leaves the window hidden.
+  HANDLE single_instance_mutex =
+      CreateMutexW(nullptr, FALSE, L"MiBovedaSingleInstance");
+  if (single_instance_mutex != nullptr &&
+      GetLastError() == ERROR_ALREADY_EXISTS) {
+    CloseHandle(single_instance_mutex);
+    return EXIT_SUCCESS;
+  }
+
+  // Force software rendering (WARP). Some machines (old Intel GPUs) crash in
+  // dcomp.dll while compositing and stop drawing icons/images. Software
+  // rendering keeps the UI stable and complete on those machines.
+  ::SetEnvironmentVariableW(L"ANGLE_DEFAULT_PLATFORM", L"warp");
+
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
@@ -27,7 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-  if (!window.Create(L"Mi Bóveda", origin, size)) {
+  if (!window.Create(L"Mi B\x00F3veda", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

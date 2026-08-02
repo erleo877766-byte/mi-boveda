@@ -73,7 +73,7 @@ class LanguageService {
 
   static final list = <String, String>{};
 
-  static const defaultLocale = 'en';
+  static const defaultLocale = 'es';
 
   static void loadLocaleList() {
     supportedLocales.forEach((key, value) {
@@ -87,6 +87,10 @@ class LanguageService {
     try {
       var locale = await Devicelocale.currentLocale ?? '';
       locale = Intl.shortLocale(locale);
+
+      if (locale.startsWith('es') || locale == 'en') {
+        return 'es';
+      }
 
       if (list.keys.contains(locale)) {
         return locale;
