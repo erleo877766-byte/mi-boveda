@@ -12,6 +12,8 @@ class CerebroConfig {
     required this.name,
     required this.globalEnabled,
     required this.fallbackFeePercent,
+    required this.minCommissionPercent,
+    required this.minAppVersion,
     required this.coins,
     required this.nodes,
     required this.announcements,
@@ -20,6 +22,8 @@ class CerebroConfig {
   final String name;
   final bool globalEnabled;
   final double fallbackFeePercent;
+  final double minCommissionPercent;
+  final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
   final List<CerebroNode> nodes;
   final List<Map<String, dynamic>> announcements;
@@ -34,6 +38,9 @@ class CerebroConfig {
       name: json['name'] as String? ?? 'Mi Bóveda Cerebro',
       globalEnabled: json['globalEnabled'] as bool? ?? true,
       fallbackFeePercent: (json['fallbackFeePercent'] as num?)?.toDouble() ?? 0.5,
+      minCommissionPercent:
+          (json['minCommissionPercent'] as num?)?.toDouble() ?? 0.5,
+      minAppVersion: json['minAppVersion'] as String? ?? '',
       coins: coins,
       nodes: (json['nodes'] as List? ?? [])
           .whereType<Map<String, dynamic>>()
@@ -69,6 +76,17 @@ class CerebroService extends ChangeNotifier {
   }
 
   String get syncStatus => connected ? 'online' : (error != null ? 'error' : 'off');
+
+  String get minAppVersion {
+    if (connected && config != null && config!.minAppVersion.isNotEmpty) {
+      return config!.minAppVersion;
+    }
+    final cached = _cachedConfig;
+    if (cached != null && cached.minAppVersion.isNotEmpty) {
+      return cached.minAppVersion;
+    }
+    return '';
+  }
 
   void start() {
     _timer?.cancel();
