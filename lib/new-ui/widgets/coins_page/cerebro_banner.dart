@@ -1,19 +1,19 @@
 import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/di.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class CerebroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cerebro = getIt.get<CerebroService>();
     final theme = Theme.of(context);
-    return Observer(builder: (_) {
+    return ListenableBuilder(
+      listenable: cerebro,
+      builder: (context, _) {
       final announcements = cerebro.activeAnnouncements;
       final killSwitch = cerebro.killSwitchActive;
       final Widget? content;
       Color background;
-      IconData icon;
 
       if (killSwitch) {
         content = Row(
@@ -29,11 +29,7 @@ class CerebroBanner extends StatelessWidget {
           ],
         );
         background = theme.colorScheme.errorContainer;
-        icon = Icons.block;
       } else if (announcements.isNotEmpty) {
-        final announcement = announcements.first;
-        final title = announcement['title'] as String? ?? '';
-        final body = announcement['body'] as String? ?? '';
         content = Row(
           children: [
             const Icon(Icons.campaign_outlined, size: 18),
@@ -42,19 +38,21 @@ class CerebroBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (title.isNotEmpty)
-                    Text(title,
-                        style:
-                            theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700)),
-                  if (body.isNotEmpty)
-                    Text(body, style: theme.textTheme.bodySmall),
+                  for (var i = 0; i < announcements.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 6),
+                    Text(
+                        announcements[i]['title'] as String? ?? '',
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(announcements[i]['body'] as String? ?? '',
+                        style: theme.textTheme.bodySmall),
+                  ],
                 ],
               ),
             ),
           ],
         );
         background = theme.colorScheme.tertiaryContainer;
-        icon = Icons.campaign_outlined;
       } else if (cerebro.isConfigured && !cerebro.connected) {
         content = Row(
           children: [
@@ -69,11 +67,9 @@ class CerebroBanner extends StatelessWidget {
           ],
         );
         background = theme.colorScheme.surfaceContainerHighest;
-        icon = Icons.cloud_off;
       } else {
         content = null;
         background = Colors.transparent;
-        icon = Icons.cloud_done;
       }
 
       if (content == null) {

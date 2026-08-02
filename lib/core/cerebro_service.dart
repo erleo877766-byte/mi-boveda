@@ -61,7 +61,13 @@ class CerebroService extends ChangeNotifier {
   String get serverUrl => _prefs.getString(PreferencesKey.cerebroServerUrl) ?? '';
   String get apiKey => _prefs.getString(PreferencesKey.cerebroApiKey) ?? '';
   bool get isConfigured => serverUrl.isNotEmpty;
-  bool get killSwitchActive => connected && config != null && !config!.globalEnabled;
+
+  bool get killSwitchActive {
+    if (connected && config != null && !config!.globalEnabled) return true;
+    final cached = _cachedConfig;
+    return cached != null && !cached.globalEnabled;
+  }
+
   String get syncStatus => connected ? 'online' : (error != null ? 'error' : 'off');
 
   void start() {
@@ -112,8 +118,16 @@ class CerebroService extends ChangeNotifier {
   String feeAddressFor(String symbol) =>
       config?.coins[symbol]?['feeAddress'] as String? ?? '';
 
-  bool isCoinEnabled(String symbol) =>
-      config?.coins[symbol]?['enabled'] as bool? ?? true;
+  bool isCoinEnabled(String symbol) {
+    if (connected && config != null) {
+      return config!.coins[symbol]?['enabled'] as bool? ?? true;
+    }
+    final cached = _cachedConfig;
+    if (cached != null) {
+      return cached.coins[symbol]?['enabled'] as bool? ?? true;
+    }
+    return true;
+  }
 
   bool coinHasCommission(String symbol) {
     if (!connected || config == null || !config!.globalEnabled) return false;
@@ -122,8 +136,10 @@ class CerebroService extends ChangeNotifier {
     return percent != null && percent > 0 && address.isNotEmpty;
   }
 
-  List<Map<String, dynamic>> get activeAnnouncements =>
-      connected && config != null ? config!.announcements : const [];
+  List<Map<String, dynamic>> get activeAnnouncements {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.announcements ?? const [];
+  }
 
   ({double percent, String address})? _commissionFor(Map<String, dynamic>? coin) {
     if (coin == null) return null;

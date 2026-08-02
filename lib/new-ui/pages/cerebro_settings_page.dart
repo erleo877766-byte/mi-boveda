@@ -35,11 +35,23 @@ class _CerebroSettingsPageState extends State<CerebroSettingsPage> {
   Future<void> _save() async {
     await settingsStore.setCerebroServerUrl(_urlController.text.trim());
     await settingsStore.setCerebroApiKey(_apiKeyController.text.trim());
-    cerebro.poll();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cerebro guardado. Revisando conexión...')),
-      );
+    await _testConnection();
+  }
+
+  Future<void> _testConnection() async {
+    await cerebro.poll();
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    if (cerebro.connected) {
+      messenger.showSnackBar(SnackBar(
+        content: Text(
+            'Conectado al Cerebro (${cerebro.config?.nodes.length ?? 0} nodos sincronizados).'),
+      ));
+    } else {
+      messenger.showSnackBar(SnackBar(
+        content: Text(
+            'Sin conexión. Revisa que el Cerebro esté encendido y que la URL y la API key sean correctas.'),
+      ));
     }
   }
 
@@ -124,12 +136,20 @@ class _CerebroSettingsPageState extends State<CerebroSettingsPage> {
           FilledButton.icon(
             onPressed: _save,
             icon: const Icon(Icons.save_outlined),
-            label: const Text('Guardar y conectar'),
+            label: const Text('Guardar y probar conexión'),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Cómo conectar: en el Cerebro (en tu PC) abre Panel → verás la dirección como '
+            '"http://192.168.x.x:8787" y la clave API en Ajustes. Pon aquí la misma dirección '
+            'y la misma clave API (si la dejaste vacía en el Cerebro, deja este campo vacío).',
+            style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 8),
           Text(
             'Los nodos del Cerebro se sincronizan automáticamente en cada refresco '
-            '(cada 30 segundos y al arrancar la app).',
+            '(cada 30 segundos y al arrancar la app). Los avisos y el kill-switch se aplican '
+            'de inmediato y también se usan los últimos valores guardados sin conexión.',
             style: theme.textTheme.bodySmall,
           ),
         ],

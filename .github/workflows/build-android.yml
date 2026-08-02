@@ -130,6 +130,28 @@ jobs:
             popd
           popd
 
+      - name: Copy monero/wownero/zano libs to jniLibs
+        run: |
+          BUNDLE_DIR=$(ls -d scripts/monero_c/release/v0.18.4.6-* 2>/dev/null | head -1)
+          if [ -z "$BUNDLE_DIR" ]; then
+            BUNDLE_DIR="scripts/monero_c/release/$(git -C scripts/monero_c describe --tags)"
+          fi
+          echo "Using bundle: $BUNDLE_DIR"
+          for coin in monero wownero zano; do
+            for pair in "aarch64-linux-android:arm64-v8a" "armv7a-linux-androideabi:armeabi-v7a" "x86_64-linux-android:x86_64"; do
+              SRC=${pair%%:*}
+              DST=${pair##*:}
+              if [ -f "$BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so" ]; then
+                mkdir -p "android/app/src/main/jniLibs/$DST"
+                cp "$BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so" "android/app/src/main/jniLibs/$DST/lib${coin}_wallet2_api_c.so"
+                echo "copied lib${coin}_wallet2_api_c.so -> jniLibs/$DST/"
+              else
+                echo "MISSING: $BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so"
+              fi
+            done
+          done
+          find android/app/src/main/jniLibs -name "*.so" | sort
+
       - name: Configure app
         run: |
           pushd scripts/android
