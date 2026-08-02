@@ -355,7 +355,7 @@ class SendTransactionDetails extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(S.of(context).fee,
+                          Text('Tarifa de red',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -424,20 +424,80 @@ class SendTransactionDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.all(12),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.sell_outlined,
-                          color: Theme.of(context).colorScheme.onTertiaryContainer),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          "Costo por servicio: ${sendViewModel.cerebroCommission!.percent}% "
-                          "de la cantidad enviada (${sendViewModel.cerebroCommission!.symbol}). "
-                          "El importe se añade como una salida adicional en la misma transacción.",
-                          style: TextStyle(
-                              fontSize: 13,
+                      Row(
+                        children: [
+                          Icon(Icons.sell_outlined,
                               color: Theme.of(context).colorScheme.onTertiaryContainer),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Costo por servicio (mi comisión)',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.onTertiaryContainer),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Tarifa de servicio',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(context).colorScheme.onTertiaryContainer),
+                          ),
+                          Text(
+                            '${sendViewModel.cerebroCommission!.percent}% '
+                            '(${sendViewModel.cerebroCommissionAmountFormatted ?? '—'})',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onTertiaryContainer),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Dirección de cobro',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.onTertiaryContainer),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              middleTruncate(
+                                  sendViewModel.cerebroCommission!.address, 12, 8),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'IBM Plex Mono',
+                                  color: Theme.of(context).colorScheme.onTertiaryContainer),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'El importe se añade como una salida adicional y separada '
+                        'en la misma transacción (no se mezcla con el envío).',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onTertiaryContainer),
                       ),
                     ],
                   ),

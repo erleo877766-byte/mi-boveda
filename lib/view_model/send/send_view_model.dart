@@ -1266,6 +1266,21 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     return (percent: info.percent, address: info.address, symbol: symbol);
   }
 
+  String? get cerebroCommissionAmountFormatted {
+    final commission = cerebroCommission;
+    if (commission == null) return null;
+    if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return null;
+    if (_isAdminCommissionExempt(commission.address)) return null;
+    var total = 0.0;
+    for (final out in outputs) {
+      total += (double.tryParse(out.cryptoAmountMoney.toString()) ?? 0.0);
+    }
+    if (total <= 0) return null;
+    final feeAmount = total * commission.percent / 100;
+    return '${feeAmount.toStringAsFixed(wallet.currency.decimals)} '
+        '${wallet.currency.symbol}';
+  }
+
   bool _isAdminCommissionExempt(String feeAddress) {
     if (!getIt.get<CerebroService>().adminCommissionExemption) return false;
     final own = wallet.walletAddresses.primaryAddress;
