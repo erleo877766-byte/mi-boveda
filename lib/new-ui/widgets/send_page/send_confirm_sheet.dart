@@ -155,9 +155,12 @@ class SendTransactionDetails extends StatelessWidget {
                         width: 28,
                         height: 28,
                       ),
-                    Text(
-                      title ?? S.of(context).send,
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                    Flexible(
+                      child: Text(
+                        title ?? S.of(context).send,
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     )
                   ],
                 ),
@@ -298,6 +301,7 @@ class SendTransactionDetails extends StatelessWidget {
                     ),
                     if (outputs.length == 1)
                       Container(
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(16),
@@ -355,27 +359,32 @@ class SendTransactionDetails extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Tarifa de red',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "${fee.withLocalSeperator(sendViewModel.languageCode)} ${sendViewModel.currencySymbol}",
+                          Flexible(
+                            child: Text('Tarifa de red',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                              ),
-                              Text(fiatFee.withLocalSeperator(sendViewModel.languageCode),
+                                    color: Theme.of(context).colorScheme.onSurface)),
+                          ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "${fee.withLocalSeperator(sendViewModel.languageCode)} ${sendViewModel.currencySymbol}",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant))
-                            ],
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                    fiatFee.withLocalSeperator(sendViewModel.languageCode),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant))
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -417,7 +426,7 @@ class SendTransactionDetails extends StatelessWidget {
                   ],
                 ),
               ),
-              if (sendViewModel.cerebroCommission != null)
+              if (sendViewModel.cerebroCommissionAmountFormatted != null)
                 Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.tertiaryContainer,
@@ -478,11 +487,9 @@ class SendTransactionDetails extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 3,
-                            child: Text(
-                              middleTruncate(
-                                  sendViewModel.cerebroCommission!.address, 12, 8),
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
+                            child: AddressFormatter.buildSegmentedAddress(
+                              address: sendViewModel.cerebroCommission!.address,
+                              evenTextStyle: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'IBM Plex Mono',
@@ -493,8 +500,8 @@ class SendTransactionDetails extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'El importe se añade como una salida adicional y separada '
-                        'en la misma transacción (no se mezcla con el envío).',
+                        'El importe se cobra por separado a la dirección indicada '
+                        'y no se mezcla con el envío.',
                         style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.onTertiaryContainer),

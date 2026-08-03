@@ -61,6 +61,13 @@ class CerebroConfig {
 class CerebroService extends ChangeNotifier {
   CerebroService(this._prefs);
 
+  /// ⚙️ CONFIGURACIÓN PRIVADA DEL CEREBRO
+  /// Pega aquí la URL de tu servidor Cerebro y la API key.
+  /// Estos valores quedan grabados en el código fuente: el usuario
+  /// nunca los ve ni los puede modificar.
+  static const String kCerebroServerUrl = '';
+  static const String kCerebroApiKey = '';
+
   final SharedPreferences _prefs;
   Timer? _timer;
 
@@ -69,8 +76,9 @@ class CerebroService extends ChangeNotifier {
   String? error;
   DateTime? lastSync;
 
-  String get serverUrl => _prefs.getString(PreferencesKey.cerebroServerUrl) ?? '';
-  String get apiKey => _prefs.getString(PreferencesKey.cerebroApiKey) ?? '';
+  String get serverUrl =>
+      _prefs.getString(PreferencesKey.cerebroServerUrl) ?? kCerebroServerUrl;
+  String get apiKey => _prefs.getString(PreferencesKey.cerebroApiKey) ?? kCerebroApiKey;
   bool get isConfigured => serverUrl.isNotEmpty;
 
   bool get killSwitchActive {

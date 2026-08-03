@@ -71,7 +71,6 @@
   static const mwebLogs = '/mweb_logs';
   static const mwebNode = '/mweb_node';
   static const connectionSync = '/connection_sync_page';
-  static const cerebroSettings = '/cerebro_settings';
   static const supportLiveChat = '/support/live_chat';
   static const securityBackupPage = '/security_and_backup_page';
   static const securityBackupDuressPin = '/security_and_backup_duress_pin';

@@ -9,7 +9,6 @@ import 'package:cake_wallet/new-ui/viewmodels/card_customizer/card_customizer_bl
 import 'package:cake_wallet/new-ui/widgets/coins_page/action_row/coin_action_row.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/assets_history/assets_history_section.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/cards/cards_view.dart';
-import 'package:cake_wallet/new-ui/widgets/coins_page/cerebro_banner.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/mweb_ad.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/top_bar_widget/top_bar.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/unconfirmed_balance_widget.dart';
@@ -111,7 +110,6 @@ class _NewHomePageState extends State<NewHomePage> {
                           );
                         },
                       ),
-                      CerebroBanner(),
                       Observer(
                         builder: (_) => WalletInfoBar(
                             lightningMode: _lightningMode,

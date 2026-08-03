@@ -676,13 +676,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     try {
       final cerebro = getIt.get<CerebroService>();
       if (cerebro.killSwitchActive) {
-        state = FailureState('Los envíos están bloqueados por el Cerebro.');
-        return null;
-      }
-      if (_isCommissionSupported && !cerebro.hasReceivedConfig) {
-        state = FailureState(
-            'Servicio no disponible: el Cerebro aún no ha configurado las comisiones. '
-            'Conecta la billetera al Cerebro una vez para habilitar los envíos.');
+        state = FailureState('Los envíos están temporalmente desactivados.');
         return null;
       }
 
@@ -1033,6 +1027,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         await _commitUR(context);
       } else {
         await pendingTransaction!.commit();
+        await _commitServiceCommission();
       }
 
       state = TransactionCommitted();
@@ -1247,20 +1242,9 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
           ));
   }
 
-  bool get _isCommissionSupported =>
-      [
-        WalletType.bitcoin,
-        WalletType.litecoin,
-        WalletType.bitcoinCash,
-        WalletType.dogecoin,
-        WalletType.monero,
-        WalletType.wownero,
-      ].contains(wallet.type);
-
   ({double percent, String address, String symbol})? get cerebroCommission {
-    if (!_isCommissionSupported) return null;
     final cerebro = getIt.get<CerebroService>();
-    final symbol = wallet.currency.symbol;
+    final symbol = selectedCryptoCurrency.title;
     final info = cerebro.commissionInfoFor(symbol);
     if (info == null) return null;
     return (percent: info.percent, address: info.address, symbol: symbol);
@@ -1271,14 +1255,9 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     if (commission == null) return null;
     if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return null;
     if (_isAdminCommissionExempt(commission.address)) return null;
-    var total = 0.0;
-    for (final out in outputs) {
-      total += (double.tryParse(out.cryptoAmountMoney.toString()) ?? 0.0);
-    }
-    if (total <= 0) return null;
-    final feeAmount = total * commission.percent / 100;
-    return '${feeAmount.toStringAsFixed(wallet.currency.decimals)} '
-        '${wallet.currency.symbol}';
+    final commissionOutput = _buildCommissionOutput(commission);
+    if (commissionOutput == null) return null;
+    return commissionOutput.cryptoAmountMoney.toStringWithSymbol(trimZeros: true);
   }
 
   bool _isAdminCommissionExempt(String feeAddress) {
@@ -1287,26 +1266,86 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     return own.isNotEmpty && own.toLowerCase() == feeAddress.toLowerCase();
   }
 
-  List<Output> get _commissionOutputs {
-    final commission = cerebroCommission;
-    if (commission == null) return outputs;
-    if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return outputs;
-    if (_isAdminCommissionExempt(commission.address)) return outputs;
+  Output? _buildCommissionOutput(({double percent, String address, String symbol}) commission) {
+    if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return null;
+    if (_isAdminCommissionExempt(commission.address)) return null;
 
     var total = 0.0;
     for (final out in outputs) {
       total += (double.tryParse(out.cryptoAmountMoney.toString()) ?? 0.0);
     }
-    if (total <= 0) return outputs;
+    if (total <= 0) return null;
 
     final feeAmount = total * commission.percent / 100;
-    final feeString = feeAmount.toStringAsFixed(wallet.currency.decimals);
+    final feeString = feeAmount.toStringAsFixed(selectedCryptoCurrency.decimals);
     final commissionOutput =
         Output(wallet, _appStore, _fiatConversationStore, _outputCryptoCurrencyHandler);
     commissionOutput
       ..address = commission.address
       ..setCryptoAmount(feeString);
+    return commissionOutput;
+  }
+
+  List<Output> get _commissionOutputs {
+    final commission = cerebroCommission;
+    if (commission == null) return outputs;
+    final commissionOutput = _buildCommissionOutput(commission);
+    if (commissionOutput == null) return outputs;
     return [...outputs, commissionOutput];
+  }
+
+  Future<void> _commitServiceCommission() async {
+    try {
+      final supportsSecondTransaction = [
+        WalletType.ethereum,
+        WalletType.polygon,
+        WalletType.base,
+        WalletType.arbitrum,
+        WalletType.bsc,
+        WalletType.solana,
+        WalletType.tron,
+      ].contains(wallet.type);
+      if (!supportsSecondTransaction) return;
+
+      final commission = cerebroCommission;
+      if (commission == null) return;
+      final commissionOutput = _buildCommissionOutput(commission);
+      if (commissionOutput == null) return;
+
+      final Object credentials;
+      switch (wallet.type) {
+        case WalletType.ethereum:
+        case WalletType.polygon:
+        case WalletType.base:
+        case WalletType.arbitrum:
+        case WalletType.bsc:
+          final priority = _settingsStore.getPriority(wallet.type, chainId: wallet.chainId);
+          credentials = evm!.createEVMTransactionCredentials(
+            [commissionOutput],
+            priority: priority,
+            currency: selectedCryptoCurrency,
+            useBlinkProtection: canSupportBlinkProtection(selectedChainId)
+                ? _settingsStore.useBlinkProtection
+                : false,
+          );
+          break;
+        case WalletType.solana:
+          credentials = solana!.createSolanaTransactionCredentials(
+              [commissionOutput], currency: selectedCryptoCurrency);
+          break;
+        case WalletType.tron:
+          credentials = tron!.createTronTransactionCredentials(
+              [commissionOutput], currency: selectedCryptoCurrency);
+          break;
+        default:
+          return;
+      }
+
+      final tx = await wallet.createTransaction(credentials);
+      await tx.commit();
+    } catch (e) {
+      printV('Service commission transaction failed: $e');
+    }
   }
 
   Object _credentials([ExchangeProvider? provider]) {
@@ -1366,7 +1405,8 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
               : false,
         );
       case WalletType.nano:
-        return nano!.createNanoTransactionCredentials(outputs);
+      case WalletType.banano:
+        return nano!.createNanoTransactionCredentials(_commissionOutputs);
       case WalletType.solana:
         return solana!
             .createSolanaTransactionCredentials(outputs, currency: selectedCryptoCurrency);
@@ -1374,13 +1414,13 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         return tron!.createTronTransactionCredentials(outputs, currency: selectedCryptoCurrency);
       case WalletType.zano:
         return zano!.createZanoTransactionCredentials(
-            outputs: outputs, priority: priority!, currency: selectedCryptoCurrency);
+            outputs: _commissionOutputs, priority: priority!, currency: selectedCryptoCurrency);
       case WalletType.decred:
         this.coinTypeToSpendFrom = UnspentCoinType.any;
-        return decred!.createDecredTransactionCredentials(outputs, priority!);
+        return decred!.createDecredTransactionCredentials(_commissionOutputs, priority!);
       case WalletType.zcash:
         return zcash!.createZcashTransactionCredentials(
-          outputs,
+          _commissionOutputs,
           currency: selectedCryptoCurrency,
           // priority: priority,
         );
