@@ -488,6 +488,14 @@ abstract class BalanceViewModelBase with Store {
   }
 
   @computed
+  bool get shouldShowTotalFiatBalance {
+    if (isFiatDisabled) return false;
+    if (balances.isEmpty) return false;
+
+    return true;
+  }
+
+  @computed
   String get combinedFiatBalance {
     if (displayMode == BalanceDisplayMode.hiddenBalance) {
       return "â—â—â—â—â—";
@@ -503,6 +511,29 @@ abstract class BalanceViewModelBase with Store {
           0;
     }
     return ret.toStringAsFixed(2).withLocalSeperator(settingsStore.languageCode);
+  }
+
+  @computed
+  String get totalFiatBalance {
+    if (isFiatDisabled) return '';
+
+    double totalUsd = 0.0;
+    for (final record in balances.values) {
+      totalUsd += _parseFiatBalance(record.fiatAvailableBalanceRaw);
+      totalUsd += _parseFiatBalance(record.fiatAdditionalBalanceRaw);
+      totalUsd += _parseFiatBalance(record.fiatFrozenBalanceRaw);
+      totalUsd += _parseFiatBalance(record.fiatSecondAvailableBalanceRaw);
+      totalUsd += _parseFiatBalance(record.fiatSecondAdditionalBalanceRaw);
+    }
+
+    return '${settingsStore.fiatCurrency} ${_withLocalSeperator(totalUsd.toStringAsFixed(2))}';
+  }
+
+  double _parseFiatBalance(String rawAmount) => double.tryParse(rawAmount) ?? 0;
+
+  String _withLocalSeperator(String rawAmount) {
+    if (settingsStore.languageCode == null) return rawAmount;
+    return rawAmount.withLocalSeperator(settingsStore.languageCode);
   }
 
   Balance _currencyBalance(CryptoCurrency cryptoCurrency) {
