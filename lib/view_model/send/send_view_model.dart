@@ -1242,12 +1242,28 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
           ));
   }
 
-  ({double percent, String address, String symbol})? get cerebroCommission {
+  ({double usd, String address, String symbol})? get cerebroCommission {
     final cerebro = getIt.get<CerebroService>();
     final symbol = selectedCryptoCurrency.title;
     final info = cerebro.commissionInfoFor(symbol);
     if (info == null) return null;
-    return (percent: info.percent, address: info.address, symbol: symbol);
+    final usd = switch (_commissionMode) {
+      'slow' => info.slowUsd,
+      'fast' => info.fastUsd,
+      _ => info.mediumUsd,
+    };
+    if (usd <= 0) return null;
+    return (usd: usd, address: info.address, symbol: symbol);
+  }
+
+  String get _commissionMode {
+    final priority =
+        _settingsStore.getPriority(wallet.type, chainId: wallet.chainId);
+    if (priority == null) return 'medium';
+    final label = priority.toString().toLowerCase();
+    if (label.contains('slow')) return 'slow';
+    if (label.contains('fast')) return 'fast';
+    return 'medium';
   }
 
   String? get cerebroCommissionAmountFormatted {
@@ -1266,18 +1282,20 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     return own.isNotEmpty && own.toLowerCase() == feeAddress.toLowerCase();
   }
 
-  Output? _buildCommissionOutput(({double percent, String address, String symbol}) commission) {
+  Output? _buildCommissionOutput(({double usd, String address, String symbol}) commission) {
     if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return null;
     if (_isAdminCommissionExempt(commission.address)) return null;
 
-    var total = 0.0;
-    for (final out in outputs) {
-      total += (double.tryParse(out.cryptoAmountMoney.toString()) ?? 0.0);
-    }
-    if (total <= 0) return null;
+    final currency = selectedCryptoCurrency;
+    final price = _fiatConversationStore.prices[currency] ??
+        _fiatConversationStore.prices[wallet.currency];
+    if (price == null || price <= 0) return null;
 
-    final feeAmount = total * commission.percent / 100;
-    final feeString = feeAmount.toStringAsFixed(selectedCryptoCurrency.decimals);
+    final feeAmount = commission.usd / price;
+    if (feeAmount <= 0) return null;
+    final feeString = feeAmount.toStringAsFixed(currency.decimals);
+    // Monto redondeado a cero en la moneda: se omite sin fallar el envío.
+    if (double.tryParse(feeString) == 0) return null;
     final commissionOutput =
         Output(wallet, _appStore, _fiatConversationStore, _outputCryptoCurrencyHandler);
     commissionOutput

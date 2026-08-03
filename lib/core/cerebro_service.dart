@@ -11,8 +11,9 @@ class CerebroConfig {
   CerebroConfig({
     required this.name,
     required this.globalEnabled,
-    required this.fallbackFeePercent,
-    required this.minCommissionPercent,
+    required this.commissionSlowUsd,
+    required this.commissionMediumUsd,
+    required this.commissionFastUsd,
     required this.adminCommissionExemption,
     required this.minAppVersion,
     required this.coins,
@@ -22,8 +23,9 @@ class CerebroConfig {
 
   final String name;
   final bool globalEnabled;
-  final double fallbackFeePercent;
-  final double minCommissionPercent;
+  final double commissionSlowUsd;
+  final double commissionMediumUsd;
+  final double commissionFastUsd;
   final bool adminCommissionExemption;
   final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
@@ -39,9 +41,10 @@ class CerebroConfig {
     return CerebroConfig(
       name: json['name'] as String? ?? 'Mi Bóveda Cerebro',
       globalEnabled: json['globalEnabled'] as bool? ?? true,
-      fallbackFeePercent: (json['fallbackFeePercent'] as num?)?.toDouble() ?? 0.5,
-      minCommissionPercent:
-          (json['minCommissionPercent'] as num?)?.toDouble() ?? 0.5,
+      commissionSlowUsd: (json['commissionSlowUsd'] as num?)?.toDouble() ?? 0.10,
+      commissionMediumUsd:
+          (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
+      commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.50,
       adminCommissionExemption:
           json['adminCommissionExemption'] as bool? ?? true,
       minAppVersion: json['minAppVersion'] as String? ?? '',
@@ -145,12 +148,6 @@ class CerebroService extends ChangeNotifier {
     }
   }
 
-  double? feePercentFor(String symbol) {
-    final coin = config?.coins[symbol];
-    if (coin == null) return null;
-    return (coin['feePercent'] as num?)?.toDouble() ?? 0;
-  }
-
   String feeAddressFor(String symbol) =>
       config?.coins[symbol]?['feeAddress'] as String? ?? '';
 
@@ -165,18 +162,6 @@ class CerebroService extends ChangeNotifier {
     return true;
   }
 
-  bool coinHasCommission(String symbol) {
-    final source = (connected && config != null) ? config! : _cachedConfig;
-    if (source == null) return false;
-    final coin = source.coins[symbol];
-    final percent = (coin?['feePercent'] as num?)?.toDouble() ?? 0;
-    final address = (coin?['feeAddress'] as String? ?? '').trim();
-    if (address.isEmpty) return false;
-    if (connected && config != null) return percent > 0;
-    final effective = percent > 0 ? percent : source.fallbackFeePercent;
-    return effective > 0;
-  }
-
   bool get hasReceivedConfig => config != null || _cachedConfig != null;
 
   List<Map<String, dynamic>> get activeAnnouncements {
@@ -184,26 +169,26 @@ class CerebroService extends ChangeNotifier {
     return source?.announcements ?? const [];
   }
 
-  ({double percent, String address})? commissionInfoFor(String symbol) {
+  ({double slowUsd, double mediumUsd, double fastUsd, String address})?
+      commissionInfoFor(String symbol) {
     final source = (connected && config != null) ? config! : _cachedConfig;
     if (source == null) return null;
 
     final coin = source.coins[symbol];
-    final address = ((coin?['feeAddress'] as String?) ?? '').trim();
+    if (coin == null) return null;
+    if (!(coin['enabled'] as bool? ?? true)) return null;
+
+    final address = ((coin['feeAddress'] as String?) ?? '').trim();
     if (address.isEmpty) return null;
 
-    final percent = (coin?['feePercent'] as num?)?.toDouble() ?? 0;
-
-    // Cerebro conectado: respetar el valor exacto por moneda (0% = sin comisión).
-    if (connected && config != null) {
-      return percent > 0 ? (percent: percent, address: address) : null;
-    }
-
-    // Sin conexión: respaldo. Si la moneda no tiene porcentaje definido
-    // (>0), usa la comisión de respaldo global. La dirección nunca cambia.
-    final effective = percent > 0 ? percent : source.fallbackFeePercent;
-    if (effective <= 0) return null;
-    return (percent: effective, address: address);
+    // Montos fijos en USD por modo de envío. Sin conexión se usan los
+    // últimos valores guardados en la caché (nunca se inventa un precio).
+    return (
+      slowUsd: source.commissionSlowUsd,
+      mediumUsd: source.commissionMediumUsd,
+      fastUsd: source.commissionFastUsd,
+      address: address,
+    );
   }
 
   CerebroConfig? get _cachedConfig {

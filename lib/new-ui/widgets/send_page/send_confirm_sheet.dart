@@ -463,7 +463,7 @@ class SendTransactionDetails extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.onTertiaryContainer),
                           ),
                           Text(
-                            '${sendViewModel.cerebroCommission!.percent}% '
+                            '\$${sendViewModel.cerebroCommission!.usd.toStringAsFixed(2)} USD '
                             '(${sendViewModel.cerebroCommissionAmountFormatted ?? '—'})',
                             style: TextStyle(
                                 fontSize: 13,
