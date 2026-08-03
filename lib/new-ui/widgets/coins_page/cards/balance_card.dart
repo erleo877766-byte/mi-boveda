@@ -51,7 +51,6 @@ class BalanceCard extends StatelessWidget {
   final List<BalanceCardAction> actions;
   final Duration designSwitchDuration;
   final VoidCallback? onCustomizeTapped;
-  final String totalFiatBalance;
 
   @override
   Widget build(BuildContext context) {

@@ -517,6 +517,10 @@ abstract class BalanceViewModelBase with Store {
   String get totalFiatBalance {
     if (isFiatDisabled) return '';
 
+    if (displayMode == BalanceDisplayMode.hiddenBalance) {
+      return '●●●●●●';
+    }
+
     double totalUsd = 0.0;
     for (final record in balances.values) {
       totalUsd += _parseFiatBalance(record.fiatAvailableBalanceRaw);

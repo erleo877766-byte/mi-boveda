@@ -1,3 +1,4 @@
+import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/assets_history/asset_details_modal.dart';
 import 'package:cake_wallet/view_model/dashboard/dashboard_view_model.dart';
 import 'package:cw_core/crypto_currency.dart';
@@ -18,7 +19,13 @@ class AssetsSection extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 64.0),
         child: Observer(builder: (context) {
           final hasMweb = dashboardViewModel.hasMweb && dashboardViewModel.mwebEnabled;
-          return ListView.separated(
+          return Column(
+            children: [
+              if (dashboardViewModel.balanceViewModel.shouldShowTotalFiatBalance)
+                _TotalBalanceHeader(
+                    total:
+                        dashboardViewModel.balanceViewModel.totalFiatBalance),
+              ListView.separated(
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(vertical: 18),
             physics: NeverScrollableScrollPhysics(),
@@ -70,6 +77,8 @@ class AssetsSection extends StatelessWidget {
                 );
               });
             },
+          ),
+              ],
           );
         }),
       ),
@@ -85,5 +94,53 @@ class AssetsSection extends StatelessWidget {
     } catch (e) {
       return dashboardViewModel.wallet.currency.chainIconPath ?? "";
     }
+  }
+}
+
+class _TotalBalanceHeader extends StatelessWidget {
+  const _TotalBalanceHeader({required this.total});
+
+  final String total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 18.0, left: 18.0, right: 18.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 16.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.primaryContainer,
+              Theme.of(context).colorScheme.primaryContainer.withAlpha(80),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              S.of(context).total,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onPrimaryContainer.withAlpha(180),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              total,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
