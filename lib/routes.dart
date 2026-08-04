@@ -41,7 +41,12 @@
   static const tradeHistory = '/trade_history';
   static const tradeDetails = '/trade_details';
   static const orderDetails = '/order_details';
+  static const exchangeConfirm = '/exchange_confirm';
+  static const exchangeFunds = '/exchange_funds';
+  static const exchangeTrade = '/exchange_trade';
   static const exchange = '/exchange';
+  static const exchangeTemplate = '/exchange_template';
+  static const exchangeTradeExternalSendPage = '/exchange_trade_external_send_page';
   static const buySellPage = '/buy';
   static const settings = '/settings';
   static const desktop_settings_page = '/desktop_settings_page';

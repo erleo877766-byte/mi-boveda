@@ -58,6 +58,17 @@ import 'package:cake_wallet/new-ui/widgets/addresses_page/address_label_input.da
 import 'package:cake_wallet/new-ui/widgets/coins_page/assets_history/transaction_details_modal.dart';
 import 'package:cake_wallet/new-ui/widgets/receive_page/receive_label_modal.dart';
 import 'package:cake_wallet/new-ui/pages/swap_page.dart';
+import 'package:cake_wallet/order/order.dart';
+import 'package:cake_wallet/exchange/exchange_template.dart';
+import 'package:cake_wallet/store/templates/exchange_template_store.dart';
+import 'package:cake_wallet/view_model/exchange/exchange_view_model.dart';
+import 'package:cake_wallet/view_model/exchange/exchange_trade_view_model.dart';
+import 'package:cake_wallet/src/screens/exchange/exchange_page.dart';
+import 'package:cake_wallet/src/screens/exchange/exchange_template_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_confirm_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_trade_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_trade_external_send_page.dart';
+import 'package:cake_wallet/exchange/provider/trocador_exchange_provider.dart';
 import 'package:cake_wallet/reactions/on_authentication_state_change.dart';
 import 'package:cake_wallet/routes.dart';
 import 'package:cake_wallet/solana/solana.dart';
@@ -285,14 +296,18 @@ var _isSetupFinished = false;
 // late Box<Node> _powNodeSource;
 late Box<Contact> _contactSource;
 late Box<Template> _templates;
+late Box<ExchangeTemplate> _exchangeTemplates;
 late Box<TransactionDescription> _transactionDescriptionBox;
+late Box<Order> _ordersSource;
 late Box<UnspentCoinsInfo> _unspentCoinsInfoSource;
 late Box<PayjoinSession> _payjoinSessionSource;
 late Box<AnonpayInvoiceInfo> _anonpayInvoiceInfoSource;
 Future<void> setup({
   required Box<Contact> contactSource,
   required Box<Template> templates,
+  required Box<ExchangeTemplate> exchangeTemplates,
   required Box<TransactionDescription> transactionDescriptionBox,
+  required Box<Order> ordersSource,
   required Box<UnspentCoinsInfo> unspentCoinsInfoSource,
   required Box<PayjoinSession> payjoinSessionSource,
   required Box<AnonpayInvoiceInfo> anonpayInvoiceInfoSource,
@@ -301,7 +316,9 @@ Future<void> setup({
 }) async {
   _contactSource = contactSource;
   _templates = templates;
+  _exchangeTemplates = exchangeTemplates;
   _transactionDescriptionBox = transactionDescriptionBox;
+  _ordersSource = ordersSource;
   _unspentCoinsInfoSource = unspentCoinsInfoSource;
   _payjoinSessionSource = payjoinSessionSource;
   _anonpayInvoiceInfoSource = anonpayInvoiceInfoSource;
@@ -347,9 +364,16 @@ Future<void> setup({
   getIt.registerSingleton<AnonpayTransactionsStore>(
       AnonpayTransactionsStore(anonpayInvoiceInfoSource: _anonpayInvoiceInfoSource));
   getIt.registerSingleton<SeedSettingsStore>(SeedSettingsStore());
-  getIt.registerSingleton<TradeMonitor>(TradeMonitor());
-  getIt.registerSingleton<TradesStore>(TradesStore());
-  getIt.registerSingleton<OrdersStore>(OrdersStore());
+  getIt.registerSingleton<TradeMonitor>(TradeMonitor(
+    tradesStore: getIt.get<TradesStore>(),
+    appStore: getIt.get<AppStore>(),
+    preferences: getIt.get<SharedPreferences>(),
+  ));
+  getIt.registerSingleton<TradesStore>(TradesStore(appStore: getIt.get<AppStore>()));
+  getIt.registerSingleton<OrdersStore>(
+      OrdersStore(ordersSource: _ordersSource, settingsStore: getIt.get<SettingsStore>()));
+  getIt.registerSingleton<ExchangeTemplateStore>(
+      ExchangeTemplateStore(templateSource: _exchangeTemplates));
   getIt.registerSingleton<TradeFilterStore>(TradeFilterStore());
   getIt.registerSingleton<OrderFilterStore>(OrderFilterStore());
 
@@ -492,6 +516,19 @@ Future<void> setup({
       appStore: getIt.get<AppStore>(),
       settingsStore: getIt.get<SettingsStore>(),
       fiatConversionStore: getIt.get<FiatConversionStore>()));
+
+  getIt.registerFactory(
+    () => ExchangeViewModel(
+      getIt.get<AppStore>(),
+      getIt.get<ExchangeTemplateStore>(),
+      getIt.get<TradesStore>(),
+      getIt.get<SharedPreferences>(),
+      getIt.get<ContactListViewModel>(),
+      getIt.get<UnspentCoinsListViewModel>(),
+      getIt.get<FeesViewModel>(),
+      getIt.get<FiatConversionStore>(),
+    ),
+  );
 
   getIt.registerFactory(() => DashboardViewModel(
       tradeMonitor: getIt.get<TradeMonitor>(),
@@ -827,9 +864,9 @@ Future<void> setup({
             ? getIt<HardwareWalletViewModel>(
                 param1: getIt.get<AppStore>().wallet!.hardwareWalletType!)
             : null,
-        coinTypeToSpendFrom: coinTypeToSpendFrom ?? UnspentCoinType.nonMweb,
         getIt.get<UnspentCoinsListViewModel>(param1: coinTypeToSpendFrom),
-        getIt.get<FeesViewModel>()),
+        getIt.get<FeesViewModel>(),
+        coinTypeToSpendFrom: coinTypeToSpendFrom ?? UnspentCoinType.nonMweb),
   );
 
   getIt.registerFactoryParam<SendPage, PaymentRequest?, UnspentCoinType?>(
@@ -1056,6 +1093,11 @@ Future<void> setup({
 
   getIt.registerFactory(() => PrivacyPage(getIt.get<PrivacySettingsViewModel>()));
 
+  getIt.registerFactory(() => TrocadorExchangeProvider());
+
+  getIt.registerFactory(() => TrocadorProvidersViewModel(
+      getIt.get<SettingsStore>(), getIt.get<TrocadorExchangeProvider>()));
+
   getIt.registerFactory(() => TrocadorProvidersPage(getIt.get<TrocadorProvidersViewModel>()));
 
   getIt.registerFactory(() => DomainLookupsPage(getIt.get<ConnectionSyncViewModel>()));
@@ -1115,6 +1157,44 @@ Future<void> setup({
       getIt.get<BalanceViewModel>(),
     ),
   );
+
+  getIt.registerFactory(
+    () => ExchangeTradeViewModel(
+      wallet: getIt.get<AppStore>().wallet!,
+      tradesStore: getIt.get<TradesStore>(),
+      sendViewModel: getIt.get<SendViewModel>(),
+      feesViewModel: getIt.get<FeesViewModel>(),
+      fiatConversionStore: getIt.get<FiatConversionStore>(),
+    ),
+  );
+
+  getIt.registerFactoryParam<ExchangePage, PaymentRequest?, void>(
+      (PaymentRequest? paymentRequest, __) {
+    return ExchangePage(getIt.get<ExchangeViewModel>(), getIt.get<AuthService>(),
+        getIt.get<AddressResolverService>(), paymentRequest);
+  });
+
+  getIt.registerFactoryParam<NewSwapPage, PaymentRequest?, CryptoCurrency?>(
+      (PaymentRequest? paymentRequest, CryptoCurrency? initialCurrency) {
+    return NewSwapPage(
+      getIt.get<ExchangeViewModel>(),
+      getIt.get<AuthService>(),
+      getIt.get<AddressResolverService>(),
+      paymentRequest,
+      walletSwitcherViewModel: getIt.get<WalletSwitcherViewModel>(),
+      initialCurrency: initialCurrency,
+    );
+  });
+
+  getIt.registerFactory(() => ExchangeConfirmPage(tradesStore: getIt.get<TradesStore>()));
+
+  getIt.registerFactory(
+      () => ExchangeTradePage(exchangeTradeViewModel: getIt.get<ExchangeTradeViewModel>()));
+
+  getIt.registerFactory(() =>
+      ExchangeTradeExternalSendPage(exchangeTradeViewModel: getIt.get<ExchangeTradeViewModel>()));
+
+  getIt.registerFactory(() => ExchangeTemplatePage(getIt.get<ExchangeViewModel>()));
 
   getIt.registerFactory(() => BackgroundSyncPage(getIt.get<DashboardViewModel>()));
 

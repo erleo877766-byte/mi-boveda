@@ -67,6 +67,11 @@ import 'package:cake_wallet/src/screens/nodes/pow_node_create_or_edit_page.dart'
 import 'package:cake_wallet/src/screens/payjoin_details/payjoin_details_page.dart';
 import 'package:cake_wallet/src/screens/pin_code/pin_code_widget.dart';
 import 'package:cake_wallet/src/screens/receive/address_list_page.dart';
+import 'package:cake_wallet/src/screens/exchange/exchange_page.dart';
+import 'package:cake_wallet/src/screens/exchange/exchange_template_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_confirm_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_trade_page.dart';
+import 'package:cake_wallet/src/screens/exchange_trade/exchange_trade_external_send_page.dart';
 import 'package:cake_wallet/src/screens/receive/anonpay_invoice_page.dart';
 import 'package:cake_wallet/src/screens/receive/anonpay_receive_page.dart';
 import 'package:cake_wallet/src/screens/receive/fullscreen_qr_page.dart';
@@ -448,6 +453,12 @@ Route<dynamic> createRoute(RouteSettings settings) {
       return CupertinoPageRoute<void>(
           builder: (context) => getIt.get<ReceivePage>(), settings: settings);
 
+    case Routes.exchangeTrade:
+      return CupertinoPageRoute<void>(builder: (_) => getIt.get<ExchangeTradePage>());
+
+    case Routes.exchangeConfirm:
+      return MaterialPageRoute<void>(builder: (_) => getIt.get<ExchangeConfirmPage>());
+
     case Routes.addressPage:
       return handleRouteWithPlatformAwareness((context) => getIt.get<AddressPage>(),
           settings: settings);
@@ -657,6 +668,14 @@ Route<dynamic> createRoute(RouteSettings settings) {
       return handleRouteWithPlatformAwareness(
         (context) => getIt.get<WalletKeysPage>(),
       );
+
+    case Routes.exchange:
+      return handleRouteWithPlatformAwareness(
+        (context) => getIt.get<ExchangePage>(param1: settings.arguments as PaymentRequest?),
+      );
+
+    case Routes.exchangeTemplate:
+      return CupertinoPageRoute<void>(builder: (_) => getIt.get<ExchangeTemplatePage>());
 
     case Routes.rescan:
       final page = getIt.get<RescanPage>();
@@ -881,6 +900,11 @@ Route<dynamic> createRoute(RouteSettings settings) {
       return MaterialPageRoute<void>(
         fullscreenDialog: true,
         builder: (_) => getIt.get<SeedVerificationPage>(),
+      );
+
+    case Routes.exchangeTradeExternalSendPage:
+      return MaterialPageRoute<void>(
+        builder: (_) => getIt.get<ExchangeTradeExternalSendPage>(),
       );
 
     case Routes.backgroundSync:

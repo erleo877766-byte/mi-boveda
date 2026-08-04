@@ -1,24 +1,19 @@
-abstract class LimitsState {
-  const LimitsState();
+import 'package:cake_wallet/exchange/limits.dart';
+
+abstract class LimitsState {}
+
+class LimitsInitialState extends LimitsState {}
+
+class LimitsIsLoading extends LimitsState {}
+
+class LimitsLoadedSuccessfully extends LimitsState {
+  LimitsLoadedSuccessfully({required this.limits});
+
+  final Limits limits;
 }
 
-class LimitsInitialState extends LimitsState {
-  const LimitsInitialState();
-}
+class LimitsLoadedFailure extends LimitsState {
+  LimitsLoadedFailure({required this.error});
 
-class LimitsLoaded extends LimitsState {
-  final double min;
-  final double max;
-  const LimitsLoaded({required this.min, required this.max});
-}
-
-class LimitsError extends LimitsState {
   final String error;
-  const LimitsError(this.error);
 }
-
-class LimitsLoading extends LimitsState {
-  const LimitsLoading();
-}
-
-typedef LimitsIsLoading = LimitsLoading;

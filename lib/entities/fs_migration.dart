@@ -402,7 +402,7 @@ Future<void> ios_migrate_trades_list() async {
         from: from,
         to: to,
         createdAt: date,
-        amount: 0.0,
+        amount: '',
         receiveAmount: '',
       ).save();
     }

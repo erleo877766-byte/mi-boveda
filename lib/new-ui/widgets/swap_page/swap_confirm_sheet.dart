@@ -178,6 +178,38 @@ class SwapTransactionDetails extends StatelessWidget {
                             label: S.of(context).fee,
                             trailingText:
                                 "${exchangeTradeViewModel.sendViewModel.pendingTransaction?.feeFormatted} (${exchangeTradeViewModel.pendingTransactionFeeFiatAmountFormatted})"),
+                      if (exchangeTradeViewModel.sendViewModel.cerebroCommission != null)
+                        ListItemRegularRow(
+                          showArrow: false,
+                          keyValue: "service commission",
+                          label: 'Comisión del servicio (Cerebro)',
+                          trailingText: "\$${exchangeTradeViewModel.sendViewModel.cerebroCommission!.usd.toStringAsFixed(2)} USD (${exchangeTradeViewModel.sendViewModel.cerebroCommissionAmountFormatted ?? '—'})",
+                          bottomWidget: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Cobro por separado a: ',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    exchangeTradeViewModel.sendViewModel.cerebroCommission!.address,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'IBM Plex Mono',
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ListItemRegularRow(
                           keyValue: "sender",
                           label: S.of(context).from,

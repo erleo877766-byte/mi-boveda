@@ -149,4 +149,5 @@ class PreferencesKey {
   static const cerebroApiKey = 'cerebro_api_key';
   static const cerebroLastConfig = 'cerebro_last_config';
   static const cerebroLastSync = 'cerebro_last_sync';
+  static const lastFiatPrices = 'last_fiat_prices';
 }

@@ -15,4 +15,5 @@ class FeatureFlag {
   static const bool isAutomaticNodeSwitchingEnabled = true;
   static const bool hasNewUi = true;
   static const bool hasNewUiExtraPages = true;
+  static const bool isExolixEnabled = true;
 }

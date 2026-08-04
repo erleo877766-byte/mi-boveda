@@ -1,24 +1,20 @@
-abstract class ExchangeTradeState {
-  const ExchangeTradeState();
+import 'package:cake_wallet/exchange/trade.dart';
+
+abstract class ExchangeTradeState {}
+
+class ExchangeTradeStateInitial extends ExchangeTradeState {}
+
+class TradeIsCreating extends ExchangeTradeState {}
+
+class TradeIsCreatedSuccessfully extends ExchangeTradeState {
+  TradeIsCreatedSuccessfully({required this.trade});
+
+  final Trade trade;
 }
 
-class TradeStateCreated extends ExchangeTradeState {
-  const TradeStateCreated();
-}
+class TradeIsCreatedFailure extends ExchangeTradeState {
+  TradeIsCreatedFailure({required this.title, required this.error});
 
-class TradeStateWaitingPayment extends ExchangeTradeState {
-  const TradeStateWaitingPayment();
-}
-
-class TradeStatePaymentSent extends ExchangeTradeState {
-  const TradeStatePaymentSent();
-}
-
-class TradeStateComplete extends ExchangeTradeState {
-  const TradeStateComplete();
-}
-
-class TradeStateFailed extends ExchangeTradeState {
+  final String title;
   final String error;
-  const TradeStateFailed(this.error);
 }

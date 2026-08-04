@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cake_wallet/reactions/fiat_rate_update.dart';
 import 'package:cake_wallet/reactions/on_current_fiat_api_mode_change.dart';
 import 'package:cake_wallet/reactions/on_current_node_change.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +15,7 @@ import 'package:cake_wallet/store/authentication_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';
 import 'package:cake_wallet/core/node_switching_service.dart';
 import 'package:cake_wallet/core/cerebro_service.dart';
+import 'package:cake_wallet/services/fiat_refresh_service.dart';
 import 'package:cake_wallet/utils/feature_flag.dart';
 
 Future<void> bootstrapOffline() async {
@@ -42,7 +42,14 @@ void bootstrapOnline(GlobalKey<NavigatorState> navigatorKey, {required bool load
   startCurrentFiatChangeReaction(appStore, settingsStore, fiatConversionStore);
   startCurrentFiatApiModeChangeReaction(appStore, settingsStore, fiatConversionStore);
   startOnCurrentNodeChangeReaction(appStore);
-  startFiatRateUpdate(appStore, settingsStore, fiatConversionStore);
+
+  final fiatRefreshService = FiatRefreshService(
+    appStore: appStore,
+    settingsStore: settingsStore,
+    fiatConversionStore: fiatConversionStore,
+    prefs: getIt.get<SharedPreferences>(),
+  );
+  fiatRefreshService.startAutomaticPriceRefresh();
 
   if (FeatureFlag.isAutomaticNodeSwitchingEnabled) {
     getIt.get<NodeSwitchingService>().startHealthCheckTimer();

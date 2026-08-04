@@ -326,7 +326,7 @@ class _SwapDetailsContent extends StatelessWidget {
                 label: 'You Get',
                 value: '${trade.receiveAmount ?? '0'} ${trade.to?.title ?? ''}',
                 valueFiatFormatted: exchangeTradeViewModel
-                    .getReceiveAmountFiatFormatted(trade.receiveAmount),
+                    .getReceiveAmountFiatFormatted(trade.receiveAmount ?? '0.0'),
               ),
               const SizedBox(height: 8),
               Container(

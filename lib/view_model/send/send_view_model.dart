@@ -905,7 +905,7 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
       final bool isTradeTx = trade != null && provider != null;
 
       if (isTradeTx) {
-        final tradeAmountDouble = trade.amount;
+        final tradeAmountDouble = double.tryParse(trade.amount) ?? 0.0;
         if (tradeAmountDouble <= 0) throw Exception('Trade amount must be greater than 0');
 
         if (trade.isSendAll == true) {
