@@ -364,12 +364,12 @@ Future<void> setup({
   getIt.registerSingleton<AnonpayTransactionsStore>(
       AnonpayTransactionsStore(anonpayInvoiceInfoSource: _anonpayInvoiceInfoSource));
   getIt.registerSingleton<SeedSettingsStore>(SeedSettingsStore());
+  getIt.registerSingleton<TradesStore>(TradesStore(appStore: getIt.get<AppStore>()));
   getIt.registerSingleton<TradeMonitor>(TradeMonitor(
     tradesStore: getIt.get<TradesStore>(),
     appStore: getIt.get<AppStore>(),
     preferences: getIt.get<SharedPreferences>(),
   ));
-  getIt.registerSingleton<TradesStore>(TradesStore(appStore: getIt.get<AppStore>()));
   getIt.registerSingleton<OrdersStore>(
       OrdersStore(ordersSource: _ordersSource, settingsStore: getIt.get<SettingsStore>()));
   getIt.registerSingleton<ExchangeTemplateStore>(
