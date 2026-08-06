@@ -524,21 +524,36 @@ class _NewSwapPageState extends State<NewSwapPage> {
                                         }
                                       },
                                       currencyValueValidator: (value) {
-                                        return !widget.exchangeViewModel.isFixedRateMode &&
-                                                value != S.of(context).all
-                                            ? AmountValidator(
-                                                isAutovalidate: true,
-                                                currency: widget.exchangeViewModel.isFixedRateMode
-                                                    ? widget.exchangeViewModel.receiveCurrency
-                                                    : widget.exchangeViewModel.depositCurrency,
-                                                minValue:
-                                                    widget.exchangeViewModel.limits.min.toString(),
-                                                maxValue:
-                                                    widget.exchangeViewModel.limits.max.toString(),
-                                                amountParsingProxy:
-                                                    widget.exchangeViewModel.amountParsingProxy,
-                                              ).call(value)
-                                            : null;
+                                        if (widget.exchangeViewModel.isFixedRateMode ||
+                                            value == S.of(context).all) {
+                                          return null;
+                                        }
+                                        final amountError = AmountValidator(
+                                          isAutovalidate: true,
+                                          currency: widget.exchangeViewModel.isFixedRateMode
+                                              ? widget.exchangeViewModel.receiveCurrency
+                                              : widget.exchangeViewModel.depositCurrency,
+                                          minValue:
+                                              widget.exchangeViewModel.limits.min.toString(),
+                                          maxValue:
+                                              widget.exchangeViewModel.limits.max.toString(),
+                                          amountParsingProxy:
+                                              widget.exchangeViewModel.amountParsingProxy,
+                                        ).call(value);
+                                        if (amountError != null) return amountError;
+
+                                        // Validar contra el saldo real de la cuenta
+                                        final amountDouble =
+                                            double.tryParse((value ?? '').replaceAll(',', '.'));
+                                        final balance =
+                                            widget.exchangeViewModel.availableDepositBalance;
+                                        if (amountDouble != null &&
+                                            balance != null &&
+                                            amountDouble > balance) {
+                                          return S.current.tx_wrong_balance_exception(
+                                              widget.exchangeViewModel.depositCurrency.title);
+                                        }
+                                        return null;
                                       },
                                       addressTextFieldValidator: AddressValidator(
                                           type: widget.exchangeViewModel.depositCurrency),
@@ -740,6 +755,10 @@ class SwapProviderPreview extends StatelessWidget {
           ? exchangeViewModel.bestRate
           : exchangeViewModel.forcedProviderRate;
 
+      final noProviders = provider == null &&
+          exchangeViewModel.hasCompletedProviderSearch &&
+          !exchangeViewModel.hasAvailableProviders;
+
       return GestureDetector(
         onTap: () {
           if (provider != null) {
@@ -766,9 +785,12 @@ class SwapProviderPreview extends StatelessWidget {
                   children: [
                     if (provider != null)
                       CakeImageWidget(imageUrl: provider.description.image, width: 28, height: 28),
-                    if (provider == null) CupertinoActivityIndicator(),
+                    if (provider == null && !noProviders) CupertinoActivityIndicator(),
                     Text(
-                      provider?.title ?? "${S.of(context).finding_provider}...",
+                      provider?.title ??
+                          (noProviders
+                              ? S.of(context).no_providers_available
+                              : "${S.of(context).finding_provider}..."),
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

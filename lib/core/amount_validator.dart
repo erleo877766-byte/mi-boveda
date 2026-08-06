@@ -123,6 +123,11 @@ class AmountMinValidator extends Validator<String> {
       return false;
     }
 
+    // 0 significa "sin límite mínimo" (aún no cargó o el proveedor no define mínimo)
+    if (minInDouble <= 0) {
+      return true;
+    }
+
     return valueInDouble >= minInDouble;
   }
 
@@ -162,6 +167,12 @@ class AmountMaxValidator extends Validator<String> {
     if (valueInDouble == null || maxInDouble == null) {
       return false;
     }
+
+    // 0 significa "sin límite máximo" (aún no cargó o el proveedor no define máximo)
+    if (maxInDouble <= 0) {
+      return true;
+    }
+
     return valueInDouble <= maxInDouble;
   }
 

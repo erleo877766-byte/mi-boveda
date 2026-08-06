@@ -304,16 +304,6 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
 
   List<ExchangeProvider> get _allProviders => [
         ChangeNowExchangeProvider(settingsStore: _settingsStore),
-        // SideShiftExchangeProvider(),
-        ChainflipExchangeProvider(),
-        if (FeatureFlag.isExolixEnabled) ExolixExchangeProvider(),
-        SwapTradeExchangeProvider(),
-        LetsExchangeExchangeProvider(),
-        StealthExExchangeProvider(),
-        XOSwapExchangeProvider(),
-        SwapsXyzExchangeProvider(),
-        JupiterExchangeProvider(),
-        NearIntentsExchangeProvider(),
         TrocadorExchangeProvider(
             useTorOnly: _useTorOnly, providerStates: _settingsStore.trocadorProviderStates),
       ];
@@ -323,6 +313,17 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
 
   @observable
   ExchangeProvider? providerDisplay;
+
+  /// true cuando la última búsqueda de proveedores no encontró ninguno
+  /// disponible (rates = 0), para que la UI muestre un mensaje claro en vez
+  /// de quedarse cargando infinitamente.
+  @observable
+  bool hasAvailableProviders = false;
+
+  /// true una vez que la primera búsqueda de proveedores terminó, para
+  /// diferenciar "cargando" de "sin proveedores".
+  @observable
+  bool hasCompletedProviderSearch = false;
 
   /// Maps in dart are not sorted by default
   /// SplayTreeMap is a map sorted by keys
@@ -511,6 +512,27 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     final bal = balanceCurrency != null ? wallet.balance[balanceCurrency]?.available : null;
     if (bal == null) return null;
     return amountParsingProxy.asDisplayString(bal);
+  }
+
+  /// Saldo disponible de la moneda de depósito como número, para poder
+  /// comparar en el formulario si el monto supera lo que realmente se tiene.
+  @computed
+  double? get availableDepositBalance {
+    CryptoCurrency? balanceCurrency;
+    if (isEVMCompatibleChain(wallet.type) ||
+        wallet.type == WalletType.solana ||
+        wallet.type == WalletType.tron) {
+      balanceCurrency = wallet.balance.keys.firstWhereOrNull(
+        (c) =>
+            c.title == depositCurrency.title &&
+            (c.tag == depositCurrency.tag || c.tag == depositCurrency.title),
+      );
+    } else {
+      balanceCurrency = depositCurrency;
+    }
+    final bal = balanceCurrency != null ? wallet.balance[balanceCurrency]?.available : null;
+    if (bal == null) return null;
+    return double.tryParse(bal.toString());
   }
 
   //* Still open to further optimize these checks
@@ -979,7 +1001,13 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     if (_sortedAvailableProviders.isNotEmpty) {
       bestRate = _sortedAvailableProviders.keys.first;
       bestRateProvider = _sortedAvailableProviders.values.first;
+      hasAvailableProviders = true;
+    } else {
+      bestRate = 0.0;
+      bestRateProvider = null;
+      hasAvailableProviders = false;
     }
+    hasCompletedProviderSearch = true;
   }
 
   @action

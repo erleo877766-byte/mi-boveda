@@ -4,98 +4,34 @@ import 'package:cw_core/crypto_currency.dart';
 import 'package:cake_wallet/entities/fiat_currency.dart';
 import 'dart:convert';
 
-const _coingeckoApiAuthority = 'api.coingecko.com';
-const _coingeckoApiPath = '/api/v3/simple/price';
+const _binanceApiAuthority = 'api.binance.com';
+const _binanceApiPath = '/api/v3/ticker/price';
 
-const Map<String, String> _tickerToCoingeckoId = {
-  'BTC': 'bitcoin',
-  'XMR': 'monero',
-  'LTC': 'litecoin',
-  'ETH': 'ethereum',
-  'BCH': 'bitcoin-cash',
-  'BNB': 'binancecoin',
-  'SOL': 'solana',
-  'TRX': 'tron',
-  'XNO': 'nano',
-  'ZEC': 'zcash',
-  'DCR': 'decred',
-  'ZANO': 'zano',
-  'DOGE': 'dogecoin',
-  'BAN': 'banano',
-  'ADA': 'cardano',
-  'DASH': 'dash',
-  'EOS': 'eos',
-  'XRP': 'ripple',
-  'XLM': 'stellar',
-  'KMD': 'komodo',
-  'PIVX': 'pivx',
-  'XHV': 'haven',
-  'MANA': 'decentraland',
-  'MKR': 'maker',
-  'NEAR': 'near',
-  'OXT': 'orchid',
-  'PAXG': 'pax-gold',
-  'RUNE': 'thorchain',
-  'RVN': 'ravencoin',
-  'SCRT': 'secret',
-  'UNI': 'uniswap',
-  'STX': 'blockstack',
-  'SHIB': 'shiba-inu',
-  'AAVE': 'aave',
-  'ARB': 'arbitrum',
-  'BAT': 'basic-attention-token',
-  'COMP': 'compound-governance-token',
-  'CRO': 'crypto-com-chain',
-  'ENS': 'ethereum-name-service',
-  'FTM': 'fantom',
-  'FRAX': 'frax',
-  'GUSD': 'gemini-dollar',
-  'GTC': 'gitcoin',
-  'GRT': 'the-graph',
-  'LDO': 'lido-dao',
-  'NEXO': 'nexo',
-  'CAKE': 'pancakeswap-token',
-  'PEPE': 'pepe',
-  'STORJ': 'storj',
-  'TUSD': 'true-usd',
-  'WBTC': 'wrapped-bitcoin',
-  'WETH': 'weth',
-  'ZRX': 'ox',
-  'DYDX': 'dydx-chain',
-  'STETH': 'staked-ether',
-  'USDT': 'tether',
-  'USDC': 'usd-coin',
-  'DAI': 'dai',
-  'MATIC': 'matic-network',
-  'SC': 'siacoin',
-  'HBAR': 'hedera-hashgraph',
-  'BTT': 'bittorrent',
-  'BTTC': 'bittorrent',
-  'FIRO': 'firo',
-  'APE': 'apecoin',
-  'AVAX': 'avalanche-2',
-  'FLIP': 'chainflip',
-  'WOW': 'wownero',
-  'TON': 'the-open-network',
-  'KAS': 'kaspa',
-  'DEPS': 'decentralized-euro-protocol-share',
-  'NDEPS': 'decentralized-euro-protocol-share',
+/// Símbolos de Binance que NO siguen el patrón TICKER + 'USDT'.
+/// Todo lo demás se construye automáticamente como '${ticker}USDT'.
+const Map<String, String> _tickerToBinanceSymbol = {
+  'MATIC': 'POLUSDT',
+  'BTT': 'BTTUSDT',
+  'BTTC': 'BTTCUSDT',
+  'XNO': 'XNOUSDT',
+  'WBTC': 'WBTCUSDT',
+  'WETH': 'WETHUSDT',
+  'STETH': 'STETHUSDT',
+  'ARB': 'ARBUSDT',
+  'FLIP': 'FLIPUSDT',
+  'TON': 'TONUSDT',
 };
 
 Future<double> _fetchPrice(String crypto, String fiat, bool torOnly) async {
   final ticker = crypto.split(".").first;
-  final coingeckoId = _tickerToCoingeckoId[ticker];
-  if (coingeckoId == null) {
-    return 0.0;
-  }
 
-  num price = 0.0;
+  // El par USDT/USDT no existe; el precio de una stablecoin es ~1
+  if (ticker == 'USDT') return 1.0;
+
+  final symbol = _tickerToBinanceSymbol[ticker] ?? '${ticker}USDT';
 
   try {
-    final uri = Uri.https(_coingeckoApiAuthority, _coingeckoApiPath, {
-      'ids': coingeckoId,
-      'vs_currencies': fiat,
-    });
+    final uri = Uri.https(_binanceApiAuthority, _binanceApiPath, {'symbol': symbol});
 
     final response = await ProxyWrapper()
         .get(clearnetUri: uri, onionUri: uri)
@@ -106,14 +42,37 @@ Future<double> _fetchPrice(String crypto, String fiat, bool torOnly) async {
     }
 
     final responseJSON = json.decode(response.body) as Map<String, dynamic>;
-    final coinData = responseJSON[coingeckoId] as Map<String, dynamic>?;
-    if (coinData != null && coinData.containsKey(fiat)) {
-      price = coinData[fiat] as num;
+    final priceStr = responseJSON['price'] as String?;
+    final usdPrice = double.tryParse(priceStr ?? '');
+    if (usdPrice == null || usdPrice <= 0) {
+      return 0.0;
     }
 
-    return price.toDouble();
+    if (fiat == 'USD') {
+      return usdPrice;
+    }
+
+    // Conversión de fiat usando el par FIATUSDT de Binance (p.ej. EURUSDT)
+    final fiatSymbol = '${fiat}USDT';
+    final fiatUri = Uri.https(_binanceApiAuthority, _binanceApiPath, {'symbol': fiatSymbol});
+    final fiatResponse = await ProxyWrapper()
+        .get(clearnetUri: fiatUri, onionUri: fiatUri)
+        .timeout(Duration(seconds: 15));
+
+    if (fiatResponse.statusCode != 200) {
+      return 0.0;
+    }
+
+    final fiatJson = json.decode(fiatResponse.body) as Map<String, dynamic>;
+    final fiatUsd = double.tryParse((fiatJson['price'] as String?) ?? '');
+    if (fiatUsd == null || fiatUsd <= 0) {
+      return 0.0;
+    }
+
+    return usdPrice / fiatUsd;
   } catch (e) {
-    return price.toDouble();
+    printV('FiatConversionService: $e');
+    return 0.0;
   }
 }
 
