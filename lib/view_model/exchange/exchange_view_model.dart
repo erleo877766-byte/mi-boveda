@@ -658,10 +658,11 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     var amount = '0.00';
     try {
       if (_receiveAmount != null) {
-        if (fiatConversionStore.prices[receiveCurrency] == null) return '';
+        final price = fiatConversionStore.prices[receiveCurrency];
+        if (price == null || price == 0.0) return '';
 
         amount = calculateFiatAmount(
-          price: fiatConversionStore.prices[receiveCurrency]!,
+          price: price,
           cryptoAmount: _receiveAmount.toString(),
         );
       }
@@ -676,10 +677,11 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     var amount = '0.00';
     try {
       if (_depositAmount != null) {
-        if (fiatConversionStore.prices[depositCurrency] == null) return '';
+        final price = fiatConversionStore.prices[depositCurrency];
+        if (price == null || price == 0.0) return '';
 
         amount = calculateFiatAmount(
-          price: fiatConversionStore.prices[depositCurrency]!,
+          price: price,
           cryptoAmount: _depositAmount.toString(),
         );
       }
@@ -694,10 +696,11 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     var amount = '';
     try {
       if (_receiveAmount != null) {
-        if (fiatConversionStore.prices[receiveCurrency] == null) return '';
+        final price = fiatConversionStore.prices[receiveCurrency];
+        if (price == null || price == 0.0) return '';
 
         amount = calculateFiatAmount(
-            price: fiatConversionStore.prices[receiveCurrency]!,
+            price: price,
             cryptoAmount: _receiveAmount.toString(),
             raw: true);
       }
@@ -712,10 +715,11 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     var amount = '';
     try {
       if (_depositAmount != null) {
-        if (fiatConversionStore.prices[depositCurrency] == null) return '';
+        final price = fiatConversionStore.prices[depositCurrency];
+        if (price == null || price == 0.0) return '';
 
         amount = calculateFiatAmount(
-          price: fiatConversionStore.prices[depositCurrency]!,
+          price: price,
           cryptoAmount: _depositAmount.toString(),
           raw: true,
         );

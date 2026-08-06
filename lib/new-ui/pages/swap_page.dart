@@ -736,6 +736,13 @@ class _NewSwapPageState extends State<NewSwapPage> {
 
     if (widget.exchangeViewModel.depositAmount.isEmpty) return true;
 
+    // Sin tasa disponible (sin proveedor con cotización): bloquea el botón
+    // y deja que SwapProviderPreview muestre el aviso "no hay proveedores".
+    if (widget.exchangeViewModel.hasCompletedProviderSearch &&
+        !widget.exchangeViewModel.hasAvailableProviders) {
+      return true;
+    }
+
     return false;
   }
 }

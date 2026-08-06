@@ -325,6 +325,8 @@ class ChangeNowExchangeProvider extends ExchangeProvider {
         return 'btc';
       case CryptoCurrency.arb:
         return 'arbitrum';
+      case CryptoCurrency.nano:
+        return 'nano';
       default:
         return currency.tag != null ? _normalizeTag(currency.tag!) : currency.title.toLowerCase();
     }
