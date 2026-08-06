@@ -304,8 +304,6 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
 
   List<ExchangeProvider> get _allProviders => [
         ChangeNowExchangeProvider(settingsStore: _settingsStore),
-        TrocadorExchangeProvider(
-            useTorOnly: _useTorOnly, providerStates: _settingsStore.trocadorProviderStates),
       ];
 
   @observable
