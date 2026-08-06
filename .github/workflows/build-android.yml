@@ -191,6 +191,17 @@ jobs:
       - name: Generate secrets
         run: dart run tool/generate_new_secrets.dart
 
+      - name: Inject ChangeNOW API key (from private secret)
+        env:
+          CHANGENOW_API_KEY: ${{ secrets.CHANGENOW_API_KEY }}
+        run: |
+          if [ -n "$CHANGENOW_API_KEY" ]; then
+            sed -i "s/const changeNowCakeWalletApiKey = '';/const changeNowCakeWalletApiKey = '$CHANGENOW_API_KEY';/" lib/.secrets.g.dart
+            echo "ChangeNOW API key injected."
+          else
+            echo "CHANGENOW_API_KEY not set; skipping injection."
+          fi
+
       - name: Generate key and key properties
         run: |
           pushd /opt/generic_cache || mkdir -p /opt/generic_cache && pushd /opt/generic_cache
