@@ -34,6 +34,12 @@ class SwapLimitPopup extends StatelessWidget {
           final neededAmount = (tooLarge ? max : min).toString().withMaxDecimals(8);
           final currency = exchangeViewModel.depositCurrency.title;
 
+          // Mensaje claro con el mínimo real de ChangeNOW:
+          // "Mín.: 18.0545715 XNO" (o el máximo si es demasiado grande).
+          final message = tooLarge
+              ? "$askText $neededAmount $currency"
+              : "${S.of(context).min_amount(neededAmount)} $currency";
+
           return Padding(
             padding: const EdgeInsets.only(top: 12.0),
             child: AnimatedOpacity(
@@ -48,7 +54,7 @@ class SwapLimitPopup extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Text(
-                    "$askText $neededAmount $currency",
+                    message,
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(color: outlineColor, fontWeight: FontWeight.w500, fontSize: 12),

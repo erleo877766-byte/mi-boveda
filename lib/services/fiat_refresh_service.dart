@@ -17,10 +17,11 @@ import 'package:cw_core/utils/print_verbose.dart';
 import 'package:cw_core/wallet_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Mantiene los precios de mercado (CoinGecko) siempre frescos y nunca en cero.
+/// Mantiene los precios de mercado (Binance + CoinGecko) siempre frescos y
+/// nunca en cero.
 ///
 /// - Al abrir la app carga los últimos precios guardados (sin esperar a la red).
-/// - Cada 60 segundos busca precios nuevos para la moneda de la billetera y
+/// - Cada 30 segundos busca precios nuevos para la moneda de la billetera y
 ///   para sus tokens, con respaldo si falla la conexión (usa la última caché).
 /// - Persiste los precios obtenidos para que sin internet se sigan mostrando
 ///   los últimos valores en vez de un 0.
@@ -39,7 +40,7 @@ class FiatRefreshService {
 
   Timer? _priceRefreshTimer;
   bool _isRefreshing = false;
-  static const Duration _refreshInterval = Duration(seconds: 60);
+  static const Duration _refreshInterval = Duration(seconds: 30);
   static const int _maxCachedCurrencies = 200;
 
   void startAutomaticPriceRefresh() {
@@ -96,9 +97,11 @@ class FiatRefreshService {
       CryptoCurrency currency, FiatCurrency fiat, bool torOnly) async {
     final key = currency == CryptoCurrency.btcln ? CryptoCurrency.btc : currency;
     try {
+      final previous = fiatConversionStore.prices[currency];
       final price =
           await FiatConversionService.fetchPrice(crypto: key, fiat: fiat, torOnly: torOnly);
       if (price > 0) {
+        fiatConversionStore.previousPrices[currency] = previous ?? 0;
         fiatConversionStore.prices[currency] = price;
       }
     } catch (e) {

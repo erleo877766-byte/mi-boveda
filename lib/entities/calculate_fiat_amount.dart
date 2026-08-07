@@ -17,15 +17,17 @@ String calculateFiatAmount({double? price, String? cryptoAmount, bool raw = fals
   }
 
   if (raw) {
-    return result.toStringAsFixed(2);
+    return result.toStringAsFixed(3);
   }
 
+  // Mostrar hasta 3 decimales y nunca "0.00" para montos muy chicos:
+  // se ve el valor exacto (p.ej. 0.007) en vez de "< 0.01".
   var formatted = '';
   final parts = result.toString().split('.');
 
   if (parts.length >= 2) {
-    if (parts[1].length > 2) {
-      formatted = formatWithCommas(parts[0] + '.' + parts[1].substring(0, 2));
+    if (parts[1].length > 3) {
+      formatted = formatWithCommas(parts[0] + '.' + parts[1].substring(0, 3));
     } else {
       formatted = formatWithCommas(parts[0] + '.' + parts[1]);
     }
@@ -33,7 +35,7 @@ String calculateFiatAmount({double? price, String? cryptoAmount, bool raw = fals
     formatted = formatWithCommas(parts[0]);
   }
 
-  return result > 0.01 ? formatted : '< 0.01';
+  return formatted;
 }
 
 String formatWithCommas(String? number) {

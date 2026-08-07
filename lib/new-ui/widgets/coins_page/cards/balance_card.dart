@@ -32,7 +32,8 @@ class BalanceCard extends StatelessWidget {
       this.capitalizeAssetName = true,
       this.onCustomizeTapped,
       this.accountIndex,
-      this.fiatFirst = false});
+      this.fiatFirst = false,
+      this.fiatTextColor});
 
   final double width;
   final double borderRadius;
@@ -51,6 +52,7 @@ class BalanceCard extends StatelessWidget {
   final List<BalanceCardAction> actions;
   final Duration designSwitchDuration;
   final VoidCallback? onCustomizeTapped;
+  final Color? fiatTextColor;
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +200,7 @@ class BalanceCard extends StatelessWidget {
                         style: DefaultTextStyle.of(context).style.copyWith(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
-                            color: design.colors.textColorSecondary),
+                            color: fiatTextColor ?? design.colors.textColorSecondary),
                         child: AnimatedSwitcher(
                           duration: designSwitchDuration,
                           layoutBuilder: (currentChild, previousChildren) {

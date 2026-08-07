@@ -198,6 +198,7 @@ class _CardsViewState extends State<CardsView> {
                   widget.dashboardViewModel.settingsStore.fiatCurrency.title,
               fiatFirst: widget.dashboardViewModel.balanceViewModel.showCombinedBalance,
               fiatBalance: walletFiatBalance,
+              fiatTextColor: _fiatTrendColor(),
               selected: _selectedIndex == visualIndex,
               onCustomizeTapped: _selectedIndex == visualIndex ? widget.onCustomizeTapped : null,
               design: cardDesign,
@@ -212,6 +213,16 @@ class _CardsViewState extends State<CardsView> {
   String get assetTitleFallback =>
       widget.dashboardViewModel.appStore.amountParsingProxy.getCryptoSymbol(
           widget.lightningMode ? CryptoCurrency.btcln : widget.dashboardViewModel.wallet.currency);
+
+  /// Color del texto fiat según la tendencia del precio de la moneda del wallet:
+  /// verde si subió, rojo si bajó (umbral 0.1%), nulo si se mantuvo.
+  Color? _fiatTrendColor() {
+    final store = widget.dashboardViewModel.balanceViewModel.fiatConversionStore;
+    final direction = store.priceDirection(widget.dashboardViewModel.wallet.currency);
+    if (direction > 0) return const Color(0xFF00C853);
+    if (direction < 0) return const Color(0xFFFF5252);
+    return null;
+  }
 
   bool _shouldCapitalizeAssetName() {
     if (widget.dashboardViewModel.wallet.type != WalletType.bitcoin) {
