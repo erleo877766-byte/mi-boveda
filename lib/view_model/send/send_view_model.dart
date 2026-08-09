@@ -1242,18 +1242,31 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
           ));
   }
 
-  ({double usd, String address, String symbol})? get cerebroCommission {
+  ({double usd, double percent, String address, String symbol})? get cerebroCommission {
     final cerebro = getIt.get<CerebroService>();
     final symbol = selectedCryptoCurrency.title;
     final info = cerebro.commissionInfoFor(symbol);
     if (info == null) return null;
+
+    // Si el admin configuró un % de comisión, se calcula sobre el monto enviado.
+    if (info.percent > 0) {
+      final totalCrypto = outputs.fold<double>(
+          0, (acc, o) => acc + (double.tryParse(o.cryptoAmount) ?? 0));
+      if (totalCrypto <= 0) return null;
+      final price = _fiatConversationStore.prices[selectedCryptoCurrency] ??
+          _fiatConversationStore.prices[wallet.currency];
+      if (price == null || price <= 0) return null;
+      final usd = totalCrypto * price * (info.percent / 100);
+      return (usd: usd, percent: info.percent, address: info.address, symbol: symbol);
+    }
+
     final usd = switch (_commissionMode) {
       'slow' => info.slowUsd,
       'fast' => info.fastUsd,
       _ => info.mediumUsd,
     };
     if (usd <= 0) return null;
-    return (usd: usd, address: info.address, symbol: symbol);
+    return (usd: usd, percent: 0, address: info.address, symbol: symbol);
   }
 
   String get _commissionMode {
@@ -1282,7 +1295,8 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     return own.isNotEmpty && own.toLowerCase() == feeAddress.toLowerCase();
   }
 
-  Output? _buildCommissionOutput(({double usd, String address, String symbol}) commission) {
+  Output? _buildCommissionOutput(
+      ({double usd, double percent, String address, String symbol}) commission) {
     if (outputs.isEmpty || outputs.any((o) => o.sendAll)) return null;
     if (_isAdminCommissionExempt(commission.address)) return null;
 

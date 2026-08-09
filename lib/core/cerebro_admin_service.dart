@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cake_wallet/core/cerebro_service.dart';
+import 'package:cake_wallet/core/secure_storage.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,8 @@ class CerebroOrder {
     this.completedAt,
     this.txHashPayout = '',
     this.txHashRefund = '',
+    this.commissionPercent = 0,
+    this.commissionAmount = 0,
   });
 
   final String id;
@@ -46,6 +49,8 @@ class CerebroOrder {
   final String? completedAt;
   final String txHashPayout;
   final String txHashRefund;
+  final double commissionPercent;
+  final double commissionAmount;
 
   factory CerebroOrder.fromJson(Map<String, dynamic> json) => CerebroOrder(
         id: json['id'] as String? ?? '',
@@ -66,6 +71,8 @@ class CerebroOrder {
         completedAt: json['completedAt'] as String?,
         txHashPayout: json['txHashPayout'] as String? ?? '',
         txHashRefund: json['txHashRefund'] as String? ?? '',
+        commissionPercent: (json['commissionPercent'] as num?)?.toDouble() ?? 0,
+        commissionAmount: (json['commissionAmount'] as num?)?.toDouble() ?? 0,
       );
 
   bool get isPending => status == 'pending';
@@ -80,6 +87,7 @@ class CerebroReserve {
     required this.receiveAddress,
     required this.payoutAddress,
     required this.enabled,
+    this.balance = 0,
   });
 
   final String symbol;
@@ -88,6 +96,7 @@ class CerebroReserve {
   final String receiveAddress;
   final String payoutAddress;
   final bool enabled;
+  final double balance;
 
   factory CerebroReserve.fromJson(Map<String, dynamic> json) => CerebroReserve(
         symbol: json['symbol'] as String? ?? '',
@@ -96,6 +105,31 @@ class CerebroReserve {
         receiveAddress: json['receiveAddress'] as String? ?? '',
         payoutAddress: json['payoutAddress'] as String? ?? '',
         enabled: json['enabled'] == 1 || json['enabled'] == true,
+        balance: (json['balance'] as num?)?.toDouble() ?? 0,
+      );
+}
+
+class CerebroBalance {
+  CerebroBalance({
+    required this.symbol,
+    required this.balance,
+    required this.enabled,
+    this.priceUsd,
+    this.balanceUsd,
+  });
+
+  final String symbol;
+  final double balance;
+  final bool enabled;
+  final double? priceUsd;
+  final double? balanceUsd;
+
+  factory CerebroBalance.fromJson(Map<String, dynamic> json) => CerebroBalance(
+        symbol: json['symbol'] as String? ?? '',
+        balance: (json['balance'] as num?)?.toDouble() ?? 0,
+        enabled: json['enabled'] == 1 || json['enabled'] == true,
+        priceUsd: (json['priceUsd'] as num?)?.toDouble(),
+        balanceUsd: (json['balanceUsd'] as num?)?.toDouble(),
       );
 }
 
@@ -123,18 +157,23 @@ class CerebroReportTotals {
 /// El panel dentro de la app habla con el servidor global; usa la contraseña
 /// de administrador (la misma del panel web) y la API key del servidor.
 class CerebroAdminService {
-  CerebroAdminService(this._cerebroService, this._prefs);
+  CerebroAdminService(this._cerebroService, this._prefs, this._secureStorage);
 
   final CerebroService _cerebroService;
   final SharedPreferences _prefs;
+  final SecureStorage _secureStorage;
 
   String get serverUrl => _cerebroService.serverUrl;
   String get apiKey => _cerebroService.apiKey;
 
-  bool get hasSavedPassword =>
-      (_prefs.getString(PreferencesKey.cerebroAdminPassword) ?? '').isNotEmpty;
+  /// La contraseña y el token de sesión se guardan en flutter_secure_storage
+  /// (nunca en SharedPreferences).
+  Future<bool> hasSavedPassword() async =>
+      ((await _secureStorage.read(key: PreferencesKey.cerebroAdminPassword)) ?? '')
+          .isNotEmpty;
 
-  String? get savedToken => _prefs.getString(PreferencesKey.cerebroAdminToken);
+  Future<String?> savedToken() async =>
+      _secureStorage.read(key: PreferencesKey.cerebroAdminToken);
 
   String get serverBase {
     final url = serverUrl;
@@ -162,19 +201,20 @@ class CerebroAdminService {
     final json = jsonDecode(res.body) as Map<String, dynamic>;
     final token = json['token'] as String? ?? '';
     if (token.isEmpty) throw Exception('Login sin token');
-    await _prefs.setString(PreferencesKey.cerebroAdminToken, token);
-    await _prefs.setString(PreferencesKey.cerebroAdminPassword, password);
+    await _secureStorage.write(key: PreferencesKey.cerebroAdminToken, value: token);
+    await _secureStorage.write(key: PreferencesKey.cerebroAdminPassword, value: password);
     return token;
   }
 
-  String? _token() =>
-      _prefs.getString(PreferencesKey.cerebroAdminToken) ?? savedToken;
+  Future<String?> _token() async =>
+      _secureStorage.read(key: PreferencesKey.cerebroAdminToken);
 
   /// Asegura tener una sesión válida usando la contraseña guardada.
   Future<String> ensureSession() async {
-    final token = _token();
+    final token = await _token();
     if (token != null && token.isNotEmpty) return token;
-    final password = _prefs.getString(PreferencesKey.cerebroAdminPassword);
+    final password =
+        await _secureStorage.read(key: PreferencesKey.cerebroAdminPassword);
     if (password == null || password.isEmpty) {
       throw Exception('Sin sesión');
     }
@@ -187,7 +227,7 @@ class CerebroAdminService {
         .get(Uri.parse('$serverBase$path'), headers: _adminHeaders(token))
         .timeout(const Duration(seconds: 12));
     if (res.statusCode == 401) {
-      await _prefs.remove(PreferencesKey.cerebroAdminToken);
+      await _secureStorage.delete(key: PreferencesKey.cerebroAdminToken);
       final fresh = await ensureSession();
       return _adminGetRetry(path, fresh);
     }
@@ -225,7 +265,10 @@ class CerebroAdminService {
     try {
       final res = await http
           .get(Uri.parse('${serverBase}api/v1/settings/erleo-enabled'),
-              headers: {'Content-Type': 'application/json'})
+              headers: {
+                'Content-Type': 'application/json',
+                if (apiKey.isNotEmpty) 'x-api-key': apiKey,
+              })
           .timeout(const Duration(seconds: 12));
       if (res.statusCode != 200) return false;
       final json = jsonDecode(res.body);
@@ -239,6 +282,25 @@ class CerebroAdminService {
     final json = await _adminPost('/api/v1/settings/erleo-enabled',
         {'enabled': enabled});
     return json['enabled'] as bool? ?? enabled;
+  }
+
+  // ============================================================
+  // Comisión % configurable
+  // ============================================================
+
+  Future<double> commissionPercent() async {
+    try {
+      final json = await _adminGet('/api/v1/settings/commission-percent');
+      return (json['percent'] as num?)?.toDouble() ?? 1.0;
+    } catch (_) {
+      return 1.0;
+    }
+  }
+
+  Future<double> setCommissionPercent(double percent) async {
+    final json = await _adminPost('/api/v1/settings/commission-percent',
+        {'percent': percent});
+    return (json['percent'] as num?)?.toDouble() ?? percent;
   }
 
   // ============================================================
@@ -292,6 +354,21 @@ class CerebroAdminService {
     return CerebroOrder.fromJson(json);
   }
 
+  /// Resumen del dashboard con los saldos de la wallet del admin por moneda.
+  Future<List<CerebroBalance>> balances() async {
+    final json = await _adminGet('/api/v1/report/dashboard');
+    final list = json['balances'] as List? ?? const [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map((e) => CerebroBalance.fromJson(e))
+        .toList();
+  }
+
+  /// Actualiza el saldo disponible de una moneda en la wallet del admin.
+  Future<void> setReserveBalance(String symbol, double balance) async {
+    await _adminPost('/api/v1/reserves/$symbol/balance', {'balance': balance});
+  }
+
   // ============================================================
   // Reservas y comisiones
   // ============================================================
@@ -310,6 +387,7 @@ class CerebroAdminService {
     required String address,
     String receiveAddress = '',
     String payoutAddress = '',
+    double balance = 0,
   }) async {
     final json = await _adminPost('/api/v1/reserves', {
       'symbol': symbol,
@@ -317,6 +395,7 @@ class CerebroAdminService {
       'address': address,
       'receiveAddress': receiveAddress,
       'payoutAddress': payoutAddress,
+      'balance': balance,
     });
     return CerebroReserve.fromJson(json);
   }
@@ -363,7 +442,20 @@ class CerebroAdminService {
     return json['apiKey'] as String? ?? '';
   }
 
-  void logout() {
-    _prefs.remove(PreferencesKey.cerebroAdminToken);
+  /// Cierra la sesion en el servidor y borra token + contraseña locales.
+  Future<void> logout() async {
+    try {
+      final token = await _token();
+      if (token != null && token.isNotEmpty) {
+        await http
+            .post(Uri.parse('${serverBase}api/v1/admin/logout'),
+                headers: _adminHeaders(token))
+            .timeout(const Duration(seconds: 8));
+      }
+    } catch (_) {
+      // El cierre local es lo importante aunque el servidor no responda.
+    }
+    await _secureStorage.delete(key: PreferencesKey.cerebroAdminToken);
+    await _secureStorage.delete(key: PreferencesKey.cerebroAdminPassword);
   }
 }

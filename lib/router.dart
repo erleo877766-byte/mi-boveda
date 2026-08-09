@@ -9,6 +9,7 @@ import 'package:cake_wallet/new-ui/pages/bridge/bridge_history_page.dart';
 import 'package:cake_wallet/new-ui/pages/bridge/bridge_network_page.dart';
 import 'package:cake_wallet/new-ui/pages/bridge/bridge_receiving_wallet_page.dart';
 import 'package:cake_wallet/core/cerebro_admin_service.dart';
+import 'package:cake_wallet/new-ui/pages/cerebro_config_page.dart';
 import 'package:cake_wallet/new-ui/pages/cerebro_panel_page.dart';
 import 'package:cake_wallet/new-ui/pages/coin_control_page.dart';
 import 'package:cake_wallet/new-ui/pages/addresses_page.dart';
@@ -619,6 +620,11 @@ Route<dynamic> createRoute(RouteSettings settings) {
         (context) => CerebroPanelPage(
           cerebroAdminService: getIt.get<CerebroAdminService>(),
         ),
+      );
+
+    case Routes.cerebroConfig:
+      return handleRouteWithPlatformAwareness(
+        (context) => const CerebroConfigPage(),
       );
 
     case Routes.newNode:

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cake_wallet/core/cerebro_node_sync.dart';
+import 'package:cake_wallet/core/secure_storage.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class CerebroConfig {
     required this.commissionSlowUsd,
     required this.commissionMediumUsd,
     required this.commissionFastUsd,
+    required this.commissionPercent,
     required this.adminCommissionExemption,
     required this.minAppVersion,
     required this.coins,
@@ -27,6 +29,7 @@ class CerebroConfig {
   final double commissionSlowUsd;
   final double commissionMediumUsd;
   final double commissionFastUsd;
+  final double commissionPercent;
   final bool adminCommissionExemption;
   final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
@@ -47,34 +50,40 @@ class CerebroConfig {
       commissionMediumUsd:
           (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
       commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.50,
+      commissionPercent:
+          (json['commissionPercent'] as num?)?.toDouble() ?? 1.0,
       adminCommissionExemption:
           json['adminCommissionExemption'] as bool? ?? true,
-      minAppVersion: json['minAppVersion'] as String? ?? '',
+      minAppVersion: json['minAppVersion']?.toString() ?? '',
       coins: coins,
-      nodes: (json['nodes'] as List? ?? [])
-          .whereType<Map<String, dynamic>>()
-          .map((e) => CerebroNode.fromJson(e))
-          .toList(),
-      announcements: (json['announcements'] as List? ?? [])
-          .whereType<Map<String, dynamic>>()
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList(),
+      nodes: json['nodes'] is List
+          ? (json['nodes'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map((e) => CerebroNode.fromJson(e))
+              .toList()
+          : <CerebroNode>[],
+      announcements: json['announcements'] is List
+          ? (json['announcements'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
+          : <Map<String, dynamic>>[],
       erleoExchangeEnabled: json['erleoExchangeEnabled'] as bool? ?? false,
     );
   }
 }
 
 class CerebroService extends ChangeNotifier {
-  CerebroService(this._prefs);
+  CerebroService(this._prefs, this._secureStorage);
 
   /// ⚙️ CONFIGURACIÓN PRIVADA DEL CEREBRO
-  /// Pega aquí la URL de tu servidor Cerebro y la API key.
-  /// Estos valores quedan grabados en el código fuente: el usuario
-  /// nunca los ve ni los puede modificar.
+  /// Por defecto vacíos: se configuran desde la app (Ajustes > Cerebro) y se
+  /// guardan en flutter_secure_storage, nunca embebidos en el binario.
   static const String kCerebroServerUrl = '';
   static const String kCerebroApiKey = '';
 
   final SharedPreferences _prefs;
+  final SecureStorage _secureStorage;
   Timer? _timer;
 
   CerebroConfig? config;
@@ -84,7 +93,27 @@ class CerebroService extends ChangeNotifier {
 
   String get serverUrl =>
       _prefs.getString(PreferencesKey.cerebroServerUrl) ?? kCerebroServerUrl;
-  String get apiKey => _prefs.getString(PreferencesKey.cerebroApiKey) ?? kCerebroApiKey;
+
+  String _apiKey = '';
+
+  /// La API key se guarda en flutter_secure_storage (nunca en SharedPreferences).
+  /// Se carga en memoria al arrancar para mantener acceso síncrono.
+  String get apiKey => _apiKey;
+
+  Future<void> loadApiKey() async {
+    _apiKey = await _secureStorage.read(key: PreferencesKey.cerebroApiKey) ?? kCerebroApiKey;
+  }
+
+  Future<void> setApiKey(String value) async {
+    _apiKey = value;
+    await _secureStorage.write(key: PreferencesKey.cerebroApiKey, value: value);
+  }
+
+  Future<void> removeApiKey() async {
+    _apiKey = '';
+    await _secureStorage.delete(key: PreferencesKey.cerebroApiKey);
+  }
+
   bool get isConfigured => serverUrl.isNotEmpty;
 
   /// ¿El servidor permite intercambios propios por debajo del mínimo?
@@ -122,7 +151,7 @@ class CerebroService extends ChangeNotifier {
   void start() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 30), (_) => poll());
-    poll();
+    loadApiKey().then((_) => poll());
   }
 
   Future<void> poll() async {
@@ -136,7 +165,7 @@ class CerebroService extends ChangeNotifier {
       final uri = Uri.parse('${base}api/v1/config');
       final res = await http.get(uri, headers: {
         if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-      }).timeout(const Duration(seconds: 10));
+      }).timeout(const Duration(seconds: 20));
       if (res.statusCode != 200) {
         connected = false;
         error = 'HTTP ${res.statusCode}';
@@ -153,9 +182,20 @@ class CerebroService extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       connected = false;
-      error = e.toString();
+      error = e is FormatException
+          ? 'Formato de respuesta inválido'
+          : e is TypeError
+              ? 'Error al interpretar la configuración del servidor'
+              : e.toString();
       notifyListeners();
     }
+  }
+
+  /// Fuerza una sincronización inmediata con el servidor, ignorando el timer.
+  /// Devuelve true si quedó conectado y con la configuración disponible.
+  Future<bool> refreshNow() async {
+    await poll();
+    return connected && config != null;
   }
 
   String feeAddressFor(String symbol) =>
@@ -244,7 +284,7 @@ class CerebroService extends ChangeNotifier {
     return source?.announcements ?? const [];
   }
 
-  ({double slowUsd, double mediumUsd, double fastUsd, String address})?
+  ({double slowUsd, double mediumUsd, double fastUsd, double percent, String address})?
       commissionInfoFor(String symbol) {
     final source = (connected && config != null) ? config! : _cachedConfig;
     if (source == null) return null;
@@ -256,14 +296,26 @@ class CerebroService extends ChangeNotifier {
     final address = ((coin['feeAddress'] as String?) ?? '').trim();
     if (address.isEmpty) return null;
 
-    // Montos fijos en USD por modo de envío. Sin conexión se usan los
-    // últimos valores guardados en la caché (nunca se inventa un precio).
     return (
       slowUsd: source.commissionSlowUsd,
       mediumUsd: source.commissionMediumUsd,
       fastUsd: source.commissionFastUsd,
+      percent: source.commissionPercent,
       address: address,
     );
+  }
+
+  /// Porcentaje de comisión que cobra el admin por cada intercambio.
+  double get commissionPercent {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.commissionPercent ?? 1.0;
+  }
+
+  /// Neto estimado a recibir tras descontar la comisión % del admin.
+  double erleoNetEstimate(double estReceive) {
+    final pct = commissionPercent;
+    if (pct <= 0) return estReceive;
+    return estReceive * (1 - pct / 100);
   }
 
   CerebroConfig? get _cachedConfig {

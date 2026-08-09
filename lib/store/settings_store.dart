@@ -1162,11 +1162,11 @@ abstract class SettingsStoreBase with Store {
   Future<void> setCerebroServerUrl(String value) async =>
       _sharedPreferences.setString(PreferencesKey.cerebroServerUrl, value);
 
-  String get cerebroApiKey =>
-      _sharedPreferences.getString(PreferencesKey.cerebroApiKey) ?? '';
+  Future<String> get cerebroApiKey async =>
+      await _secureStorage.read(key: PreferencesKey.cerebroApiKey) ?? '';
 
   Future<void> setCerebroApiKey(String value) async =>
-      _sharedPreferences.setString(PreferencesKey.cerebroApiKey, value);
+      await _secureStorage.write(key: PreferencesKey.cerebroApiKey, value: value);
 
   static Future<SettingsStore> load(
       {required bool isBitcoinBuyEnabled,

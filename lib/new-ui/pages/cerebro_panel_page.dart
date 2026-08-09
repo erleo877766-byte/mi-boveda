@@ -1,6 +1,8 @@
 import 'package:cake_wallet/core/cerebro_admin_service.dart';
+import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/new-ui/widgets/modal_page_wrapper.dart';
 import 'package:cake_wallet/new-ui/widgets/receive_page/receive_top_bar.dart';
+import 'package:cake_wallet/store/app_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -38,14 +40,13 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
   List<CerebroOrder> _approved = [];
   List<CerebroOrder> _history = [];
   List<CerebroReserve> _reserves = [];
+  List<CerebroBalance> _balances = [];
   CerebroReportTotals? _reportTotals;
   bool _apiKeyShown = false;
   String? _apiKey;
+  double _commissionPercent = 1;
 
-  bool get _needsLogin =>
-      !widget.cerebroAdminService.hasSavedPassword ||
-      (_error?.contains('Sin sesión') ?? false) ||
-      (_error?.contains('Contraseña') ?? false);
+  bool _needsLogin = false;
 
   @override
   void initState() {
@@ -66,6 +67,11 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
       final reserves = await widget.cerebroAdminService.reserves();
       final report = await widget.cerebroAdminService.commissionReport();
       final apiKeyInfo = await widget.cerebroAdminService.apiKeyInfo();
+      final percent = await widget.cerebroAdminService.commissionPercent();
+      List<CerebroBalance> balances = [];
+      try {
+        balances = await widget.cerebroAdminService.balances();
+      } catch (_) {}
       if (!mounted) return;
       setState(() {
         _erleoEnabled = enabled;
@@ -76,13 +82,18 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
         _reportTotals = report.totals;
         _apiKey = apiKeyInfo.apiKey;
         _apiKeyShown = apiKeyInfo.revealedOnce;
+        _commissionPercent = percent;
+        _balances = balances;
         _loading = false;
+        _needsLogin = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _error = e.toString();
         _loading = false;
+        _needsLogin = (_error?.contains('Sin sesión') ?? false) ||
+            (_error?.contains('Contraseña') ?? false);
       });
     }
   }
@@ -118,6 +129,60 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
     } catch (e) {
       _showError(e);
     }
+  }
+
+  Future<void> _editCommission() async {
+    final controller = TextEditingController(text: _commissionPercent.toString());
+    final res = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Comisión del Cerebro (%)'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            suffixText: '%',
+            helperText: 'Porcentaje descontado del monto del intercambio',
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, null), child: const Text('Cancelar')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, double.tryParse(controller.text)),
+              child: const Text('Guardar')),
+        ],
+      ),
+    );
+    if (res == null || !mounted) return;
+    try {
+      final percent = await widget.cerebroAdminService.setCommissionPercent(res);
+      setState(() => _commissionPercent = percent);
+      _snack('Comisión actualizada: $percent%');
+    } catch (e) {
+      _showError(e);
+    }
+  }
+
+  CerebroBalance? _balanceFor(String symbol) {
+    for (final b in _balances) {
+      if (b.symbol == symbol) return b;
+    }
+    return null;
+  }
+
+  double? _walletLocalBalance(String symbol) {
+    try {
+      final wallet = getIt.get<AppStore>().wallet;
+      if (wallet == null) return null;
+      for (final c in wallet.balance.keys) {
+        if (c.title.toUpperCase() == symbol.toUpperCase()) {
+          final bal = wallet.balance[c]?.available;
+          return bal?.toDouble();
+        }
+      }
+    } catch (_) {}
+    return null;
   }
 
   Future<void> _approve(CerebroOrder o) async {
@@ -300,6 +365,10 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
+              _buildSectionTitle('Saldo de tu wallet'),
+              _buildBalancesCard(),
+              _buildSectionTitle('Comisión del Cerebro'),
+              _buildCommissionCard(),
               _buildSectionTitle('Órdenes pendientes (${_pending.length})'),
               ...(_pending.isEmpty
                   ? [_buildEmpty('No hay órdenes pendientes')]
@@ -374,6 +443,87 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
       );
 
+  Widget _buildCommissionCard() {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: const Icon(Icons.percent),
+        title: Text('Cobras $_commissionPercent% de cada intercambio'),
+        subtitle: const Text('Se descuenta del monto que recibe el usuario antes de entregarlo.'),
+        trailing: TextButton(
+          onPressed: _editCommission,
+          child: const Text('Editar'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBalancesCard() {
+    if (_balances.isEmpty) {
+      return _buildEmpty('Configura direcciones de reserva para ver tu saldo.');
+    }
+    final rows = _balances.map((b) {
+      final local = _walletLocalBalance(b.symbol);
+      final bal = local ?? b.balance;
+      final usd = b.balanceUsd;
+      return Card(
+        margin: const EdgeInsets.only(bottom: 6),
+        child: ListTile(
+          dense: true,
+          leading: Text(b.symbol,
+              style: const TextStyle(fontWeight: FontWeight.w700)),
+          title: Text('${_fmtNum(bal)} ${b.symbol}${local != null ? ' (local)' : ''}'),
+          subtitle: Text(
+            b.priceUsd != null
+                ? 'Precio: \$${b.priceUsd!.toStringAsFixed(8)} · Valor: \$${(bal * b.priceUsd!).toStringAsFixed(2)}'
+                : 'Sin precio de mercado',
+            style: const TextStyle(fontSize: 12),
+          ),
+          trailing: b.enabled
+              ? const Icon(Icons.check_circle, color: Colors.green, size: 18)
+              : const Icon(Icons.cancel, color: Colors.grey, size: 18),
+          onTap: () => _editBalance(b.symbol, b.balance),
+        ),
+      );
+    }).toList();
+    return Column(children: [
+      ...rows,
+      const SizedBox(height: 4),
+      const Text('Toca una moneda para actualizar su saldo en tu wallet.',
+          style: TextStyle(fontSize: 11)),
+    ]);
+  }
+
+  Future<void> _editBalance(String symbol, double current) async {
+    final controller = TextEditingController(text: current.toString());
+    final res = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Saldo de $symbol en tu wallet'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(labelText: 'Saldo disponible'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, null), child: const Text('Cancelar')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, double.tryParse(controller.text)),
+              child: const Text('Guardar')),
+        ],
+      ),
+    );
+    if (res == null || !mounted) return;
+    try {
+      await widget.cerebroAdminService.setReserveBalance(symbol, res);
+      _snack('Saldo de $symbol actualizado');
+      await _loadAll();
+    } catch (e) {
+      _showError(e);
+    }
+  }
+
   Widget _buildEmpty(String msg) => Padding(
         padding: const EdgeInsets.all(12),
         child: Text(msg,
@@ -381,6 +531,8 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
       );
 
   Widget _orderInfo(CerebroOrder o) {
+    final balance = _balanceFor(o.toSymbol);
+    final toBalance = balance != null ? _fmtNum(balance.balance) : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -394,12 +546,20 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
         if (o.userLabel.isNotEmpty)
           Text('Usuario: ${o.userLabel}', style: const TextStyle(fontSize: 12)),
         Text('Destino: ${o.toAddress}', style: const TextStyle(fontSize: 12)),
-        if (o.commissionUsd > 0)
+        if (o.commissionPercent > 0)
+          Text('Comisión: ${o.commissionPercent.toStringAsFixed(2)}% del intercambio',
+              style: const TextStyle(fontSize: 12)),
+        if (o.commissionUsd > 0 && o.commissionPercent == 0)
           Text('Comisión: \$${o.commissionUsd.toStringAsFixed(2)} USD',
               style: const TextStyle(fontSize: 12)),
         if (o.netToAmount > 0)
-          Text('Entrega: ${_fmtNum(o.netToAmount)} ${o.toSymbol}',
+          Text('Entregas al usuario: ${_fmtNum(o.netToAmount)} ${o.toSymbol}',
               style: const TextStyle(fontSize: 12)),
+        if (toBalance != null)
+          Text('Tu saldo de ${o.toSymbol}: $toBalance',
+              style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -531,11 +691,21 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
                 child: ListTile(
                   dense: true,
                   title: Text(r.symbol),
-                  subtitle: Text('${r.address}\nRecibir: ${r.receiveAddress.isEmpty ? '—' : r.receiveAddress}\nEnviar: ${r.payoutAddress.isEmpty ? '—' : r.payoutAddress}'),
+                  subtitle: Text('${r.address}\nRecibir: ${r.receiveAddress.isEmpty ? '—' : r.receiveAddress}\nEnviar: ${r.payoutAddress.isEmpty ? '—' : r.payoutAddress}\nSaldo: ${_fmtNum(r.balance)} ${r.symbol}'),
                   isThreeLine: true,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => _deleteReserve(r),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.tune),
+                        tooltip: 'Editar saldo',
+                        onPressed: () => _editBalance(r.symbol, r.balance),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () => _deleteReserve(r),
+                      ),
+                    ],
                   ),
                 ),
               )),

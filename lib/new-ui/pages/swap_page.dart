@@ -22,6 +22,7 @@ import 'package:cake_wallet/new-ui/widgets/swap_page/swap_limit_popup.dart';
 import 'package:cake_wallet/new-ui/widgets/currency_picker/currency_picker_args.dart';
 import 'package:cake_wallet/new-ui/widgets/currency_picker/currency_picker_sheet.dart';
 import 'package:cake_wallet/new-ui/widgets/swap_page/swap_options_page.dart';
+import 'package:cake_wallet/new-ui/widgets/swap_page/cerebro_connection_status.dart';
 import 'package:cake_wallet/src/screens/exchange/widgets/present_provider_picker.dart';
 import 'package:cake_wallet/src/widgets/alert_with_one_action.dart';
 import 'package:cake_wallet/src/widgets/alert_with_two_actions.dart';
@@ -98,9 +99,21 @@ class _NewSwapPageState extends State<NewSwapPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final pct = state.commissionPercent ?? 0;
+        final neto = state.estNetToAmount;
+        final netoText = neto != null && neto > 0
+            ? S.of(context).erleo_net_estimate(
+                neto.toStringAsFixed(8), widget.exchangeViewModel.receiveCurrency.title)
+            : '';
+        final commissionText = pct > 0
+            ? S.of(context).erleo_commission_percent(pct.toStringAsFixed(2))
+            : '';
+        final body = [S.of(context).erleo_processing_message, commissionText, netoText]
+            .where((s) => s.isNotEmpty)
+            .join('\n\n');
         return AlertWithOneAction(
           alertTitle: S.of(context).processing,
-          alertContent: S.of(context).erleo_processing_message,
+          alertContent: body,
           buttonText: S.of(context).cancel,
           buttonAction: () {
             widget.exchangeViewModel.cancelErleoWait();
@@ -116,9 +129,21 @@ class _NewSwapPageState extends State<NewSwapPage> {
     showPopUp<void>(
       context: context,
       builder: (BuildContext context) {
+        final pct = state.commissionPercent ?? 0;
+        final neto = state.netToAmount;
+        final netoText = neto != null && neto > 0
+            ? S.of(context).erleo_net_estimate(
+                neto.toStringAsFixed(8), widget.exchangeViewModel.receiveCurrency.title)
+            : '';
+        final commissionText = pct > 0
+            ? S.of(context).erleo_commission_percent(pct.toStringAsFixed(2))
+            : '';
+        final body = [S.of(context).erleo_approved_message, commissionText, netoText]
+            .where((s) => s.isNotEmpty)
+            .join('\n\n');
         return AlertWithOneAction(
           alertTitle: S.of(context).erleo_approved_title,
-          alertContent: S.of(context).erleo_approved_message,
+          alertContent: body,
           buttonText: S.of(context).ok,
           buttonAction: () => Navigator.of(context).pop(),
         );
@@ -772,6 +797,7 @@ class _NewSwapPageState extends State<NewSwapPage> {
                                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       fontSize: 12)),
                             SwapProviderPreview(exchangeViewModel: widget.exchangeViewModel),
+                            const CerebroConnectionStatus(),
                             Observer(
                               builder: (_) => LoadingPrimaryButton(
                                 key: ValueKey('exchange_page_exchange_button_key'),
@@ -850,7 +876,7 @@ class _NewSwapPageState extends State<NewSwapPage> {
     // la orden (intercambio propio), el botón debe quedar habilitado.
     if (widget.exchangeViewModel.hasCompletedProviderSearch &&
         !widget.exchangeViewModel.hasAvailableProviders &&
-        !widget.exchangeViewModel.canUseErleoForBelowMin) {
+        !widget.exchangeViewModel.canAttemptErleoForBelowMin) {
       return true;
     }
 

@@ -1575,10 +1575,12 @@ Future<void> setup({
         settingsStore: getIt.get<SettingsStore>(),
       ));
 
-  getIt.registerLazySingleton(() => CerebroService(getIt.get<SharedPreferences>()));
+  getIt.registerLazySingleton(
+      () => CerebroService(getIt.get<SharedPreferences>(), getIt.get<SecureStorage>()));
 
   getIt.registerLazySingleton(
-      () => CerebroAdminService(getIt.get<CerebroService>(), getIt.get<SharedPreferences>()));
+      () => CerebroAdminService(getIt.get<CerebroService>(), getIt.get<SharedPreferences>(),
+          getIt.get<SecureStorage>()));
 
   getIt.registerFactoryParam<BridgeAmountPage, CryptoCurrency, void>(
     (CryptoCurrency initialToken, _) => BridgeAmountPage(

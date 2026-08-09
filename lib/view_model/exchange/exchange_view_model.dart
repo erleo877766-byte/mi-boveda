@@ -590,8 +590,15 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     final cerebro = getIt.get<CerebroService>();
     if (!cerebro.canSubmitErleoOrders) return false;
     if (!cerebro.erleoExchangeEnabled) return false;
-    if (isFixedRateMode) return false; // solo modo estándar
-    if (isSendAllEnabled) return false;
+    return receiveAddress.isNotEmpty;
+  }
+
+  /// Como [canUseErleoForBelowMin] pero SIN exigir que la conexión ya esté
+  /// confirmada: habilita el botón aunque el servidor (Render free) aún se
+  /// esté despertando. El envío real hace un poll fresco antes de decidir.
+  bool get canAttemptErleoForBelowMin {
+    final cerebro = getIt.get<CerebroService>();
+    if (!cerebro.canSubmitErleoOrders) return false;
     return receiveAddress.isNotEmpty;
   }
 
@@ -1145,6 +1152,12 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
       final amount = double.tryParse(_depositAmount.toString());
 
       if (limits.min != null && amount != null && amount < limits.min!) {
+        // Intercambio propio (Erleo): si el monto está por debajo del mínimo
+        // y el Cerebro puede procesarlo, enviar la orden ahí en vez de bloquear.
+        if (canAttemptErleoForBelowMin) {
+          final sent = await submitToErleo();
+          if (sent) return;
+        }
         tradeState = TradeIsCreatedFailure(
           title: S.current.trade_not_created,
           error: S.current.amount_is_below_minimum_limit(limits.min!.toString()),
@@ -1215,6 +1228,12 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
             'toAmount': _receiveAmount,
           },
         );
+        // Intercambio propio (Erleo): si ningún proveedor cotiza (típico por
+        // debajo del mínimo) y el Cerebro puede procesarlo, enviar la orden ahí.
+        if (canAttemptErleoForBelowMin) {
+          final sent = await submitToErleo();
+          if (sent) return;
+        }
         tradeState = TradeIsCreatedFailure(
             title: S.current.trade_not_created,
             error: S.current.none_of_selected_providers_can_exchange);
@@ -1254,7 +1273,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
       final minValue = limits.min;
       final amountToCheck =
           double.tryParse(isFixedRateMode ? receiveAmountCanonical : depositAmountCanonical);
-      if (canUseErleoForBelowMin &&
+      if (canAttemptErleoForBelowMin &&
           minValue != null &&
           minValue > 0 &&
           amountToCheck != null &&
@@ -1431,8 +1450,14 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
   /// de su estado. Devuelve true si la orden se envió correctamente.
   Future<bool> submitToErleo() async {
     final cerebro = getIt.get<CerebroService>();
+
+    // Sincroniza con el servidor ANTES de decidir: si Render estaba dormido,
+    // este poll lo despierta y actualiza erleoExchangeEnabled en caliente.
+    await cerebro.refreshNow();
+
     if (!canUseErleoForBelowMin) return false;
 
+    final estReceive = double.parse(receiveAmountCanonical);
     tradeState = TradeIsErleoPending(orderId: '');
     try {
       final orderId = await cerebro.submitErleoOrder(
@@ -1444,9 +1469,14 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
         toAddress: receiveAddress,
         toExtraId: receiveAddressExtraId.trim(),
         speed: erleoSpeed,
-        estReceive: double.parse(receiveAmountCanonical),
+        estReceive: estReceive,
       );
-      tradeState = TradeIsErleoPending(orderId: orderId);
+      tradeState = TradeIsErleoPending(
+        orderId: orderId,
+        estReceive: estReceive,
+        estNetToAmount: cerebro.erleoNetEstimate(estReceive),
+        commissionPercent: cerebro.commissionPercent,
+      );
       _startErleoPolling(orderId);
       return true;
     } catch (e) {
@@ -1475,6 +1505,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
               orderId: orderId,
               netToAmount: (json['netToAmount'] as num?)?.toDouble(),
               commissionUsd: (json['commissionUsd'] as num?)?.toDouble(),
+              commissionPercent: (json['commissionPercent'] as num?)?.toDouble(),
             );
             break;
           case 'completed':

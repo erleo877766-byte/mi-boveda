@@ -21,18 +21,33 @@ class TradeIsCreatedFailure extends ExchangeTradeState {
 
 /// Orden de intercambio propio enviada al Cerebro, esperando aprobación del admin.
 class TradeIsErleoPending extends ExchangeTradeState {
-  TradeIsErleoPending({required this.orderId});
+  TradeIsErleoPending({
+    required this.orderId,
+    this.estReceive,
+    this.estNetToAmount,
+    this.commissionPercent,
+  });
 
   final String orderId;
+
+  /// Monto estimado que la app calculó antes de comisión.
+  final double? estReceive;
+
+  /// Neto estimado tras descontar la comisión % del admin.
+  final double? estNetToAmount;
+
+  /// % de comisión que cobra el admin.
+  final double? commissionPercent;
 }
 
 /// El Cerebro aprobó la orden: el admin está ejecutando el envío manual.
 class TradeIsErleoApproved extends ExchangeTradeState {
-  TradeIsErleoApproved({required this.orderId, this.netToAmount, this.commissionUsd});
+  TradeIsErleoApproved({required this.orderId, this.netToAmount, this.commissionUsd, this.commissionPercent});
 
   final String orderId;
   final double? netToAmount;
   final double? commissionUsd;
+  final double? commissionPercent;
 }
 
 /// El Cerebro confirmó el envío: intercambio completado por el admin.

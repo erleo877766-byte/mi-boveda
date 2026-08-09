@@ -1469,5 +1469,7 @@
   "erleo_approved_title": "Exchange approved",
   "erleo_approved_message": "Your exchange was approved and is being processed. You will receive the final amount shortly.",
   "erleo_completed_title": "Exchange completed",
-  "erleo_completed_message": "Your exchange was completed successfully."
+  "erleo_completed_message": "Your exchange was completed successfully.",
+  "erleo_commission_percent": "Service commission: {pct}% of the exchange",
+  "erleo_net_estimate": "You will receive: {net} {currency}"
 }
