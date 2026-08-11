@@ -249,6 +249,10 @@ abstract class NanoWalletBase
       id: "",
       nanoClient: _client,
       blocks: blocks,
+      onCommitted: () async {
+        await _updateBalance();
+        await updateTransactions();
+      },
     );
   }
 
@@ -363,6 +367,8 @@ abstract class NanoWalletBase
       _receiveTimer = Timer.periodic(const Duration(seconds: POLL_INTERVAL_SECONDS), (timer) async {
         // get our balance:
         await _updateBalance();
+        // refresh the transaction list so it never goes stale:
+        await updateTransactions();
         // if we have anything to receive, process it:
         if (balance[currency]!.receivableBalance.amount > BigInt.zero) {
           await _receiveAll();

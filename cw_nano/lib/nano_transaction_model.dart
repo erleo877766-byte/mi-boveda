@@ -33,7 +33,7 @@ class NanoTransactionModel {
       type: json["type"] as String,
       amount: BigInt.parse(json["amount"] as String),
       account: json["account"] as String,
-      confirmed: (json["confirmed"] as String) == "true",
+      confirmed: (json["confirmed"] as String? ?? "true") == "true",
     );
   }
 }

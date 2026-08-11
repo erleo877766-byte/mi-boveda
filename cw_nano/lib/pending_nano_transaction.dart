@@ -9,11 +9,13 @@ class PendingNanoTransaction with PendingTransaction {
     required this.amount,
     required this.id,
     required this.blocks,
+    this.onCommitted,
   });
 
   final NanoClient nanoClient;
   final String id;
   final List<Map<String, String>> blocks;
+  final Future<void> Function()? onCommitted;
   String hex = "unused";
 
   @override
@@ -29,6 +31,9 @@ class PendingNanoTransaction with PendingTransaction {
   Future<void> commit() async {
     for (final block in blocks) {
       await nanoClient.processBlock(block, "send");
+    }
+    if (onCommitted != null) {
+      await onCommitted!();
     }
   }
 

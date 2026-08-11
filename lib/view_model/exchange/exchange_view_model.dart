@@ -1481,15 +1481,26 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
       return true;
     } catch (e) {
       printV('submitToErleo error: $e');
-      // Fallback al mensaje oficial del mínimo.
-      tradeState = TradeIsCreatedFailure(
-        title: S.current.trade_not_created,
-        error: limits.min != null
-            ? S.current.amount_is_below_minimum_limit(limits.min!.toString())
-            : S.current.none_of_selected_providers_can_exchange,
-      );
+      // Muestra el error real del Cerebro en lugar de un mensaje genérico.
+      tradeState = TradeIsErleoError(error: _friendlyErleoError(e));
       return false;
     }
+  }
+
+  /// Convierte una excepción del Cerebro en un mensaje legible para el usuario.
+  String _friendlyErleoError(Object error) {
+    final message = error.toString();
+    if (error is TimeoutException) {
+      return 'El servidor del Cerebro no respondió a tiempo. Inténtalo de nuevo.';
+    }
+    final status = RegExp(r'HTTP (\d{3})').firstMatch(message);
+    if (status != null) {
+      return 'El servidor del Cerebro respondió con un error (HTTP ${status.group(1)}). Inténtalo de nuevo.';
+    }
+    if (message.contains('orden sin id')) {
+      return 'El servidor del Cerebro no devolvió el id de la orden. Inténtalo de nuevo.';
+    }
+    return 'No se pudo enviar la orden al Cerebro. Revisa tu conexión e inténtalo de nuevo.';
   }
 
   void _startErleoPolling(String orderId) {

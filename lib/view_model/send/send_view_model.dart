@@ -1249,15 +1249,21 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
     if (info == null) return null;
 
     // Si el admin configuró un % de comisión, se calcula sobre el monto enviado.
+    // Si no hay precio disponible se cae al USD fijo por velocidad: la comisión
+    // NUNCA desaparece cuando la moneda está configurada en el Cerebro.
     if (info.percent > 0) {
       final totalCrypto = outputs.fold<double>(
           0, (acc, o) => acc + (double.tryParse(o.cryptoAmount) ?? 0));
-      if (totalCrypto <= 0) return null;
-      final price = _fiatConversationStore.prices[selectedCryptoCurrency] ??
-          _fiatConversationStore.prices[wallet.currency];
-      if (price == null || price <= 0) return null;
-      final usd = totalCrypto * price * (info.percent / 100);
-      return (usd: usd, percent: info.percent, address: info.address, symbol: symbol);
+      if (totalCrypto > 0) {
+        final price = _fiatConversationStore.prices[selectedCryptoCurrency] ??
+            _fiatConversationStore.prices[wallet.currency];
+        if (price != null && price > 0) {
+          final usd = totalCrypto * price * (info.percent / 100);
+          if (usd > 0) {
+            return (usd: usd, percent: info.percent, address: info.address, symbol: symbol);
+          }
+        }
+      }
     }
 
     final usd = switch (_commissionMode) {

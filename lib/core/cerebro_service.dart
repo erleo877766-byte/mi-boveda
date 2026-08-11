@@ -49,7 +49,7 @@ class CerebroConfig {
       commissionSlowUsd: (json['commissionSlowUsd'] as num?)?.toDouble() ?? 0.10,
       commissionMediumUsd:
           (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
-      commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.50,
+      commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.75,
       commissionPercent:
           (json['commissionPercent'] as num?)?.toDouble() ?? 1.0,
       adminCommissionExemption:
