@@ -409,6 +409,11 @@ class CerebroAdminService {
     if (res.statusCode != 200) throw Exception('HTTP ${res.statusCode}');
   }
 
+  /// Envia una notificacion broadcast a todas las apps conectadas.
+  Future<void> sendNotification({required String title, String body = ''}) async {
+    await _adminPost('/api/v1/notifications', {'title': title, 'body': body});
+  }
+
   Future<({CerebroReportTotals totals, List<Map<String, dynamic>> events})>
       commissionReport() async {
     final json = await _adminGet('/api/v1/report/commissions');

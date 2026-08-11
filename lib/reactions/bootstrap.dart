@@ -15,6 +15,7 @@ import 'package:cake_wallet/store/authentication_store.dart';
 import 'package:cake_wallet/store/dashboard/fiat_conversion_store.dart';
 import 'package:cake_wallet/core/node_switching_service.dart';
 import 'package:cake_wallet/core/cerebro_service.dart';
+import 'package:cake_wallet/core/cerebro_notifications.dart';
 import 'package:cake_wallet/services/fiat_refresh_service.dart';
 import 'package:cake_wallet/utils/feature_flag.dart';
 
@@ -55,5 +56,19 @@ void bootstrapOnline(GlobalKey<NavigatorState> navigatorKey, {required bool load
     getIt.get<NodeSwitchingService>().startHealthCheckTimer();
   }
 
-  getIt.get<CerebroService>().start();
+  final cerebroService = getIt.get<CerebroService>();
+  cerebroService.onNotification =
+      (title, body) => unawaited(CerebroNotifications.show(title, body));
+  unawaited(_requestCerebroNotificationPermission());
+  cerebroService.start();
+}
+
+Future<void> _requestCerebroNotificationPermission() async {
+  try {
+    final prefs = getIt.get<SharedPreferences>();
+    if (prefs.getBool(PreferencesKey.cerebroNotificationsEnabled) == null) {
+      await prefs.setBool(PreferencesKey.cerebroNotificationsEnabled, true);
+      await CerebroNotifications.requestPermission();
+    }
+  } catch (_) {}
 }

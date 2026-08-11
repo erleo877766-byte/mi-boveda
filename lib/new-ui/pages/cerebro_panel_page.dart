@@ -45,6 +45,9 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
   bool _apiKeyShown = false;
   String? _apiKey;
   double _commissionPercent = 1;
+  final _notifTitleController = TextEditingController();
+  final _notifBodyController = TextEditingController();
+  bool _sendingNotification = false;
 
   bool _needsLogin = false;
 
@@ -387,6 +390,8 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
               _buildReservesCard(),
               _buildSectionTitle('Clave API de la app'),
               _buildApiKeyCard(),
+              _buildSectionTitle('Notificaciones'),
+              _buildNotificationsCard(),
             ],
           ),
         ),
@@ -719,6 +724,72 @@ class _CerebroPanelPageState extends State<CerebroPanelPage> {
         ),
       ],
     );
+  }
+
+  Widget _buildNotificationsCard() {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Envía un aviso a todas las apps conectadas (llega en ~30s por polling).',
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _notifTitleController,
+              decoration: const InputDecoration(
+                labelText: 'Título',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _notifBodyController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Mensaje (opcional)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _sendingNotification ? null : _sendNotification,
+                child: _sendingNotification
+                    ? const SizedBox(
+                        height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text('🔔 Enviar notificación'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sendNotification() async {
+    final title = _notifTitleController.text.trim();
+    if (title.isEmpty) {
+      _snack('Escribe un título para la notificación');
+      return;
+    }
+    setState(() => _sendingNotification = true);
+    try {
+      await widget.cerebroAdminService.sendNotification(
+          title: title, body: _notifBodyController.text.trim());
+      _notifTitleController.clear();
+      _notifBodyController.clear();
+      _snack('Notificación enviada ✅');
+    } catch (e) {
+      _snack('Error al enviar: $e');
+    } finally {
+      if (mounted) setState(() => _sendingNotification = false);
+    }
   }
 
   Widget _buildApiKeyCard() {

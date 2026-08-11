@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cake_wallet/core/cerebro_node_sync.dart';
 import 'package:cake_wallet/core/secure_storage.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
+import 'package:cw_core/utils/print_verbose.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -180,6 +181,7 @@ class CerebroService extends ChangeNotifier {
       await persistCerebroConfig(res.body);
       await syncBuiltinNodesFromCerebro(config!.nodes);
       notifyListeners();
+      unawaited(_checkNotifications());
     } catch (e) {
       connected = false;
       error = e is FormatException
@@ -200,6 +202,38 @@ class CerebroService extends ChangeNotifier {
 
   String feeAddressFor(String symbol) =>
       config?.coins[symbol]?['feeAddress'] as String? ?? '';
+
+  /// Se invoca con cada notificación nueva que llega del Cerebro.
+  void Function(String title, String body)? onNotification;
+
+  Future<void> _checkNotifications() async {
+    if (!isConfigured) return;
+    try {
+      final lastId = _prefs.getInt(PreferencesKey.cerebroLastNotificationId) ?? 0;
+      final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+      final uri = Uri.parse('${base}api/v1/notifications?after=$lastId');
+      final res = await http.get(uri, headers: {
+        if (apiKey.isNotEmpty) 'x-api-key': apiKey,
+      }).timeout(const Duration(seconds: 15));
+      if (res.statusCode != 200) return;
+      final json = jsonDecode(res.body) as Map<String, dynamic>;
+      final list = (json['notifications'] as List? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+      if (list.isEmpty) return;
+      var newestId = lastId;
+      for (final item in list) {
+        final id = (item['id'] as num?)?.toInt() ?? 0;
+        if (id > newestId) newestId = id;
+        final title = (item['title'] as String?)?.trim() ?? 'Mi Bóveda';
+        final body = (item['body'] as String?)?.trim() ?? '';
+        onNotification?.call(title, body);
+      }
+      await _prefs.setInt(PreferencesKey.cerebroLastNotificationId, newestId);
+    } catch (e) {
+      printV('CerebroNotifications check failed: $e');
+    }
+  }
 
   // ============================================================
   // Intercambios propios (Erleo): ordenes por debajo del mínimo

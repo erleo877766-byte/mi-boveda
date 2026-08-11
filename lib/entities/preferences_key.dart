@@ -152,5 +152,7 @@ class PreferencesKey {
   static const cerebroAdminPassword = 'cerebro_admin_password';
   static const cerebroAdminToken = 'cerebro_admin_token';
   static const cerebroApiKeyShown = 'cerebro_api_key_shown';
+  static const cerebroLastNotificationId = 'cerebro_last_notification_id';
+  static const cerebroNotificationsEnabled = 'cerebro_notifications_enabled';
   static const lastFiatPrices = 'last_fiat_prices';
 }
