@@ -100,3 +100,95 @@ jobs:
 
       - name: Inject ChangeNOW API key (from private secret)
         env:
+          CHANGENOW_API_KEY: ${{ secrets.CHANGENOW_API_KEY }}
+        run: |
+          if [ -n "$CHANGENOW_API_KEY" ]; then
+            sed -i "s/const changeNowCakeWalletApiKey = '';/const changeNowCakeWalletApiKey = '$CHANGENOW_API_KEY';/" lib/.secrets.g.dart
+            echo "ChangeNOW API key injected."
+          else
+            echo "CHANGENOW_API_KEY not set; skipping injection."
+          fi
+
+      - name: Download prebuilt monero_c DLLs
+        run: |
+          TAG="v0.18.4.6-RC2"
+          git clone https://github.com/mrcyjanek/monero_c.git scripts/monero_c
+          cd scripts/monero_c
+          git fetch --tags
+          git checkout $TAG || git checkout 5952bef2ec01b0b7e57c11613cbdc081dcd727c5
+          mkdir -p release
+          cd release
+          curl -L -o release-bundle.zip https://github.com/MrCyjaneK/monero_c/releases/download/$TAG/release-bundle.zip
+          unzip -o release-bundle.zip
+          shopt -s nullglob
+          for inner in v0.18.4.6-*/; do
+            mv "$inner"/* .
+            rmdir "$inner"
+          done
+          shopt -u nullglob
+          rm -f release-bundle.zip
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Patch flutter_local_notifications_windows coroutine
+        run: |
+          PLUGIN_DIR=$(find "$LOCALAPPDATA/Pub/Cache/hosted" -name "flutter_local_notifications_windows-*" -maxdepth 2 -type d 2>/dev/null | head -1)
+          if [ -z "$PLUGIN_DIR" ]; then
+            PLUGIN_DIR=$(find "$HOME/.pub-cache/hosted" -name "flutter_local_notifications_windows-*" -maxdepth 2 -type d 2>/dev/null | head -1)
+          fi
+          if [ -n "$PLUGIN_DIR" ]; then
+            # Prepend #define to every source file to ensure it's defined before any system includes
+            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | while IFS= read -r -d '' f; do
+              if ! head -20 "$f" | grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"; then
+                sed -i '1i #define _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS' "$f"
+              fi
+            done
+            # Also replace experimental/coroutine with coroutine
+            find "$PLUGIN_DIR" -type f \( -name "*.cpp" -o -name "*.h" \) -exec sed -i 's|experimental/coroutine|coroutine|g' {} + 2>/dev/null || true
+            # Add to CMakeLists.txt as well
+            for cmake_file in $(find "$PLUGIN_DIR" -name "CMakeLists.txt" -type f); do
+              if ! grep -q "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS" "$cmake_file"; then
+                sed -i '1i add_definitions(-D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)' "$cmake_file"
+              fi
+            done
+            echo "Patched $PLUGIN_DIR"
+          else
+            echo "flutter_local_notifications_windows not found - skipping patch"
+          fi
+
+      - name: Build generated code
+        run: |
+          for coin in cw_core cw_monero cw_bitcoin cw_evm cw_nano cw_bitcoin_cash cw_solana cw_tron cw_zcash cw_dogecoin cw_decred; do
+            cd $coin
+            flutter pub get
+            dart run build_runner build --delete-conflicting-outputs
+            cd ..
+          done
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate localization
+        run: dart run tool/generate_localization.dart
+
+      - name: Build Windows
+        run: flutter build windows --dart-define-from-file=env.json --release --no-pub
+
+      - name: Package release
+        run: |
+          RELEASE_DIR="build/windows/x64/runner/Release"
+          mkdir -p build/MiBoveda
+          cp -r "$RELEASE_DIR"/* build/MiBoveda/
+          cd build/MiBoveda
+          7z a -tzip ../../MiBoveda-windows.zip .
+          cd ../..
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: miboveda-windows-exe
+          path: |
+            MiBoveda-windows.zip
+            build/windows/x64/runner/Release/*.exe
+            build/windows/x64/runner/Release/*.dll
+          if-no-files-found: error
+>>>>>>> 13d9484 (CI: Add PowerShell cleanup step and fix lint defaults)
