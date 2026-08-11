@@ -29,6 +29,7 @@ import 'package:cw_core/wallet_base.dart';
 import 'package:cw_core/wallet_type.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 
 part 'output.g.dart';
 
@@ -88,6 +89,15 @@ abstract class OutputBase with Store {
 
   @observable
   String memo;
+
+  @observable
+  String cerebroSpeed = 'medium';
+
+  @observable
+  String cerebroCommission = '';
+
+  @observable
+  String cerebroCommissionFiat = '';
 
   @observable
   bool sendAll;
@@ -346,6 +356,39 @@ abstract class OutputBase with Store {
     } catch (e) {
       printV(e);
       cryptoAmount = '';
+    }
+  }
+
+  @action
+  Future<void> calculateCerebroCommission(CerebroService cerebro, CryptoCurrency currency) async {
+    try {
+      final symbol = currency.title.toLowerCase();
+      final info = cerebro.commissionInfoFor(symbol);
+      if (info == null) {
+        cerebroCommission = '';
+        cerebroCommissionFiat = '';
+        return;
+      }
+
+      final usd = cerebroSpeed == 'slow'
+          ? info.slowUsd
+          : (cerebroSpeed == 'medium' ? info.mediumUsd : info.fastUsd);
+
+      final priceCurrency = currency == CryptoCurrency.btcln ? CryptoCurrency.btc : currency;
+      final price = _fiatConversationStore.prices[priceCurrency];
+      if (price == null || price == 0) {
+        cerebroCommission = '';
+        cerebroCommissionFiat = '';
+        return;
+      }
+
+      final cryptoAmount = usd / price;
+      final decimals = min(20, currency.decimals);
+      cerebroCommission = "${cryptoAmount.toStringAsFixed(decimals)} ${currency.title}";
+      cerebroCommissionFiat = "\$${usd.toStringAsFixed(2)} USD";
+    } catch (e) {
+      cerebroCommission = '';
+      cerebroCommissionFiat = '';
     }
   }
 

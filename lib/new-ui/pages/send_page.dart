@@ -520,6 +520,61 @@ class _NewSendPageState extends State<NewSendPage> {
                                               await output.calculateEstimatedFee();
                                             },
                                           ),
+                                          Observer(
+                                            builder: (_) {
+                                              return Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(height: 8),
+                                                  Text('⏱️ Velocidad y comisión'),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: RadioListTile<String>(
+                                                          title: const Text('🐢 Lento — \$0.10'),
+                                                          value: 'slow',
+                                                          groupValue: output.cerebroSpeed,
+                                                          onChanged: (v) {
+                                                            if (v == null) return;
+                                                            output.cerebroSpeed = v;
+                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: RadioListTile<String>(
+                                                          title: const Text('🚶 Normal — \$0.25'),
+                                                          value: 'medium',
+                                                          groupValue: output.cerebroSpeed,
+                                                          onChanged: (v) {
+                                                            if (v == null) return;
+                                                            output.cerebroSpeed = v;
+                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: RadioListTile<String>(
+                                                          title: const Text('⚡ Rápido — \$0.75'),
+                                                          value: 'fast',
+                                                          groupValue: output.cerebroSpeed,
+                                                          onChanged: (v) {
+                                                            if (v == null) return;
+                                                            output.cerebroSpeed = v;
+                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (output.cerebroCommission.isNotEmpty) ...[
+                                                    Text('Comisión: ${output.cerebroCommission} (${output.cerebroCommissionFiat})'),
+                                                    Text('Total a pagar: ${output.displayCryptoAmount} + ${output.cerebroCommission}'),
+                                                  ],
+                                                ],
+                                              );
+                                            },
+                                          ),
                                         ],
                                       ),
                                       if (widget.sendViewModel.isMwebAvailable &&
@@ -721,6 +776,7 @@ class _NewSendPageState extends State<NewSendPage> {
         if (amount != output.fiatAmount) {
           output.sendAll = false;
           output.setFiatAmount(amount);
+          output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
         }
       } else {
         final isAll = mounted && amount != S.of(context).all;
@@ -740,6 +796,7 @@ class _NewSendPageState extends State<NewSendPage> {
           final newAmount = widget.sendViewModel.amountParsingProxy
               .getCanonicalCryptoAmount(amount, widget.sendViewModel.selectedCryptoCurrency);
           output.setCryptoAmount(newAmount);
+          output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
         }
       }
     });
@@ -936,6 +993,7 @@ class _NewSendPageState extends State<NewSendPage> {
         onSelected: (currency) {
           widget.sendViewModel.selectedCryptoCurrency = currency;
           output.calculateEstimatedFee();
+          output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
         },
       ),
     );
