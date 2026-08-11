@@ -15,6 +15,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug runner environment
+        shell: pwsh
+        run: |
+          Write-Host '--- POWERSHELL VERSION ---'
+          $PSVersionTable
+          Write-Host '--- PATH ---'
+          Write-Host $env:PATH
+          Write-Host '--- WHICH SHELLS ---'
+          if (Get-Command pwsh -ErrorAction SilentlyContinue) { Write-Host 'pwsh available' } else { Write-Host 'pwsh NOT found' }
+          if (Get-Command bash -ErrorAction SilentlyContinue) { Write-Host 'bash available' } else { Write-Host 'bash NOT found' }
+          Write-Host '--- LIST WORKSPACE TOP ---'
+          Get-ChildItem -Force -Depth 1 | ForEach-Object { Write-Host $_.Name }
+
+      - name: Debug bash environment
+        run: |
+          echo '--- uname ---'
+          uname -a || true
+          echo '--- bash version ---'
+          bash --version || true
+          echo '--- ls workspace ---'
+          ls -la || true
       - name: Remove local-only files from workspace
         shell: pwsh
         run: |
