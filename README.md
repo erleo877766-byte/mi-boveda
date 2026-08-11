@@ -27,7 +27,7 @@ Basado en el código de [Cake Wallet](https://github.com/cake-tech/cake_wallet) 
 | 📱 Android | MiBoveda.apk | [Descargar APK](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.apk) |
 | 🖥️ Windows | MiBoveda.exe | [Descargar EXE](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.exe) |
 
-Además, si quieres ver directamente los runs de Actions que produjeron los artefactos:
+Si prefieres descargar directamente desde las ejecuciones de GitHub Actions:
 
 - APK: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Android+APK%22
 - EXE: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Windows+EXE%22

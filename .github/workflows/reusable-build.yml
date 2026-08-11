@@ -1,7 +1,7 @@
 name: Reusable Build Logic
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 on:
@@ -210,31 +210,33 @@ jobs:
           path: ${{ github.workspace }}/build/app/outputs/flutter-apk
           name: "android apk"
 
-      - name: Create GitHub Release (APK)
-        if: ${{ github.ref == 'refs/heads/main' }}
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-          body: Automated release for APK from workflow ${{ github.workflow }} run ${{ github.run_id }}
-          draft: false
-          prerelease: false
-
-      - name: Upload APK to Release
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.APK_FILE }}
-          asset_name: MiBoveda.apk
-          asset_content_type: application/vnd.android.package-archive
-
       - name: 16KB align
         run: |
           cd build/app/outputs/flutter-apk
           for i in arm64-v8a x86_64; do
             ../../../../scripts/android/check_16kb_align.sh app-$i-release.apk
           done
+      - name: Prepare APK for release
+        if: github.ref_name == 'main'
+        run: |
+          echo "Preparing APK for release upload"
+          # APK_FILE is set in a previous step (Find APK file)
+          if [ -n "${APK_FILE}" ]; then
+            cp "${APK_FILE}" "${{ github.workspace }}/MiBoveda.apk"
+            echo "MiBoveda.apk prepared"
+          else
+            echo "APK_FILE not found; skipping preparation"
+          fi
+
+      - name: Create or update 'latest' release and upload APK
+        if: github.ref_name == 'main'
+        uses: peter-evans/create-or-update-release@v2
+        with:
+          tag_name: latest
+          release_name: Latest
+          body: Automated release for latest APK
+          draft: false
+          prerelease: false
+          files: MiBoveda.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
