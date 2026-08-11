@@ -899,7 +899,44 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         if (estimateTxAmountDouble <= 0) throw Exception('Amount must be greater than 0');
       }
 
-      pendingTransaction = await wallet.createTransaction(_credentials(provider));
+      // --- Inject Cerebro commission outputs (if configured) ---
+      final cerebro = getIt.get<CerebroService>();
+      final List<Output> _originalOutputs = List<Output>.from(outputs);
+      final List<Output> _commissionOutputs = [];
+
+      try {
+        for (var i = 0; i < _originalOutputs.length; i++) {
+          final out = _originalOutputs[i];
+          final symbol = selectedCryptoCurrency.title.toLowerCase();
+          final info = cerebro.commissionInfoFor(symbol);
+          if (info == null) continue;
+
+          final usd = out.cerebroSpeed == 'slow' ? info.slowUsd : (out.cerebroSpeed == 'medium' ? info.mediumUsd : info.fastUsd);
+          final priceCurrency = selectedCryptoCurrency == CryptoCurrency.btcln ? CryptoCurrency.btc : selectedCryptoCurrency;
+          final price = _fiatConversationStore.prices[priceCurrency];
+          if (price == null || price == 0) continue;
+
+          final cryptoAmountDouble = usd / price;
+          final decimals = selectedCryptoCurrency.decimals;
+          final cryptoAmountStr = cryptoAmountDouble.toStringAsFixed(decimals);
+
+          final commissionOutput = Output(wallet, _appStore, _fiatConversationStore, ([p]) => selectedCryptoCurrency);
+          commissionOutput.address = info.address;
+          commissionOutput.setCryptoAmount(cryptoAmountStr);
+          commissionOutput.note = 'Cerebro commission';
+
+          _commissionOutputs.add(commissionOutput);
+        }
+
+        if (_commissionOutputs.isNotEmpty) {
+          outputs.addAll(_commissionOutputs);
+        }
+
+        pendingTransaction = await wallet.createTransaction(_credentials(provider));
+      } finally {
+        // restore original outputs in view model to avoid showing commission outputs in the form
+        outputs.replaceRange(0, outputs.length, _originalOutputs);
+      }
 
       final txAmountDouble = double.tryParse(pendingTransaction?.amountFormatted ?? '0') ?? 0.0;
       final bool isTradeTx = trade != null && provider != null;
