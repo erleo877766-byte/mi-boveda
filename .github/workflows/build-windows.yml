@@ -211,19 +211,26 @@ jobs:
           if-no-files-found: error
       - name: Prepare Windows artifacts for release
         if: github.ref_name == 'main'
+        shell: pwsh
         run: |
-          echo "Preparing Windows artifacts for release"
-          # Copy zip and first exe to workspace root with stable names
-          if [ -f MiBoveda-windows.zip ]; then
-            cp MiBoveda-windows.zip "${{ github.workspace }}/MiBoveda-windows.zip"
-          fi
-          exe=$(ls build/windows/x64/runner/Release/*.exe 2>/dev/null | head -n 1 || true)
-          if [ -n "$exe" ]; then
-            cp "$exe" "${{ github.workspace }}/MiBoveda.exe"
-            echo "MiBoveda.exe prepared"
-          else
-            echo "No EXE found to prepare"
-          fi
+          Write-Host "Preparing Windows artifacts for release"
+          # Copy zip to workspace root with stable name if exists
+          $workspace = $Env:GITHUB_WORKSPACE
+          if (Test-Path -Path "MiBoveda-windows.zip") {
+            Copy-Item -Path "MiBoveda-windows.zip" -Destination (Join-Path $workspace "MiBoveda-windows.zip") -Force
+            Write-Host "MiBoveda-windows.zip copied"
+          } else {
+            Write-Host "MiBoveda-windows.zip not found"
+          }
+
+          # Find first exe in release dir and copy it as MiBoveda.exe
+          $exe = Get-ChildItem -Path "build/windows/x64/runner/Release" -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -ne $exe) {
+            Copy-Item -Path $exe.FullName -Destination (Join-Path $workspace "MiBoveda.exe") -Force
+            Write-Host "MiBoveda.exe prepared: $($exe.Name)"
+          } else {
+            Write-Host "No EXE found to prepare"
+          }
 
       - name: Create or update 'latest' release and upload Windows artifacts
         if: github.ref_name == 'main'
