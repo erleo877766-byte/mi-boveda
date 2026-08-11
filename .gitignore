@@ -231,3 +231,8 @@ scripts/reown_flutter
 
 *.salive
 android/.kotlin
+
+# Mi Boveda Cerebro: servidor y panel admin, SOLO local (nunca sube a GitHub)
+server/
+server/data/
+server/.env
