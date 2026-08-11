@@ -20,6 +20,18 @@ Basado en el código de [Cake Wallet](https://github.com/cake-tech/cake_wallet) 
 * Zano (ZANO)
 * Decred (DCR)
 
+## 📥 Descargas — Última versión automática
+
+| Plataforma | Archivo | Enlace de descarga |
+|---|---|---|
+| 📱 Android | MiBoveda.apk | [Descargar APK](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.apk) |
+| 🖥️ Windows | MiBoveda.exe | [Descargar EXE](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.exe) |
+
+Además, si quieres ver directamente los runs de Actions que produjeron los artefactos:
+
+- APK: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Android+APK%22
+- EXE: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Windows+EXE%22
+
 ## Características
 
 * Tus claves, tus fondos — nadie más tiene acceso

@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 defaults:
   run:
     shell: bash
@@ -191,4 +194,41 @@ jobs:
             build/windows/x64/runner/Release/*.exe
             build/windows/x64/runner/Release/*.dll
           if-no-files-found: error
->>>>>>> 13d9484 (CI: Add PowerShell cleanup step and fix lint defaults)
+      - name: Prepare MiBoveda.exe for release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem build/windows/x64/runner/Release/*.exe | Select-Object -First 1
+          if (-not $exe) { Write-Error "No exe found"; exit 1 }
+          Copy-Item $exe.FullName -Destination $PWD\MiBoveda.exe -Force
+
+      - name: Create GitHub Release (Windows)
+        if: ${{ github.ref == 'refs/heads/main' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: Automated release for Windows EXE from workflow ${{ github.workflow }} run ${{ github.run_id }}
+          draft: false
+          prerelease: false
+
+      - name: Upload EXE to Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: MiBoveda.exe
+          asset_name: MiBoveda.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+
+      - name: Upload ZIP to Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: MiBoveda-windows.zip
+          asset_name: MiBoveda-windows.zip
+          asset_content_type: application/zip

@@ -1,7 +1,7 @@
 name: Reusable Build Logic
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 on:
@@ -209,6 +209,28 @@ jobs:
         with:
           path: ${{ github.workspace }}/build/app/outputs/flutter-apk
           name: "android apk"
+
+      - name: Create GitHub Release (APK)
+        if: ${{ github.ref == 'refs/heads/main' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: Automated release for APK from workflow ${{ github.workflow }} run ${{ github.run_id }}
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.APK_FILE }}
+          asset_name: MiBoveda.apk
+          asset_content_type: application/vnd.android.package-archive
 
       - name: 16KB align
         run: |
