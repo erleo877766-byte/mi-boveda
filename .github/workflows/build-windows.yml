@@ -12,38 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug runner environment
-        shell: pwsh
-        run: |
-          Write-Host '--- POWERSHELL VERSION ---'
-          $PSVersionTable
-          Write-Host '--- PATH ---'
-          Write-Host $env:PATH
-          Write-Host '--- WHICH SHELLS ---'
-          if (Get-Command pwsh -ErrorAction SilentlyContinue) { Write-Host 'pwsh available' } else { Write-Host 'pwsh NOT found' }
-          if (Get-Command bash -ErrorAction SilentlyContinue) { Write-Host 'bash available' } else { Write-Host 'bash NOT found' }
-          Write-Host '--- LIST WORKSPACE TOP ---'
-          Get-ChildItem -Force -Depth 1 | ForEach-Object { Write-Host $_.Name }
-
-      - name: Debug bash environment
-        run: |
-          echo '--- uname ---'
-          uname -a || true
-          echo '--- bash version ---'
-          bash --version || true
-          echo '--- ls workspace ---'
-          ls -la || true
       - name: Remove local-only files from workspace
         shell: pwsh
         run: |
-          if (Test-Path server) {
-            Write-Host "Removing server/ from workspace (local-only)"
-            Remove-Item -Recurse -Force server
-          }
-          if (Test-Path lib/.secrets.g.dart) {
-            Write-Host "Removing lib/.secrets.g.dart from workspace"
-            Remove-Item -Force lib/.secrets.g.dart
-          }
+          if (Test-Path server) { Remove-Item -Recurse -Force server }
+          if (Test-Path lib/.secrets.g.dart) { Remove-Item -Force lib/.secrets.g.dart }
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
