@@ -1,7 +1,7 @@
 name: Reusable Build Logic
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 on:
@@ -230,13 +230,14 @@ jobs:
 
       - name: Create or update 'latest' release and upload APK
         if: github.ref_name == 'main'
-        uses: peter-evans/create-or-update-release@v5
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: latest
-          release_name: Latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: latest
+          name: Latest
           body: Automated release for latest APK
           draft: false
           prerelease: false
-          files: MiBoveda.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: MiBoveda.apk

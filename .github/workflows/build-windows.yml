@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -207,15 +210,16 @@ jobs:
 
       - name: Create or update 'latest' release and upload Windows artifacts
         if: github.ref_name == 'main'
-        uses: peter-evans/create-or-update-release@v5
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: latest
-          release_name: Latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: latest
+          name: Latest
           body: Automated release for latest Windows build
           draft: false
           prerelease: false
-          files: |
+          artifacts: |
             MiBoveda-windows.zip
             MiBoveda.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
