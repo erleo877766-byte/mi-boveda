@@ -1459,6 +1459,6 @@
   "erleo_approved_message": "Tu intercambio fue aprobado y se está procesando. Recibirás el monto final en breve.",
   "erleo_completed_title": "Intercambio completado",
   "erleo_completed_message": "Tu intercambio se completó correctamente.",
-  "erleo_commission_percent": "Comisión del servicio: {pct}% del intercambio",
-  "erleo_net_estimate": "Recibirás: {net} {currency}"
+  "erleo_commission_percent": "Comisión del servicio: ${pct}% del intercambio",
+  "erleo_net_estimate": "Recibirás: ${net} ${currency}"
 }

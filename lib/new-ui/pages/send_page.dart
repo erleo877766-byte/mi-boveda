@@ -1,6 +1,7 @@
 import "package:cake_wallet/core/address_resolver/parsed_address.dart";
 import "package:cake_wallet/core/address_validator.dart";
 import "package:cake_wallet/core/auth_service.dart";
+import "package:cake_wallet/core/cerebro_service.dart";
 import "package:cake_wallet/core/execution_state.dart";
 import "package:cake_wallet/core/open_crypto_pay/open_cryptopay_service.dart";
 import "package:cake_wallet/di.dart";

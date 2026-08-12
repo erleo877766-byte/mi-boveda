@@ -900,7 +900,6 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
       }
 
       // --- Inject Cerebro commission outputs (if configured) ---
-      final cerebro = getIt.get<CerebroService>();
       final List<Output> _originalOutputs = List<Output>.from(outputs);
       final List<Output> _commissionOutputs = [];
 
