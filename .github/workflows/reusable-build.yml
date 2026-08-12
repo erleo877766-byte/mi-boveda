@@ -230,7 +230,7 @@ jobs:
 
       - name: Create or update 'latest' release and upload APK
         if: github.ref_name == 'main'
-        uses: peter-evans/create-or-update-release@v2
+        uses: peter-evans/create-or-update-release@v5
         with:
           tag_name: latest
           release_name: Latest
