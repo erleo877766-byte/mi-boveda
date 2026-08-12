@@ -196,9 +196,15 @@ jobs:
           Write-Host "Preparing Windows artifacts for release"
           # Copy zip to workspace root with stable name if exists
           $workspace = $Env:GITHUB_WORKSPACE
+          $zipDest = Join-Path $workspace "MiBoveda-windows.zip"
           if (Test-Path -Path "MiBoveda-windows.zip") {
-            Copy-Item -Path "MiBoveda-windows.zip" -Destination (Join-Path $workspace "MiBoveda-windows.zip") -Force
-            Write-Host "MiBoveda-windows.zip copied"
+            $zipFull = (Resolve-Path -Path "MiBoveda-windows.zip").Path
+            if ($zipFull -ne $zipDest) {
+              Copy-Item -Path "MiBoveda-windows.zip" -Destination $zipDest -Force
+              Write-Host "MiBoveda-windows.zip copied"
+            } else {
+              Write-Host "MiBoveda-windows.zip already at workspace root"
+            }
           } else {
             Write-Host "MiBoveda-windows.zip not found"
           }
