@@ -103,18 +103,9 @@ class SettingsSectionData {
 
   static List<SettingsSectionData> all = [walletSettings, appSettings, otherSettings];
 
-  static SettingsSectionData erleoSettings =
-      SettingsSectionData("Intercambios Erleo", "", [
-    SettingsListItem(
-        "assets/new-ui/settings_row_icons/nodes.svg",
-        "Intercambios Erleo",
-        Routes.cerebroConfig),
-  ]);
-
   static List<SettingsSectionData> allWithErleo = [
     walletSettings,
     appSettings,
-    erleoSettings,
     otherSettings,
   ];
 }
