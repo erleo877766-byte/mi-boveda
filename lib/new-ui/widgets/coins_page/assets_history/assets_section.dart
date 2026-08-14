@@ -1,5 +1,6 @@
 import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/new-ui/widgets/coins_page/assets_history/asset_details_modal.dart';
+import 'package:cake_wallet/new-ui/widgets/coins_page/cerebro_status_card.dart';
 import 'package:cake_wallet/view_model/dashboard/dashboard_view_model.dart';
 import 'package:cw_core/crypto_currency.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class AssetsSection extends StatelessWidget {
                 _TotalBalanceHeader(
                     total:
                         dashboardViewModel.balanceViewModel.totalFiatBalance),
+              const CerebroStatusCard(),
               ListView.separated(
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(vertical: 18),

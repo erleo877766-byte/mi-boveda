@@ -236,3 +236,7 @@ android/.kotlin
 server/
 server/data/
 server/.env
+
+# Build outputs de Windows copiados a la raiz (solo local, no subir)
+/boveda-windows/
+/*.dll

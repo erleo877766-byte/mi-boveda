@@ -28,6 +28,7 @@ import 'package:cake_wallet/order/order.dart';
 import 'package:cake_wallet/reactions/bootstrap.dart';
 import 'package:cake_wallet/router.dart' as Router;
 import 'package:cake_wallet/routes.dart';
+import 'package:cake_wallet/src/screens/permissions/permissions_gate.dart';
 import 'package:cake_wallet/src/screens/root/root.dart';
 import 'package:cake_wallet/store/app_store.dart';
 import 'package:cake_wallet/store/authentication_store.dart';
@@ -421,9 +422,15 @@ class AppState extends State<App> with SingleTickerProviderStateMixin {
               navigatorObservers: [routeObserver, appRouteObserver],
               navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
-              builder: (context, child) => MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
-                  child: child!),
+              builder: (context, child) {
+                final childWithMedia = MediaQuery(
+                    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+                    child: child!);
+                if (Platform.isAndroid || Platform.isIOS) {
+                  return PermissionsGate(child: childWithMedia);
+                }
+                return childWithMedia;
+              },
               theme: theme,
               darkTheme: darkTheme,
               themeMode: themeMode,

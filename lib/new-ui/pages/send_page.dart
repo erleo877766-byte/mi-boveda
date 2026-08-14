@@ -27,11 +27,13 @@ import "package:cake_wallet/new-ui/widgets/send_page/directional_switcher.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/fiat_amount_bar.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/l2_action_wallet_selector.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/recipient_dot_row.dart";
+import "package:cake_wallet/new-ui/widgets/send_page/cerebro_speed_selector.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/send_address_input.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/send_amount_input.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/send_confirm_sheet.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/send_memo_input.dart";
 import "package:cake_wallet/new-ui/widgets/send_page/send_syncing_indicator.dart";
+import "package:cake_wallet/new-ui/widgets/swap_page/cerebro_connection_status.dart";
 import "package:cake_wallet/reactions/wallet_connect.dart";
 import "package:cake_wallet/routes.dart" show Routes;
 import "package:cake_wallet/src/screens/connect_device/connect_device_page.dart";
@@ -527,46 +529,16 @@ class _NewSendPageState extends State<NewSendPage> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   const SizedBox(height: 8),
+                                                  CerebroConnectionStatus(),
+                                                  const SizedBox(height: 12),
                                                   Text('⏱️ Velocidad y comisión'),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: RadioListTile<String>(
-                                                          title: const Text('🐢 Lento — \$0.10'),
-                                                          value: 'slow',
-                                                          groupValue: output.cerebroSpeed,
-                                                          onChanged: (v) {
-                                                            if (v == null) return;
-                                                            output.cerebroSpeed = v;
-                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
-                                                          },
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: RadioListTile<String>(
-                                                          title: const Text('🚶 Normal — \$0.25'),
-                                                          value: 'medium',
-                                                          groupValue: output.cerebroSpeed,
-                                                          onChanged: (v) {
-                                                            if (v == null) return;
-                                                            output.cerebroSpeed = v;
-                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
-                                                          },
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: RadioListTile<String>(
-                                                          title: const Text('⚡ Rápido — \$0.75'),
-                                                          value: 'fast',
-                                                          groupValue: output.cerebroSpeed,
-                                                          onChanged: (v) {
-                                                            if (v == null) return;
-                                                            output.cerebroSpeed = v;
-                                                            output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ],
+                                                  const SizedBox(height: 8),
+                                                  CerebroSpeedSelector(
+                                                    value: output.cerebroSpeed,
+                                                    onChanged: (v) {
+                                                      output.cerebroSpeed = v;
+                                                      output.calculateCerebroCommission(getIt.get<CerebroService>(), widget.sendViewModel.selectedCryptoCurrency);
+                                                    },
                                                   ),
                                                   if (output.cerebroCommission.isNotEmpty) ...[
                                                     Text('Comisión: ${output.cerebroCommission} (${output.cerebroCommissionFiat})'),

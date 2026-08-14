@@ -345,6 +345,24 @@ class CerebroService extends ChangeNotifier {
     return source?.commissionPercent ?? 1.0;
   }
 
+  /// Comisión fija (USD) para la velocidad lenta.
+  double get commissionSlowUsd {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.commissionSlowUsd ?? 0.10;
+  }
+
+  /// Comisión fija (USD) para la velocidad normal.
+  double get commissionMediumUsd {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.commissionMediumUsd ?? 0.25;
+  }
+
+  /// Comisión fija (USD) para la velocidad rápida.
+  double get commissionFastUsd {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.commissionFastUsd ?? 0.75;
+  }
+
   /// Neto estimado a recibir tras descontar la comisión % del admin.
   double erleoNetEstimate(double estReceive) {
     final pct = commissionPercent;
