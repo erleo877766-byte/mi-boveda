@@ -244,3 +244,21 @@ jobs:
           name: miboveda-android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+
+      - name: Prepare APK for release
+        if: github.ref_name == 'main'
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk MiBoveda.apk
+
+      - name: Create or update 'latest' release and upload APK
+        if: github.ref_name == 'main'
+        uses: peter-evans/create-or-update-release@v5
+        with:
+          tag_name: latest
+          release_name: Latest
+          body: Automated release for latest APK
+          draft: false
+          prerelease: false
+          files: MiBoveda.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
