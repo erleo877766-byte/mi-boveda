@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: release-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -227,7 +231,15 @@ jobs:
           replacesArtifacts: true
           tag: latest
           name: Latest
-          body: Automated release for latest Windows build
+          body: |
+            Mi Bóveda - release automático
+
+            Elige el APK según tu teléfono:
+            - MiBoveda-arm64-v8a.apk: Android moderno (recomendado, casi todos los móviles)
+            - MiBoveda-armeabi-v7a.apk: Android antiguo (32-bit / ARMv7)
+            - MiBoveda-x86_64.apk: emuladores o dispositivos x86_64
+
+            En Windows descarga MiBoveda-windows.zip y extrae la carpeta, o usa MiBoveda.exe.
           draft: false
           prerelease: false
           artifacts: |

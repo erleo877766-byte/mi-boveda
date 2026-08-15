@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: release-publish-${{ github.ref }}
+  cancel-in-progress: false
+
 defaults:
   run:
     shell: bash
@@ -238,21 +242,24 @@ jobs:
 
       - name: Build APK
         run: |
-          flutter build apk --dart-define=hasDevOptions=true --release
+          flutter build apk --dart-define=hasDevOptions=true --release --split-per-abi
 
-      - name: Upload APK
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
           name: miboveda-android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/*-release.apk
           if-no-files-found: error
 
-      - name: Prepare APK for release
+      - name: Prepare APKs for release
         if: github.ref_name == 'main'
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk MiBoveda.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk MiBoveda-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk MiBoveda-x86_64.apk
+          ls -la MiBoveda-*.apk
 
-      - name: Create or update 'latest' release and upload APK
+      - name: Create or update 'latest' release and upload APKs
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
         with:
@@ -261,7 +268,18 @@ jobs:
           replacesArtifacts: true
           tag: latest
           name: Latest
-          body: Automated release for latest APK
+          body: |
+            Mi Bóveda - release automático
+
+            Elige el APK según tu teléfono:
+            - MiBoveda-arm64-v8a.apk: Android moderno (recomendado, casi todos los móviles)
+            - MiBoveda-armeabi-v7a.apk: Android antiguo (32-bit / ARMv7)
+            - MiBoveda-x86_64.apk: emuladores o dispositivos x86_64
+
+            En Windows descarga MiBoveda-windows.zip y extrae la carpeta, o usa MiBoveda.exe.
           draft: false
           prerelease: false
-          artifacts: MiBoveda.apk
+          artifacts: |
+            MiBoveda-arm64-v8a.apk
+            MiBoveda-armeabi-v7a.apk
+            MiBoveda-x86_64.apk
