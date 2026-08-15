@@ -175,54 +175,30 @@ jobs:
       - name: Build Windows
         run: flutter build windows --dart-define-from-file=env.json --release --no-pub
 
-      - name: Package release
+      - name: Download VC++ Redistributable
         run: |
-          RELEASE_DIR="build/windows/x64/runner/Release"
-          mkdir -p build/MiBoveda
-          cp -r "$RELEASE_DIR"/* build/MiBoveda/
-          cd build/MiBoveda
-          7z a -tzip ../../MiBoveda-windows.zip .
-          cd ../..
+          curl -sL -o scripts/windows/vc_redist.x64.exe https://aka.ms/vs/17/release/vc_redist.x64.exe
+          ls -la scripts/windows/vc_redist.x64.exe
 
-      - name: Upload EXE
+      - name: Build installer with Inno Setup
+        run: |
+          choco install innosetup --yes --no-progress
+          "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" scripts/windows/build_exe_installer.iss
+
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: miboveda-windows-exe
+          name: miboveda-windows-setup
           path: |
-            MiBoveda-windows.zip
-            build/windows/x64/runner/Release/*.exe
-            build/windows/x64/runner/Release/*.dll
+            build/installer/MiBoveda-Setup.exe
+            build/windows/x64/runner/Release/MiBoveda.exe
           if-no-files-found: error
-      - name: Prepare Windows artifacts for release
+
+      - name: Prepare Windows installer for release
         if: github.ref_name == 'main'
-        shell: pwsh
-        run: |
-          Write-Host "Preparing Windows artifacts for release"
-          # Copy zip to workspace root with stable name if exists
-          $workspace = $Env:GITHUB_WORKSPACE
-          $zipDest = Join-Path $workspace "MiBoveda-windows.zip"
-          if (Test-Path -Path "MiBoveda-windows.zip") {
-            $zipFull = (Resolve-Path -Path "MiBoveda-windows.zip").Path
-            if ($zipFull -ne $zipDest) {
-              Copy-Item -Path "MiBoveda-windows.zip" -Destination $zipDest -Force
-              Write-Host "MiBoveda-windows.zip copied"
-            } else {
-              Write-Host "MiBoveda-windows.zip already at workspace root"
-            }
-          } else {
-            Write-Host "MiBoveda-windows.zip not found"
-          }
+        run: cp build/installer/MiBoveda-Setup.exe MiBoveda-Setup.exe
 
-          # Find first exe in release dir and copy it as MiBoveda.exe
-          $exe = Get-ChildItem -Path "build/windows/x64/runner/Release" -Filter "*.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($null -ne $exe) {
-            Copy-Item -Path $exe.FullName -Destination (Join-Path $workspace "MiBoveda.exe") -Force
-            Write-Host "MiBoveda.exe prepared: $($exe.Name)"
-          } else {
-            Write-Host "No EXE found to prepare"
-          }
-
-      - name: Create or update 'latest' release and upload Windows artifacts
+      - name: Create or update 'latest' release and upload Windows installer
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
         with:
@@ -234,14 +210,12 @@ jobs:
           body: |
             Mi Bóveda - release automático
 
-            Elige el APK según tu teléfono:
-            - MiBoveda-arm64-v8a.apk: Android moderno (recomendado, casi todos los móviles)
-            - MiBoveda-armeabi-v7a.apk: Android antiguo (32-bit / ARMv7)
-            - MiBoveda-x86_64.apk: emuladores o dispositivos x86_64
+            1) Descarga MiBoveda.apk (el principal)
+            2) Ábrelo y toca "Instalar" -> listo
 
-            En Windows descarga MiBoveda-windows.zip y extrae la carpeta, o usa MiBoveda.exe.
+            MiBoveda-armeabi-v7a.apk: solo para teléfonos antiguos (32-bit)
+            MiBoveda-x86_64.apk: solo para emuladores o PC con Android
+            En Windows: descarga MiBoveda-Setup.exe -> doble clic -> Instalar -> listo
           draft: false
           prerelease: false
-          artifacts: |
-            MiBoveda-windows.zip
-            MiBoveda.exe
+          artifacts: MiBoveda-Setup.exe

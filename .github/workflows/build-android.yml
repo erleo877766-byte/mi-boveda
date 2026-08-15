@@ -254,10 +254,10 @@ jobs:
       - name: Prepare APKs for release
         if: github.ref_name == 'main'
         run: |
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda.apk
           cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk MiBoveda-armeabi-v7a.apk
           cp build/app/outputs/flutter-apk/app-x86_64-release.apk MiBoveda-x86_64.apk
-          ls -la MiBoveda-*.apk
+          ls -la MiBoveda*.apk
 
       - name: Create or update 'latest' release and upload APKs
         if: github.ref_name == 'main'
@@ -271,15 +271,15 @@ jobs:
           body: |
             Mi Bóveda - release automático
 
-            Elige el APK según tu teléfono:
-            - MiBoveda-arm64-v8a.apk: Android moderno (recomendado, casi todos los móviles)
-            - MiBoveda-armeabi-v7a.apk: Android antiguo (32-bit / ARMv7)
-            - MiBoveda-x86_64.apk: emuladores o dispositivos x86_64
+            1) Descarga MiBoveda.apk (el principal)
+            2) Ábrelo y toca "Instalar" -> listo
 
-            En Windows descarga MiBoveda-windows.zip y extrae la carpeta, o usa MiBoveda.exe.
+            MiBoveda-armeabi-v7a.apk: solo para teléfonos antiguos (32-bit)
+            MiBoveda-x86_64.apk: solo para emuladores o PC con Android
+            En Windows: descarga MiBoveda-Setup.exe -> doble clic -> Instalar -> listo
           draft: false
           prerelease: false
           artifacts: |
-            MiBoveda-arm64-v8a.apk
+            MiBoveda.apk
             MiBoveda-armeabi-v7a.apk
             MiBoveda-x86_64.apk
