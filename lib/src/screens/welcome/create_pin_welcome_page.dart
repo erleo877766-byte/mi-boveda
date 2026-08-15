@@ -21,8 +21,8 @@ class CreatePinWelcomePage extends BasePage {
   static const imageMaxWidth = 600.0;
   final welcomeImageLight = 'assets/images/welcome_light_theme.svg';
   final welcomeImageDark = 'assets/images/welcome_dark_theme.svg';
-  final cakeLogoLight = 'assets/images/cake_logo_light.svg';
-  final cakeLogoDark = 'assets/images/cake_logo_dark.svg';
+  final cakeLogoLight = 'assets/images/miboveda_logo.png';
+  final cakeLogoDark = 'assets/images/miboveda_logo.png';
 
   String appTitle(BuildContext context) {
     if (isMoneroOnly) {
