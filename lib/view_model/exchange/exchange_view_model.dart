@@ -91,9 +91,26 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
   final List<ReactionDisposer> _disposers = [];
   Timer? _erleoPollTimer;
 
+  // Moneda y monto bloqueados por la orden Erleo en curso (para desbloquear
+  // cuando el admin confirme o cuando se cancele/desista).
+  String? _erleoLockSymbol;
+  double _erleoLockAmount = 0;
+
+  void _unlockErleoCoin() {
+    final symbol = _erleoLockSymbol;
+    _erleoLockSymbol = null;
+    if (symbol != null && _erleoLockAmount > 0) {
+      try {
+        getIt.get<CerebroService>().unlockCoin(symbol, _erleoLockAmount);
+      } catch (_) {}
+    }
+    _erleoLockAmount = 0;
+  }
+
   void dispose() {
     bestRateSync.cancel();
     _erleoPollTimer?.cancel();
+    _unlockErleoCoin();
     for (final disposer in _disposers) {
       disposer();
     }
@@ -1427,6 +1444,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
   @action
   void cancelErleoWait() {
     _erleoPollTimer?.cancel();
+    _unlockErleoCoin();
     tradeState = ExchangeTradeStateInitial();
   }
 
@@ -1471,6 +1489,11 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
         speed: erleoSpeed,
         estReceive: estReceive,
       );
+      // Bloquear la moneda origen mientras la orden esté pendiente: el usuario
+      // no podrá gastarla hasta que el admin confirme o se cancele.
+      _erleoLockSymbol = depositCurrency.title;
+      _erleoLockAmount = double.parse(depositAmountCanonical);
+      cerebro.lockCoin(depositCurrency.title, _erleoLockAmount);
       tradeState = TradeIsErleoPending(
         orderId: orderId,
         estReceive: estReceive,
@@ -1481,6 +1504,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
       return true;
     } catch (e) {
       printV('submitToErleo error: $e');
+      _unlockErleoCoin();
       // Muestra el error real del Cerebro en lugar de un mensaje genérico.
       tradeState = TradeIsErleoError(error: _friendlyErleoError(e));
       return false;
@@ -1512,6 +1536,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
         final status = json['status'] as String? ?? '';
         switch (status) {
           case 'approved':
+            _unlockErleoCoin();
             tradeState = TradeIsErleoApproved(
               orderId: orderId,
               netToAmount: (json['netToAmount'] as num?)?.toDouble(),
@@ -1521,6 +1546,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
             break;
           case 'completed':
             timer.cancel();
+            _unlockErleoCoin();
             tradeState = TradeIsErleoCompleted(
               orderId: orderId,
               netToAmount: (json['netToAmount'] as num?)?.toDouble(),
@@ -1528,6 +1554,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
             break;
           case 'rejected':
             timer.cancel();
+            _unlockErleoCoin();
             tradeState = TradeIsErleoRejected(
               orderId: orderId,
               reason: json['cancelledReason'] as String?,

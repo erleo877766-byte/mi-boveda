@@ -756,6 +756,59 @@ class CWEVM extends EVM {
       }
 
       await Future.wait(tokenChecks);
+      await _syncCerebroCustomTokens(wallet);
+    } catch (_) {}
+  }
+
+  /// Red EVM (nombre de cadena) que corresponde a cada network del Cerebro.
+  static const _cerebroNetworkToChain = <String, String>{
+    'ethereum': 'ethereum',
+    'erc20': 'ethereum',
+    'bep20': 'bsc',
+    'base': 'base',
+    'arbitrum': 'arbitrum',
+    'polygon': 'polygon',
+  };
+
+  /// Agrega a la billetera los tokens EVM que el admin registró en el Cerebro
+  /// (config.customTokens). Se invoca al abrir cada billetera EVM, así el token
+  /// nuevo aparece solo, sin que el usuario actualice la app ni escriba nada.
+  Future<void> _syncCerebroCustomTokens(EVMChainWallet wallet) async {
+    try {
+      final cerebro = getIt.get<CerebroService>();
+      final tokens = cerebro.customTokens;
+      if (tokens.isEmpty) return;
+
+      final chainName =
+          EVMChainUtils.getDefaultTokenSymbol(wallet.selectedChainId).toLowerCase();
+      final existing =
+          wallet.erc20Currencies.map((t) => t.contractAddress.toLowerCase()).toSet();
+
+      for (final raw in tokens) {
+        final network = (raw['network'] as String? ?? '').toLowerCase();
+        if (_cerebroNetworkToChain[network] != chainName) continue;
+
+        final contract = (raw['contractAddress'] as String? ?? '').trim();
+        if (contract.isEmpty || existing.contains(contract.toLowerCase())) continue;
+
+        final symbol = (raw['symbol'] as String? ?? '').trim().toUpperCase();
+        final name = (raw['name'] as String? ?? '').trim();
+
+        try {
+          final info = await wallet.getErc20Token(contract, chainName);
+          final token = Erc20Token(
+            name: name.isNotEmpty ? name : (info?.name ?? symbol),
+            symbol: symbol.isNotEmpty ? symbol : (info?.symbol ?? 'TOKEN'),
+            contractAddress: contract,
+            decimal: info?.decimal ?? 18,
+            enabled: true,
+            isPotentialScam: false,
+          );
+          await wallet.addErc20Token(token);
+        } catch (e) {
+          printV('Cerebro: no se pudo agregar el token $symbol ($contract): $e');
+        }
+      }
     } catch (_) {}
   }
 }

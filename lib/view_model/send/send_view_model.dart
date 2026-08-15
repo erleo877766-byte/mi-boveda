@@ -680,6 +680,27 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
         return null;
       }
 
+      // Monedas bloqueadas por un intercambio en curso (orden Erleo pendiente):
+      // no se puede gastar más de lo disponible tras descontar lo bloqueado.
+      final locked = cerebro.lockedAmountFor(selectedCryptoCurrency.title);
+      if (locked > 0) {
+        var totalToSend = 0.0;
+        for (final output in outputs) {
+          totalToSend += output.cryptoAmountMoney.toDouble();
+        }
+        final balanceForCurrency = wallet.balance[selectedCryptoCurrency];
+        final available = balanceForCurrency == null
+            ? 0.0
+            : balanceForCurrency.available.toDouble();
+        if (totalToSend > (available - locked) + 1e-9) {
+          state = FailureState(
+            '${selectedCryptoCurrency.title} está bloqueado en un intercambio en curso. '
+            'Espera a que confirme o cancele para poder enviarlo.',
+          );
+          return null;
+        }
+      }
+
       if (!(state is IsExecutingState)) state = IsExecutingState();
 
       if (wallet.isHardwareWallet) {

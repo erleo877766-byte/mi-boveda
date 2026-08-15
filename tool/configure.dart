@@ -1382,6 +1382,8 @@ import 'package:cw_core/transaction_direction.dart';
 """;
   const evmCWHeaders = """
 import 'package:cake_wallet/core/fiat_conversion_service.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
+import 'package:cw_core/utils/print_verbose.dart';
 import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/entities/fiat_api_mode.dart';
 import 'package:cake_wallet/entities/fiat_currency.dart';

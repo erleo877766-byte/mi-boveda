@@ -20,6 +20,7 @@ class CerebroConfig {
     required this.adminCommissionExemption,
     required this.minAppVersion,
     required this.coins,
+    required this.customTokens,
     required this.nodes,
     required this.announcements,
     required this.erleoExchangeEnabled,
@@ -34,6 +35,7 @@ class CerebroConfig {
   final bool adminCommissionExemption;
   final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
+  final List<Map<String, dynamic>> customTokens;
   final List<CerebroNode> nodes;
   final List<Map<String, dynamic>> announcements;
   final bool erleoExchangeEnabled;
@@ -57,6 +59,12 @@ class CerebroConfig {
           json['adminCommissionExemption'] as bool? ?? true,
       minAppVersion: json['minAppVersion']?.toString() ?? '',
       coins: coins,
+      customTokens: json['customTokens'] is List
+          ? (json['customTokens'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
+          : <Map<String, dynamic>>[],
       nodes: json['nodes'] is List
           ? (json['nodes'] as List)
               .whereType<Map<String, dynamic>>()
@@ -312,6 +320,43 @@ class CerebroService extends ChangeNotifier {
   }
 
   bool get hasReceivedConfig => config != null || _cachedConfig != null;
+
+  /// Tokens EVM/TRC20 personalizados que el admin registró en el Cerebro.
+  /// La app los agrega automáticamente a la billetera de la red que corresponda.
+  List<Map<String, dynamic>> get customTokens {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    return source?.customTokens ?? const [];
+  }
+
+  // ============================================================
+  // Bloqueo de monedas durante un intercambio propio (Erleo)
+  // ============================================================
+  // Mientras una orden está pendiente (sin confirmar por el admin), la moneda
+  // origen queda bloqueada para que el usuario no la gaste dos veces. Se
+  // desbloquea al confirmar (approved/completed) o al cancelar/fallar.
+  final Map<String, double> _lockedBySymbol = {};
+
+  double lockedAmountFor(String symbol) => _lockedBySymbol[symbol.toUpperCase()] ?? 0;
+
+  bool hasLockedCoins() => _lockedBySymbol.isNotEmpty;
+
+  void lockCoin(String symbol, double amount) {
+    final key = symbol.toUpperCase();
+    if (amount <= 0) return;
+    _lockedBySymbol[key] = (lockedAmountFor(key) + amount);
+    notifyListeners();
+  }
+
+  void unlockCoin(String symbol, double amount) {
+    final key = symbol.toUpperCase();
+    final remaining = (_lockedBySymbol[key] ?? 0) - amount;
+    if (remaining <= 0.000000001) {
+      _lockedBySymbol.remove(key);
+    } else {
+      _lockedBySymbol[key] = remaining;
+    }
+    notifyListeners();
+  }
 
   List<Map<String, dynamic>> get activeAnnouncements {
     final source = (connected && config != null) ? config! : _cachedConfig;
