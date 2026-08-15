@@ -21,7 +21,7 @@ LicenseFile=..\..\LICENSE.md
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ; PrivilegesRequired=lowest
 OutputDir=..\..\build\installer
-OutputBaseFilename=MiBoveda-Setup
+OutputBaseFilename=MiBovedaSetup
 SetupIconFile=..\..\windows\runner\resources\app_icon.ico
 Compression=lzma
 SolidCompression=yes

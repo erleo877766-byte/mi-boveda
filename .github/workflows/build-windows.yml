@@ -190,13 +190,13 @@ jobs:
         with:
           name: miboveda-windows-setup
           path: |
-            build/installer/MiBoveda-Setup.exe
+            build/installer/MiBovedaSetup.exe
             build/windows/x64/runner/Release/MiBoveda.exe
           if-no-files-found: error
 
       - name: Prepare Windows installer for release
         if: github.ref_name == 'main'
-        run: cp build/installer/MiBoveda-Setup.exe MiBoveda-Setup.exe
+        run: cp build/installer/MiBovedaSetup.exe MiBovedaSetup.exe
 
       - name: Create or update 'latest' release and upload Windows installer
         if: github.ref_name == 'main'
@@ -213,9 +213,9 @@ jobs:
             1) Descarga MiBoveda.apk (el principal)
             2) Ábrelo y toca "Instalar" -> listo
 
-            MiBoveda-armeabi-v7a.apk: solo para teléfonos antiguos (32-bit)
-            MiBoveda-x86_64.apk: solo para emuladores o PC con Android
-            En Windows: descarga MiBoveda-Setup.exe -> doble clic -> Instalar -> listo
+            MiBovedaAntiguos.apk: solo para teléfonos antiguos (32-bit)
+            MiBovedaEmulador.apk: solo para emuladores o PC con Android
+            En Windows: descarga MiBovedaSetup.exe -> doble clic -> Instalar -> listo
           draft: false
           prerelease: false
-          artifacts: MiBoveda-Setup.exe
+          artifacts: MiBovedaSetup.exe
