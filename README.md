@@ -22,15 +22,23 @@ Basado en el código de [Cake Wallet](https://github.com/cake-tech/cake_wallet) 
 
 ## 📥 Descargas — Última versión automática
 
+### Tienda oficial
+
+👉 **https://leonard0001991.github.io/mi-boveda/** — descargas e instrucciones paso a paso.
+
 | Plataforma | Archivo | Enlace de descarga |
 |---|---|---|
-| 📱 Android | MiBoveda.apk | [Descargar APK](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.apk) |
-| 🖥️ Windows | MiBoveda.exe | [Descargar EXE](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.exe) |
+| 📱 Android (principal) | MiBoveda.apk | [Descargar APK](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBoveda.apk) |
+| 📱 Android antiguo (32-bit) | MiBovedaAntiguos.apk | [Descargar](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBovedaAntiguos.apk) |
+| 📱 Android (emulador / PC) | MiBovedaEmulador.apk | [Descargar](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBovedaEmulador.apk) |
+| 🖥️ Windows (instalador) | MiBovedaSetup.exe | [Descargar EXE](https://github.com/leonard0001991/mi-boveda/releases/latest/download/MiBovedaSetup.exe) |
 
-Si prefieres descargar directamente desde las ejecuciones de GitHub Actions:
+**Instalación:**
 
-- APK: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Android+APK%22
-- EXE: https://github.com/leonard0001991/mi-boveda/actions?query=branch%3Amain+is%3Asuccess+workflow%3A%22Build+Windows+EXE%22
+- **Android:** descarga el APK, ábrelo y toca "Instalar". Si sale el aviso de Google Play Protect ("Esta app no tiene reputación"), toca **"Más detalles" → "Instalar de todos modos" → "Instalar"**. Es normal: la app no está en Google Play.
+- **Windows:** abre `MiBovedaSetup.exe` → "Siguiente" → "Instalar". Crea accesos directos en el Escritorio y el Menú Inicio (no hay que descomprimir nada).
+
+Todas las versiones se generan automáticamente con cada cambio en `main` y quedan publicadas en la [release `latest`](https://github.com/leonard0001991/mi-boveda/releases/tag/latest).
 
 ## Características
 
