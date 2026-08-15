@@ -240,3 +240,8 @@ server/.env
 # Build outputs de Windows copiados a la raiz (solo local, no subir)
 /boveda-windows/
 /*.dll
+
+# Android signing (nunca subir al repositorio)
+*.jks
+*.keystore
+android/key.properties

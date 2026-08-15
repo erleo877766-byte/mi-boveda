@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Mi Bóveda - descarga oficial e instalación. Billetera de criptomonedas multiplataforma.">
+<title>Mi Bóveda - Tienda oficial</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --accent:#238636; --accent2:#1f6feb; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 60px; }
+  header { text-align:center; padding:16px 0 8px; }
+  h1 { font-size:1.9rem; }
+  header p { color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin:20px 0; }
+  h2 { font-size:1.15rem; margin-bottom:12px; }
+  .dl { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--border); }
+  .dl:first-of-type { border-top:none; }
+  .dl .desc { flex:1; }
+  .dl .desc small { display:block; color:var(--muted); }
+  a.btn { display:inline-block; white-space:nowrap; background:var(--accent); color:#fff; text-decoration:none; padding:10px 16px; border-radius:8px; font-weight:600; }
+  a.btn.sec { background:var(--accent2); }
+  ol,ul { padding-left:22px; }
+  li { margin:6px 0; }
+  .warn { background:#3d2314; border:1px solid #9e6a03; border-radius:10px; padding:14px 16px; margin:14px 0; }
+  .warn b { color:#ffd33d; }
+  .muted { color:var(--muted); }
+  code { background:#010409; border:1px solid var(--border); padding:1px 6px; border-radius:4px; font-size:.9em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Mi Bóveda</h1>
+    <p>Billetera de criptomonedas multiplataforma. Descarga e instala en 1 clic.</p>
+  </header>
+
+  <div class="card">
+    <h2>Descargas</h2>
+
+    <div class="dl">
+      <div class="desc">
+        <b>Android (principal)</b>
+        <small>Para casi todos los móviles modernos (arm64)</small>
+      </div>
+      <a class="btn" href="https://github.com/leonard0001991/mi-boveda/releases/download/latest/MiBoveda.apk">Descargar</a>
+    </div>
+
+    <div class="dl">
+      <div class="desc">
+        <b>Android (antiguo, 32-bit)</b>
+        <small>Solo si el principal no instala</small>
+      </div>
+      <a class="btn sec" href="https://github.com/leonard0001991/mi-boveda/releases/download/latest/MiBovedaAntiguos.apk">Descargar</a>
+    </div>
+
+    <div class="dl">
+      <div class="desc">
+        <b>Android (emulador / PC)</b>
+        <small>Emuladores o PC con Android (x86_64)</small>
+      </div>
+      <a class="btn sec" href="https://github.com/leonard0001991/mi-boveda/releases/download/latest/MiBovedaEmulador.apk">Descargar</a>
+    </div>
+
+    <div class="dl">
+      <div class="desc">
+        <b>Windows</b>
+        <small>Instalador completo (accesos directos en Escritorio y Menú Inicio)</small>
+      </div>
+      <a class="btn" href="https://github.com/leonard0001991/mi-boveda/releases/download/latest/MiBovedaSetup.exe">Descargar</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Cómo instalar en Android</h2>
+    <ol>
+      <li>Toca <b>Descargar</b> (el principal, "MiBoveda.apk").</li>
+      <li>Cuando termine, toca la notificación de la descarga o ábrela desde "Descargas".</li>
+      <li>Si pide permiso para "instalar apps desconocidas", tócalo y permite el navegador.</li>
+      <li>Toca <b>Instalar</b> y luego <b>Listo</b>.</li>
+    </ol>
+
+    <div class="warn">
+      <b>Aviso de Google Play Protect</b><br>
+      Si aparece <i>"Esta app no tiene reputación"</i>, es normal: la app no está en Google Play.
+      Toca <b>"Más detalles"</b> &rarr; <b>"Instalar de todos modos"</b> &rarr; <b>"Instalar"</b>.
+      Está firmada con un certificado de lanzamiento propio y este sitio es su origen oficial.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Cómo instalar en Windows</h2>
+    <ol>
+      <li>Descarga <b>MiBovedaSetup.exe</b>.</li>
+      <li>Haz doble clic en el archivo descargado.</li>
+      <li>Toca <b>Siguiente / Instalar</b> (acepta el aviso de Windows si aparece).</li>
+      <li>Se crea el acceso directo en el Escritorio y el Menú Inicio: listo.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Preguntas frecuentes</h2>
+    <p class="muted"><b>¿Por qué no está en Google Play?</b> Publicar en Google Play cuesta 25 USD y el resto es la tuya. Este sitio es la tienda oficial.</p>
+    <p class="muted"><b>¿Es segura?</b> La app nunca envía tus llaves a ningún servidor. La compilación se hace de forma reproducible en GitHub Actions (puedes ver el código fuente y las compilaciones en el repositorio).</p>
+    <p class="muted"><b>¿Cómo me entero de actualizaciones?</b> Vuelve a este sitio o entra a <code>github.com/leonard0001991/mi-boveda/releases</code>.</p>
+  </div>
+
+  <p class="muted" style="text-align:center;margin-top:24px;">Mi Bóveda &mdash; free, sin anuncios y de código abierto.</p>
+</div>
+</body>
+</html>

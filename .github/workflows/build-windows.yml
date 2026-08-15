@@ -216,6 +216,10 @@ jobs:
             MiBovedaAntiguos.apk: solo para teléfonos antiguos (32-bit)
             MiBovedaEmulador.apk: solo para emuladores o PC con Android
             En Windows: descarga MiBovedaSetup.exe -> doble clic -> Instalar -> listo
+
+            ¿Te sale el aviso de Google Play Protect ("Esta app no tiene reputación")?
+            Es normal: la app NO está en Google Play. Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
+            Está firmada con un certificado de lanzamiento propio y la tuya es tuya. Puedes ver su origen aquí: https://leonard0001991.github.io/mi-boveda/
           draft: false
           prerelease: false
           artifacts: MiBovedaSetup.exe
