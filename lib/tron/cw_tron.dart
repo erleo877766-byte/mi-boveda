@@ -147,6 +147,48 @@ class CWTron extends Tron {
         .any((element) => element.contractAddress == contractAddress);
   }
 
+  /// Agrega a la billetera Tron los tokens TRC20 que el admin registró en el
+  /// Cerebro (config.customTokens). Se invoca al abrir la billetera Tron, así
+  /// el token nuevo aparece solo, sin que el usuario actualice la app.
+  @override
+  Future<void> syncCerebroCustomTokens(WalletBase wallet) async {
+    final tronWallet = wallet as TronWallet;
+    try {
+      final cerebro = getIt.get<CerebroService>();
+      final tokens = cerebro.customTokens;
+      if (tokens.isEmpty) return;
+
+      final existing =
+          tronWallet.tronTokenCurrencies.map((t) => t.contractAddress.toLowerCase()).toSet();
+
+      for (final raw in tokens) {
+        final network = (raw['network'] as String? ?? '').toLowerCase();
+        if (network != 'tron' && network != 'trc20') continue;
+
+        final contract = (raw['contractAddress'] as String? ?? '').trim();
+        if (contract.isEmpty || existing.contains(contract.toLowerCase())) continue;
+
+        final symbol = (raw['symbol'] as String? ?? '').trim().toUpperCase();
+        final name = (raw['name'] as String? ?? '').trim();
+
+        try {
+          final info = await tronWallet.getTronToken(contract);
+          final token = TronToken(
+            name: name.isNotEmpty ? name : (info?.name ?? symbol),
+            symbol: symbol.isNotEmpty ? symbol : (info?.symbol ?? 'TOKEN'),
+            contractAddress: contract,
+            decimal: info?.decimal ?? 6,
+            enabled: true,
+            isPotentialScam: false,
+          );
+          await tronWallet.addTronToken(token);
+        } catch (e) {
+          printV('Cerebro: no se pudo agregar el token $symbol ($contract): $e');
+        }
+      }
+    } catch (_) {}
+  }
+
   @override
   TransactionInfo getTransactionInfo({
     required String id,

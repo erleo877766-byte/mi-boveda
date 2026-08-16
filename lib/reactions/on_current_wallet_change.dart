@@ -115,6 +115,10 @@ void startCurrentWalletChangeReaction(
       if (wallet.type == WalletType.solana) {
         await solana!.discoverAndAddWalletTokens(wallet);
       }
+
+      if (wallet.type == WalletType.tron) {
+        await tron!.syncCerebroCustomTokens(wallet);
+      }
     } catch (e) {
       printV(e.toString());
     }

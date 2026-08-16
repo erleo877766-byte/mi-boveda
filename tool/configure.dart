@@ -1079,6 +1079,9 @@ import 'package:cw_core/transaction_direction.dart';
 
 """;
   const tronCWHeaders = """
+import 'package:cake_wallet/core/cerebro_service.dart';
+import 'package:cake_wallet/di.dart';
+import 'package:cw_core/utils/print_verbose.dart';
 import 'package:cw_evm/evm_chain_mnemonics.dart';
 import 'package:cw_tron/tron_transaction_credentials.dart';
 import 'package:cw_tron/tron_transaction_info.dart';
@@ -1122,6 +1125,7 @@ abstract class Tron {
   List<String> getDefaultTokenContractAddresses();
   List<String> getDefaultTokenSymbols();
   bool isTokenAlreadyAdded(WalletBase wallet, String contractAddress);
+  Future<void> syncCerebroCustomTokens(WalletBase wallet);
   TransactionInfo getTransactionInfo({
     required String id,
     required Money amount,
