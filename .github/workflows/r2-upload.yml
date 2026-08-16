@@ -1,0 +1,57 @@
+name: Subir instaladores a Cloudflare R2 (CDN)
+
+# Cuando haya muchos usuarios, activa este flujo para servir las descargas
+# desde Cloudflare R2 (egreso GRATIS, sin limites), en vez del proxy de Render.
+#
+# Como activarlo (una sola vez, 5 minutos):
+#   1. Crea una cuenta gratis en https://dash.cloudflare.com/sign-up
+#   2. Crea un "bucket" R2 (ej. miboveda) y activa "R2.dev" o un dominio propio.
+#   3. Crea un "API Token" de R2 con permisos de lectura+escritura del bucket.
+#   4. En este repo (Settings > Secrets and variables > Actions) agrega:
+#        R2_ACCOUNT_ID   -> tu ID de cuenta de Cloudflare
+#        R2_ACCESS_KEY_ID -> access key id del token R2
+#        R2_SECRET_ACCESS_KEY -> access key secret del token R2
+#        R2_BUCKET        -> nombre del bucket (ej. miboveda)
+#   5. Listo: cada release nuevo se sube solo. La URL publica es:
+#        https://pub-XXXX.r2.dev/MiBoveda.apk  (o tu dominio propio)
+#        Para usar un dominio propio (ej. dl.miboveda.com) crealo en R2 > Custom Domain.
+#        Pon ese dominio en la pagina de descargas.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar los instaladores del ultimo release
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: leonard0001991/mi-boveda
+          latest: true
+          fileName: "*"
+          out-file-path: dist
+
+      - name: Subir los instaladores al bucket R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          aws configure set aws_access_key_id "$R2_ACCESS_KEY_ID"
+          aws configure set aws_secret_access_key "$R2_SECRET_ACCESS_KEY"
+          aws s3 sync dist s3://$R2_BUCKET \
+            --endpoint-url https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
+            --region auto --acl public-read
+
+      - name: Verificar que los 4 instaladores estan publicados
+        run: |
+          aws s3 ls s3://${{ secrets.R2_BUCKET }} \
+            --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
+            --region auto
