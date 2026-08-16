@@ -24,6 +24,7 @@ class CerebroConfig {
     required this.nodes,
     required this.announcements,
     required this.erleoExchangeEnabled,
+    required this.downloads,
   });
 
   final String name;
@@ -39,6 +40,7 @@ class CerebroConfig {
   final List<CerebroNode> nodes;
   final List<Map<String, dynamic>> announcements;
   final bool erleoExchangeEnabled;
+  final Map<String, dynamic> downloads;
 
   factory CerebroConfig.fromJson(Map<String, dynamic> json) {
     final coinsRaw = json['coins'] as Map<String, dynamic>? ?? const {};
@@ -78,6 +80,9 @@ class CerebroConfig {
               .toList()
           : <Map<String, dynamic>>[],
       erleoExchangeEnabled: json['erleoExchangeEnabled'] as bool? ?? false,
+      downloads: json['downloads'] is Map
+          ? Map<String, dynamic>.from(json['downloads'] as Map)
+          : <String, dynamic>{},
     );
   }
 }
@@ -155,6 +160,40 @@ class CerebroService extends ChangeNotifier {
     if (connected && config != null) return config!.adminCommissionExemption;
     final cached = _cachedConfig;
     return cached?.adminCommissionExemption ?? true;
+  }
+
+  // ============================================================
+  // Actualización de la app (versión disponible + enlaces)
+  // ============================================================
+  Map<String, dynamic> get _downloads {
+    if (connected && config != null) return config!.downloads;
+    final cached = _cachedConfig;
+    return cached?.downloads ?? const {};
+  }
+
+  String? get latestVersion {
+    final v = (_downloads['version'] as String?)?.trim() ?? '';
+    return v.isEmpty ? null : v;
+  }
+
+  String? get apkUrl {
+    final v = (_downloads['apkUrl'] as String?)?.trim() ?? '';
+    return v.isEmpty ? null : v;
+  }
+
+  String? get apkMirrorUrl {
+    final v = (_downloads['apkMirrorUrl'] as String?)?.trim() ?? '';
+    return v.isEmpty ? null : v;
+  }
+
+  String? get exeUrl {
+    final v = (_downloads['exeUrl'] as String?)?.trim() ?? '';
+    return v.isEmpty ? null : v;
+  }
+
+  String? get exeMirrorUrl {
+    final v = (_downloads['exeMirrorUrl'] as String?)?.trim() ?? '';
+    return v.isEmpty ? null : v;
   }
 
   void start() {

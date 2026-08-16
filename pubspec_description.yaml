@@ -1,6 +1,6 @@
 name: cake_wallet
 description: Mi Bóveda - Billetera de criptomonedas independiente.
-version: 0.0.0
+version: 1.0.0+1
 publish_to: none
 
 environment:
