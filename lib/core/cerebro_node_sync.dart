@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
 import 'package:cw_core/node.dart';
 import 'package:cw_core/wallet_type.dart';
@@ -180,7 +181,7 @@ Future<void> syncBuiltinNodesFromCerebro(List<CerebroNode> nodes) async {
 
 Future<List<CerebroNode>?> cerebroNodesFromCache() async {
   final prefs = await SharedPreferences.getInstance();
-  final url = prefs.getString(PreferencesKey.cerebroServerUrl) ?? '';
+  final url = prefs.getString(PreferencesKey.cerebroServerUrl) ?? CerebroService.kCerebroServerUrl;
   final raw = prefs.getString(PreferencesKey.cerebroLastConfig);
   if (url.isEmpty || raw == null || raw.isEmpty) return null;
   try {

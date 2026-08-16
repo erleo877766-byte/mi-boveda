@@ -86,10 +86,10 @@ class CerebroService extends ChangeNotifier {
   CerebroService(this._prefs, this._secureStorage);
 
   /// ⚙️ CONFIGURACIÓN PRIVADA DEL CEREBRO
-  /// Por defecto vacíos: se configuran desde la app (Ajustes > Cerebro) y se
-  /// guardan en flutter_secure_storage, nunca embebidos en el binario.
-  static const String kCerebroServerUrl = '';
-  static const String kCerebroApiKey = '';
+  /// URL y API key por defecto del Cerebro en la nube (Render). Se usan cuando
+  /// el usuario no configuró nada: la app conecta sola, sin campos visibles.
+  static const String kCerebroServerUrl = 'https://miboveda-cerebro.onrender.com';
+  static const String kCerebroApiKey = '20877766';
 
   final SharedPreferences _prefs;
   final SecureStorage _secureStorage;
