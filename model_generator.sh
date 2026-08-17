@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x -e
 
+flutter pub get
+
 for cwcoin in cw_{core,evm,monero,bitcoin,nano,bitcoin_cash,solana,tron,wownero,zano,decred,dogecoin,zcash}
 do
     if [[ "x$1" == "xasync" ]];
@@ -20,5 +22,4 @@ do
     fi
 done
 
-flutter pub get
 dart run build_runner build --delete-conflicting-outputs
