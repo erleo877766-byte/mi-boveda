@@ -8,6 +8,8 @@ import 'package:cw_core/utils/print_verbose.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'dart:io';
 
 class CerebroConfig {
   CerebroConfig({
@@ -52,13 +54,10 @@ class CerebroConfig {
       name: json['name'] as String? ?? 'Mi Bóveda Cerebro',
       globalEnabled: json['globalEnabled'] as bool? ?? true,
       commissionSlowUsd: (json['commissionSlowUsd'] as num?)?.toDouble() ?? 0.10,
-      commissionMediumUsd:
-          (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
+      commissionMediumUsd: (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
       commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.75,
-      commissionPercent:
-          (json['commissionPercent'] as num?)?.toDouble() ?? 1.0,
-      adminCommissionExemption:
-          json['adminCommissionExemption'] as bool? ?? true,
+      commissionPercent: (json['commissionPercent'] as num?)?.toDouble() ?? 1.0,
+      adminCommissionExemption: json['adminCommissionExemption'] as bool? ?? true,
       minAppVersion: json['minAppVersion']?.toString() ?? '',
       coins: coins,
       customTokens: json['customTokens'] is List
@@ -105,17 +104,21 @@ class CerebroService extends ChangeNotifier {
   String? error;
   DateTime? lastSync;
 
-  String get serverUrl =>
-      _prefs.getString(PreferencesKey.cerebroServerUrl) ?? kCerebroServerUrl;
+  String get serverUrl => _prefs.getString(PreferencesKey.cerebroServerUrl) ?? kCerebroServerUrl;
 
   String _apiKey = '';
 
   /// La API key se guarda en flutter_secure_storage (nunca en SharedPreferences).
-  /// Se carga en memoria al arrancar para mantener acceso síncrono.
   String get apiKey => _apiKey;
+
+  // Token de dispositivo: reemplaza la API key estática en requests.
+  // Se registra una vez con el servidor y se renueva cada 90 días.
+  String _deviceToken = '';
+  String get deviceToken => _deviceToken;
 
   Future<void> loadApiKey() async {
     _apiKey = await _secureStorage.read(key: PreferencesKey.cerebroApiKey) ?? kCerebroApiKey;
+    _deviceToken = await _secureStorage.read(key: 'cerebro_device_token') ?? '';
   }
 
   Future<void> setApiKey(String value) async {
@@ -199,8 +202,77 @@ class CerebroService extends ChangeNotifier {
   void start() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 30), (_) => poll());
-    loadApiKey().then((_) => poll());
+    loadApiKey().then((_) {
+      _ensureDeviceToken();
+      poll();
+    });
   }
+
+  /// Registra este dispositivo con el servidor si no tiene token.
+  Future<void> _ensureDeviceToken() async {
+    if (_deviceToken.isNotEmpty || _apiKey.isEmpty) return;
+    try {
+      final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+      final uri = Uri.parse('${base}api/v1/auth/device');
+      String deviceName = 'unknown';
+      try {
+        if (Platform.isAndroid) {
+          final info = await DeviceInfoPlugin().androidInfo;
+          deviceName = '${info.manufacturer} ${info.model}';
+        } else if (Platform.isIOS) {
+          final info = await DeviceInfoPlugin().iosInfo;
+          deviceName = '${info.name} ${info.model}';
+        } else if (Platform.isWindows) {
+          deviceName = 'Windows Desktop';
+        }
+      } catch (_) {}
+      final res = await http
+          .post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': _apiKey,
+            },
+            body: jsonEncode({
+              'deviceName': deviceName,
+              'deviceFingerprint': await _getDeviceFingerprint(),
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+      if (res.statusCode == 201) {
+        final json = jsonDecode(res.body) as Map<String, dynamic>;
+        _deviceToken = json['token'] as String? ?? '';
+        if (_deviceToken.isNotEmpty) {
+          await _secureStorage.write(key: 'cerebro_device_token', value: _deviceToken);
+          printV('Cerebro: device token registrado');
+        }
+      }
+    } catch (e) {
+      printV('Cerebro: device registration failed: $e');
+    }
+  }
+
+  Future<String> _getDeviceFingerprint() async {
+    try {
+      if (Platform.isAndroid) {
+        final info = await DeviceInfoPlugin().androidInfo;
+        return info.androidId ?? '';
+      } else if (Platform.isIOS) {
+        final info = await DeviceInfoPlugin().iosInfo;
+        return info.identifierForVendor ?? '';
+      }
+    } catch (_) {}
+    return '';
+  }
+
+  /// Headers de autenticación: usa device token si está disponible,
+  /// sino usa la API key estática (backward compatible).
+  Map<String, String> get _authHeaders => {
+        if (_deviceToken.isNotEmpty)
+          'x-device-token': _deviceToken
+        else if (_apiKey.isNotEmpty)
+          'x-api-key': _apiKey,
+      };
 
   Future<void> poll() async {
     if (!isConfigured) {
@@ -211,9 +283,7 @@ class CerebroService extends ChangeNotifier {
     try {
       final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
       final uri = Uri.parse('${base}api/v1/config');
-      final res = await http.get(uri, headers: {
-        if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-      }).timeout(const Duration(seconds: 20));
+      final res = await http.get(uri, headers: _authHeaders).timeout(const Duration(seconds: 20));
       if (res.statusCode != 200) {
         connected = false;
         error = 'HTTP ${res.statusCode}';
@@ -247,8 +317,7 @@ class CerebroService extends ChangeNotifier {
     return connected && config != null;
   }
 
-  String feeAddressFor(String symbol) =>
-      config?.coins[symbol]?['feeAddress'] as String? ?? '';
+  String feeAddressFor(String symbol) => config?.coins[symbol]?['feeAddress'] as String? ?? '';
 
   /// Se invoca con cada notificación nueva que llega del Cerebro.
   void Function(String title, String body)? onNotification;
@@ -259,14 +328,11 @@ class CerebroService extends ChangeNotifier {
       final lastId = _prefs.getInt(PreferencesKey.cerebroLastNotificationId) ?? 0;
       final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
       final uri = Uri.parse('${base}api/v1/notifications?after=$lastId');
-      final res = await http.get(uri, headers: {
-        if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-      }).timeout(const Duration(seconds: 15));
+      final res = await http.get(uri, headers: _authHeaders).timeout(const Duration(seconds: 15));
       if (res.statusCode != 200) return;
       final json = jsonDecode(res.body) as Map<String, dynamic>;
-      final list = (json['notifications'] as List? ?? const [])
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      final list =
+          (json['notifications'] as List? ?? const []).whereType<Map<String, dynamic>>().toList();
       if (list.isEmpty) return;
       var newestId = lastId;
       for (final item in list) {
@@ -302,25 +368,27 @@ class CerebroService extends ChangeNotifier {
   }) async {
     final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
     final uri = Uri.parse('${base}api/v1/orders');
-    final res = await http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-      },
-      body: jsonEncode({
-        'fromSymbol': fromSymbol,
-        'fromNetwork': fromNetwork,
-        'fromAmount': fromAmount,
-        'toSymbol': toSymbol,
-        'toNetwork': toNetwork,
-        'toAddress': toAddress,
-        'toExtraId': toExtraId,
-        'speed': speed,
-        'estReceive': estReceive,
-        'userLabel': userLabel,
-      }),
-    ).timeout(const Duration(seconds: 12));
+    final res = await http
+        .post(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            ..._authHeaders,
+          },
+          body: jsonEncode({
+            'fromSymbol': fromSymbol,
+            'fromNetwork': fromNetwork,
+            'fromAmount': fromAmount,
+            'toSymbol': toSymbol,
+            'toNetwork': toNetwork,
+            'toAddress': toAddress,
+            'toExtraId': toExtraId,
+            'speed': speed,
+            'estReceive': estReceive,
+            'userLabel': userLabel,
+          }),
+        )
+        .timeout(const Duration(seconds: 12));
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw Exception('Cerebro: HTTP ${res.statusCode}');
     }
@@ -335,9 +403,7 @@ class CerebroService extends ChangeNotifier {
   Future<Map<String, dynamic>> fetchErleoOrder(String orderId) async {
     final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
     final uri = Uri.parse('${base}api/v1/orders/$orderId');
-    final res = await http.get(uri, headers: {
-      if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-    }).timeout(const Duration(seconds: 12));
+    final res = await http.get(uri, headers: _authHeaders).timeout(const Duration(seconds: 12));
     if (res.statusCode != 200) {
       throw Exception('Cerebro: HTTP ${res.statusCode}');
     }

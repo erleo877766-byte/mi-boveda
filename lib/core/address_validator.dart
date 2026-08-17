@@ -5,6 +5,7 @@ import 'package:cake_wallet/solana/solana.dart';
 import 'package:cake_wallet/zano/zano.dart';
 import 'package:cw_core/crypto_currency.dart';
 import 'package:cw_core/erc20_token.dart';
+import 'package:cw_core/tron_token.dart';
 
 const BEFORE_REGEX = '(^|\\s)';
 const AFTER_REGEX = '(\$|\\s)';
@@ -65,6 +66,8 @@ class AddressValidator extends TextValidator {
     var pattern = "";
     if (type is Erc20Token) {
       pattern = '0x[0-9a-zA-Z]+';
+    } else if (type is TronToken) {
+      pattern = 'T[1-9A-HJ-NP-Za-km-z]{33}';
     }
     switch (type) {
       case CryptoCurrency.xmr:
@@ -210,6 +213,9 @@ class AddressValidator extends TextValidator {
   static List<int>? getLength(CryptoCurrency type) {
     if (type is Erc20Token) {
       return [42];
+    }
+    if (type is TronToken) {
+      return [34];
     }
 
     if (solana != null) {
