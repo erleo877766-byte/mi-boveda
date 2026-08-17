@@ -280,7 +280,6 @@ jobs:
           rm -rf build/zcash 2>/dev/null || true
           rm -rf ~/.cargo/registry 2>/dev/null || true
           rm -rf ~/.cargo/git 2>/dev/null || true
-          rm -rf ~/.cargo/bin 2>/dev/null || true
           rm -rf /home/runner/.gradle/caches 2>/dev/null || true
           rm -rf /home/runner/.gradle/daemon 2>/dev/null || true
           rm -rf /home/runner/.go 2>/dev/null || true
