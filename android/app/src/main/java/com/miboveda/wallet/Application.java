@@ -1,6 +1,6 @@
 package com.miboveda.wallet;
 
-import io.flutter.app.FlutterApplication;
+import android.app.Application;
 
-public class Application extends FlutterApplication {
+public class Application extends Application {
 }
