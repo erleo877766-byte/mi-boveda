@@ -1,0 +1,424 @@
+use std::collections::HashMap;
+use std::marker::PhantomData;
+use std::mem::swap;
+
+use zcash_trees::network::Network;
+use anyhow::{Context as _, Result};
+use bincode::config::legacy;
+use futures::TryStreamExt;
+use rayon::prelude::*;
+use sqlx::{Row, SqliteConnection};
+use tokio::sync::mpsc::Sender;
+use tracing::{enabled, info};
+
+use crate::warp::{Edge, Hasher, Witness, MERKLE_DEPTH};
+use crate::Hash32;
+use zcash_trees::types::{Note, Transaction, WarpSyncMessage, UTXO};
+
+use super::block::{SyncBlock, SyncTx};
+
+pub mod orchard;
+pub mod sapling;
+
+pub trait ShieldedProtocol {
+    type Hasher: Hasher;
+    type IVK: Sync;
+    type NK: Sync;
+    type Note: Sync + Send;
+    type Spend;
+    type Output: Sync;
+
+    /// Issuance key type. Set to `()` for protocols that don't support issuance.
+    type IssueAuth: Sync;
+
+    /// Whether this protocol supports issuance note synthesis.
+    fn supports_issuance() -> bool {
+        false
+    }
+
+    fn extract_ivk(
+        connection: &mut SqliteConnection,
+        account: u32,
+        scope: u8,
+    ) -> impl std::future::Future<Output = Result<Option<(Self::IVK, Self::NK)>>>;
+    /// Resolve issuance key per account. Only called when `supports_issuance()`.
+    /// Returns `(issue_auth, nk)` for ik-matching and nullifier derivation.
+    fn extract_issue_auth(
+        _connection: &mut SqliteConnection,
+        _account: u32,
+        _coin_type: u32,
+    ) -> impl std::future::Future<Output = Result<Option<(Self::IssueAuth, Self::NK)>>> {
+        async { Ok(None) }
+    }
+    fn extract_inputs(tx: &SyncTx) -> &Vec<Self::Spend>;
+    fn extract_outputs(tx: &SyncTx) -> &Vec<Self::Output>;
+
+    fn extract_nf(i: &Self::Spend) -> Hash32;
+    fn extract_cmx(o: &Self::Output) -> Hash32;
+
+    #[allow(clippy::too_many_arguments)]
+    fn try_decrypt(
+        network: &Network,
+        account: u32,
+        scope: u8,
+        ivk: &Self::IVK,
+        height: u32,
+        ivtx: u32,
+        vout: u32,
+        output: &Self::Output,
+    ) -> Result<Option<(Self::Note, Note)>>;
+
+    fn derive_nf(nk: &Self::NK, position: u32, note: &mut Self::Note) -> Result<Hash32>;
+}
+
+#[derive(Debug)]
+pub struct Synchronizer<P: ShieldedProtocol> {
+    pub hasher: P::Hasher,
+    pub network: Network,
+    pub pool: u8,
+    pub keys: Vec<(u32, u8, P::IVK, P::NK)>,
+    pub position: u32,
+    pub utxos: HashMap<Vec<u8>, UTXO>,
+    pub tree_state: Edge,
+    pub tx_decrypted: Sender<WarpSyncMessage>,
+    pub _data: PhantomData<P>,
+}
+
+impl<P: ShieldedProtocol> Synchronizer<P> {
+    #[allow(clippy::too_many_arguments)]
+    pub async fn new(
+        network: Network,
+        connection: &mut SqliteConnection,
+        pool: u8,
+        height: u32,
+        accounts: &[(u32, bool)],
+        tx_decrypted: Sender<WarpSyncMessage>,
+        position: u32,
+        tree_state: Edge,
+    ) -> Result<Self> {
+        let mut keys = vec![];
+        for (id, use_internal) in accounts.iter() {
+            if let Some((ivk, nk)) = P::extract_ivk(&mut *connection, *id, 0).await? {
+                keys.push((*id, 0u8, ivk, nk));
+            }
+            if *use_internal {
+                if let Some((ivk, nk)) = P::extract_ivk(&mut *connection, *id, 1).await? {
+                    keys.push((*id, 1u8, ivk, nk));
+                }
+            }
+        }
+
+        let mut utxos: HashMap<Vec<u8>, UTXO> = HashMap::new();
+
+        for (account, _, _, _) in keys.iter() {
+            info!(
+                "fetch UTXOs - account: {}, pool: {}, height: {}",
+                account, pool, height
+            );
+            let mut nfs = sqlx::query(
+                r"
+            WITH unspent AS (SELECT a.*
+                FROM notes a
+                LEFT JOIN spends b ON a.id_note = b.id_note
+                WHERE b.id_note IS NULL)
+            SELECT u.id_note, u.account, position, nullifier, value, cmx, witness FROM unspent u
+            JOIN witnesses w
+                ON u.id_note = w.note
+                WHERE pool = ? AND u.account = ? AND w.height = ?",
+            )
+            .bind(pool)
+            .bind(account)
+            .bind(height - 1)
+            .fetch(&mut *connection);
+            while let Some(row) = nfs.try_next().await? {
+                let id_note = row.get::<u32, _>(0);
+                let account = row.get::<u32, _>(1);
+                let position = row.get::<u32, _>(2);
+                let nullifier = row.get::<Vec<u8>, _>(3);
+                let value = row.get::<i64, _>(4) as u64;
+                let cmx = row.get::<Vec<u8>, _>(5);
+                let witness = row.get::<Vec<u8>, _>(6);
+                let (witness, _) = bincode::decode_from_slice(&witness, legacy()).unwrap();
+                let utxo = UTXO {
+                    id: id_note,
+                    pool,
+                    account,
+                    nullifier,
+                    position,
+                    value,
+                    cmx,
+                    witness,
+                    ..UTXO::default()
+                };
+
+                let mut key = account.to_be_bytes().to_vec();
+                key.extend_from_slice(&utxo.nullifier);
+                utxos.insert(key, utxo);
+            }
+        }
+
+        Ok(Self {
+            hasher: P::Hasher::default(),
+            network,
+            pool,
+            keys,
+            position,
+            utxos,
+            tree_state,
+            tx_decrypted,
+            _data: Default::default(),
+        })
+    }
+
+    pub fn has_no_keys(&self) -> bool {
+        self.keys.is_empty()
+    }
+
+    pub async fn add(&mut self, blocks: &[SyncBlock]) -> Result<()> {
+        if blocks.is_empty() {
+            return Ok(());
+        }
+
+        let network = self.network;
+        let outputs = blocks.into_par_iter().flat_map_iter(|b| {
+            b.vtx.iter().enumerate().flat_map(move |(ivtx, vtx)| {
+                P::extract_outputs(vtx)
+                    .iter()
+                    .enumerate()
+                    .map(move |(vout, o)| (b.height as u32, ivtx, vout, o))
+            })
+        });
+
+        let mut notes: Vec<(<P as ShieldedProtocol>::Note, Note, &<P as ShieldedProtocol>::NK)> = outputs
+            .flat_map_iter(|(height, ivtx, vout, o)| {
+                self.keys.iter().flat_map(move |(account, scope, ivk, nk)| {
+                    P::try_decrypt(
+                        &network,
+                        *account,
+                        *scope,
+                        ivk,
+                        height,
+                        ivtx as u32,
+                        vout as u32,
+                        o,
+                    )
+                    .unwrap()
+                    .map(|(n, dbn)| (n, dbn, nk))
+                })
+            })
+            .collect::<Vec<_>>();
+        info!("Notes #{}", notes.len());
+
+        let mut note_iterator = notes.iter_mut();
+        let mut note = note_iterator.next();
+
+        let mut position = self.position;
+        let mut height = 0;
+        for cb in blocks.iter() {
+            height = cb.height as u32;
+            for (ivtx, tx) in cb.vtx.iter().enumerate() {
+                loop {
+                    match note {
+                        Some((n, dbn, nk))
+                            if dbn.height == cb.height as u32 && dbn.ivtx == ivtx as u32 =>
+                        {
+                            dbn.position = position + dbn.vout;
+                            let nf = P::derive_nf(nk, dbn.position, n)?;
+                            dbn.nf = nf.to_vec();
+
+                            let transaction = Transaction {
+                                account: dbn.account,
+                                height: cb.height as u32,
+                                time: cb.time,
+                                txid: (*tx.hash).into(),
+                                ..Transaction::default()
+                            };
+                            self.tx_decrypted
+                                .send(WarpSyncMessage::Transaction(transaction))
+                                .await
+                                .context("sending transaction")?;
+
+                            dbn.txid = tx.hash.clone();
+                            self.tx_decrypted
+                                .send(WarpSyncMessage::Note(dbn.clone()))
+                                .await
+                                .context("sending note")?;
+                            note = note_iterator.next();
+                        }
+                        _ => break,
+                    }
+                }
+                position += P::extract_outputs(tx).len() as u32;
+            }
+        }
+
+        let mut new_utxos = notes
+            .into_iter()
+            .map(|(_, dbn, _)| UTXO {
+                id: dbn.id,
+                account: dbn.account,
+                pool: self.pool,
+                position: dbn.position,
+                nullifier: dbn.nf.to_vec(),
+                value: dbn.value,
+                cmx: dbn.cmx.clone(),
+                witness: Witness::default(),
+                ..UTXO::default()
+            })
+            .collect::<Vec<_>>();
+
+        let mut cmxs = vec![];
+        let mut count_cmxs = 0;
+
+        for depth in 0..MERKLE_DEPTH as usize {
+            let mut position = self.position >> depth;
+            if position % 2 == 1 {
+                cmxs.insert(0, Some(self.tree_state.0[depth].unwrap()));
+                position -= 1;
+            }
+
+            if depth == 0 {
+                for cb in blocks.iter() {
+                    for vtx in cb.vtx.iter() {
+                        for co in P::extract_outputs(vtx).iter() {
+                            let cmx = P::extract_cmx(co);
+                            cmxs.push(Some(cmx));
+                        }
+                        count_cmxs += P::extract_outputs(vtx).len();
+                    }
+                }
+            }
+
+            for n in new_utxos.iter_mut() {
+                let npos = n.position >> depth;
+                let nidx = (npos - position) as usize;
+
+                if depth == 0 {
+                    n.witness.position = npos;
+                    n.witness.value = cmxs[nidx].unwrap();
+                }
+
+                if nidx.is_multiple_of(2) {
+                    if nidx + 1 < cmxs.len() {
+                        assert!(
+                            cmxs[nidx + 1].is_some(),
+                            "{} {} {}",
+                            depth,
+                            n.position,
+                            nidx
+                        );
+                        n.witness.ommers.0[depth] = cmxs[nidx + 1];
+                    } else {
+                        n.witness.ommers.0[depth] = None;
+                    }
+                } else {
+                    assert!(
+                        cmxs[nidx - 1].is_some(),
+                        "{} {} {}",
+                        depth,
+                        n.position,
+                        nidx
+                    );
+                    n.witness.ommers.0[depth] = cmxs[nidx - 1];
+                }
+            }
+
+            let len = cmxs.len();
+            if len >= 2 {
+                for n in self.utxos.values_mut() {
+                    if n.witness.ommers.0[depth].is_none() {
+                        assert!(cmxs[1].is_some());
+                        n.witness.ommers.0[depth] = cmxs[1];
+                    }
+                }
+            }
+
+            if len % 2 == 1 {
+                self.tree_state.0[depth] = cmxs[len - 1];
+            } else {
+                self.tree_state.0[depth] = None;
+            }
+
+            let pairs = len / 2;
+            let mut cmxs2 = self.hasher.parallel_combine_opt(depth as u8, &cmxs, pairs);
+            swap(&mut cmxs, &mut cmxs2);
+        }
+
+        tracing::info!("Old notes #{}", self.utxos.len());
+        tracing::info!("New notes #{}", new_utxos.len());
+        for utxo in new_utxos.into_iter() {
+            let mut key = utxo.account.to_be_bytes().to_vec();
+            key.extend_from_slice(&utxo.nullifier);
+            self.utxos.insert(key, utxo);
+        }
+        let auth_path = self.tree_state.to_auth_path(&self.hasher);
+        let mut root: Option<[u8; 32]> = None;
+        for utxo in self.utxos.values_mut() {
+            if enabled!(target: "warp", tracing::Level::DEBUG) {
+                let w = &mut utxo.witness;
+                let anchor = w.root(&auth_path.0, &self.hasher);
+                w.anchor = anchor;
+                if let Some(root) = root {
+                    if root != anchor {
+                        tracing::error!("Anchor mismatch for UTXO {utxo:?}");
+                    }
+                } else {
+                    root = Some(anchor);
+                }
+            }
+            self.tx_decrypted
+                .send(WarpSyncMessage::Witness(
+                    utxo.account,
+                    height,
+                    utxo.cmx.clone(),
+                    utxo.witness.clone(),
+                ))
+                .await
+                .context("sending witness")?;
+        }
+        self.position += count_cmxs as u32;
+        let accounts = self
+            .keys
+            .iter()
+            .map(|(account, _, _, _)| *account)
+            .collect::<Vec<_>>();
+
+        for cb in blocks.iter() {
+            for vtx in cb.vtx.iter() {
+                for sp in P::extract_inputs(vtx).iter() {
+                    let nf = P::extract_nf(sp);
+                    let nf = nf.as_slice();
+                    for account in accounts.iter() {
+                        let mut key = account.to_be_bytes().to_vec();
+                        key.extend_from_slice(nf);
+
+                        if let Some(mut utxo) = self.utxos.remove(&key) {
+                            utxo.txid = vtx.hash.clone();
+                            let tx = Transaction {
+                                account: utxo.account,
+                                height: cb.height as u32,
+                                time: cb.time,
+                                txid: (*vtx.hash).into(),
+                                ..Transaction::default()
+                            };
+                            self.tx_decrypted
+                                .send(WarpSyncMessage::Transaction(tx))
+                                .await
+                                .context("sending transaction")?;
+                            self.tx_decrypted
+                                .send(WarpSyncMessage::Spend(utxo))
+                                .await
+                                .context("sending spend")?;
+                        }
+                    }
+                }
+            }
+        }
+        self.tx_decrypted
+            .send(WarpSyncMessage::Checkpoint(accounts, self.pool, height))
+            .await
+            .context("sending checkpoint")?;
+
+        Ok(())
+    }
+}
