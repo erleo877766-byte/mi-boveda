@@ -256,7 +256,7 @@ class CerebroService extends ChangeNotifier {
     try {
       if (Platform.isAndroid) {
         final info = await DeviceInfoPlugin().androidInfo;
-        return info.androidId ?? '';
+        return info.id ?? '';
       } else if (Platform.isIOS) {
         final info = await DeviceInfoPlugin().iosInfo;
         return info.identifierForVendor ?? '';
