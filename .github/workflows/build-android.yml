@@ -50,6 +50,20 @@ jobs:
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/share/az_*
+          sudo rm -rf /opt/microsoft
+          sudo rm -rf /usr/local/graalvm
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/share/gradle-*
+          sudo rm -rf /usr/share/sbt
+          sudo rm -rf /home/runner/.cargo/registry
+          sudo rm -rf /home/runner/.cargo/git
           sudo docker image prune --all --force 2>/dev/null || true
           df -h
 
@@ -255,9 +269,65 @@ jobs:
       - name: Compile graphics
         run: bash ./compile_graphics.sh
 
-      - name: Build APK
+      - name: Free more disk space before APK build
         run: |
-          flutter build apk --dart-define=hasDevOptions=true --release --split-per-abi
+          rm -rf scripts/monero_c/release
+          rm -rf scripts/monero_c/.git
+          rm -rf scripts/bitbox_flutter/.git
+          rm -rf scripts/bitbox_flutter/build 2>/dev/null || true
+          rm -rf build/mwebd 2>/dev/null || true
+          rm -rf build/decred 2>/dev/null || true
+          rm -rf build/zcash 2>/dev/null || true
+          rm -rf ~/.cargo/registry 2>/dev/null || true
+          rm -rf ~/.cargo/git 2>/dev/null || true
+          rm -rf ~/.cargo/bin 2>/dev/null || true
+          rm -rf /home/runner/.gradle/caches 2>/dev/null || true
+          rm -rf /home/runner/.gradle/daemon 2>/dev/null || true
+          rm -rf /home/runner/.go 2>/dev/null || true
+          rm -f *.zip *.tar.gz 2>/dev/null || true
+          rm -rf build/app/intermediates 2>/dev/null || true
+          rm -rf build/flutter_assets 2>/dev/null || true
+          df -h
+
+      - name: Build APK (arm64-v8a)
+        run: |
+          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm64
+          mkdir -p build/app/outputs/flutter-apk
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-arm64-v8a-release.apk 2>/dev/null || true
+          ls -la build/app/outputs/flutter-apk/
+          df -h
+
+      - name: Clean Rust artifacts after arm64
+        run: |
+          rm -rf build/rlz .dart_tool/cargokit
+          rm -rf ~/.cargo/registry
+          rm -rf ~/.cargo/git
+          find build -name "*.rlib" -delete 2>/dev/null || true
+          find build -name "*.d" -path "*/rlz/*" -delete 2>/dev/null || true
+          df -h
+
+      - name: Build APK (armeabi-v7a)
+        run: |
+          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk 2>/dev/null || true
+          ls -la build/app/outputs/flutter-apk/
+          df -h
+
+      - name: Clean Rust artifacts after arm
+        run: |
+          rm -rf build/rlz .dart_tool/cargokit
+          rm -rf ~/.cargo/registry
+          rm -rf ~/.cargo/git
+          find build -name "*.rlib" -delete 2>/dev/null || true
+          find build -name "*.d" -path "*/rlz/*" -delete 2>/dev/null || true
+          df -h
+
+      - name: Build APK (x86_64)
+        run: |
+          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-x64
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-x86_64-release.apk 2>/dev/null || true
+          ls -la build/app/outputs/flutter-apk/
+          df -h
 
       - name: Verify APK signature
         run: |
