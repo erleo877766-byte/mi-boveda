@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: release-publish-${{ github.ref }}
+  group: build-windows-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:

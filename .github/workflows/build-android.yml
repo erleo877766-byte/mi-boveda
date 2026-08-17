@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: release-publish-${{ github.ref }}
+  group: build-android-${{ github.ref }}
   cancel-in-progress: false
 
 defaults:
