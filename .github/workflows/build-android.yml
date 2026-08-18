@@ -16,7 +16,7 @@ defaults:
 jobs:
   build-android:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     permissions:
       contents: write
     env:
