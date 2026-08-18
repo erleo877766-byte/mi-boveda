@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: build-android-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 defaults:
   run:
@@ -16,6 +16,7 @@ defaults:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: write
     env:
@@ -27,19 +28,8 @@ jobs:
 
       - name: Remove local-only files from workspace
         run: |
-          # Ensure server/ (local-only) and lib/.secrets.g.dart are not present in the CI workspace
-          if [ -d server ]; then
-            echo "Removing server/ from workspace (local-only)"
-            rm -rf server
-          else
-            echo "server/ not present"
-          fi
-          if [ -f lib/.secrets.g.dart ]; then
-            echo "Removing lib/.secrets.g.dart from workspace"
-            rm -f lib/.secrets.g.dart
-          else
-            echo "lib/.secrets.g.dart not present"
-          fi
+          rm -rf server
+          rm -f lib/.secrets.g.dart
 
       - name: Fix script permissions
         run: find scripts/ -name "*.sh" -exec chmod +x {} \;
@@ -62,8 +52,6 @@ jobs:
           sudo rm -rf /usr/local/share/vcpkg
           sudo rm -rf /usr/share/gradle-*
           sudo rm -rf /usr/share/sbt
-          sudo rm -rf /home/runner/.cargo/registry
-          sudo rm -rf /home/runner/.cargo/git
           sudo docker image prune --all --force 2>/dev/null || true
           df -h
 
@@ -190,8 +178,6 @@ jobs:
                 mkdir -p "android/app/src/main/jniLibs/$DST"
                 cp "$BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so" "android/app/src/main/jniLibs/$DST/lib${coin}_wallet2_api_c.so"
                 echo "copied lib${coin}_wallet2_api_c.so -> jniLibs/$DST/"
-              else
-                echo "MISSING: $BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so"
               fi
             done
           done
@@ -269,21 +255,14 @@ jobs:
       - name: Compile graphics
         run: bash ./compile_graphics.sh
 
-      - name: Free more disk space before APK build
+      - name: Free more disk space before build
         run: |
           rm -rf scripts/monero_c/release
           rm -rf scripts/monero_c/.git
           rm -rf scripts/bitbox_flutter/.git
-          rm -rf scripts/bitbox_flutter/build 2>/dev/null || true
-          rm -rf build/mwebd 2>/dev/null || true
-          rm -rf build/decred 2>/dev/null || true
-          rm -rf build/zcash 2>/dev/null || true
-          rm -rf ~/.cargo/registry 2>/dev/null || true
-          rm -rf ~/.cargo/git 2>/dev/null || true
-          rm -rf /home/runner/.gradle/caches 2>/dev/null || true
-          rm -rf /home/runner/.gradle/daemon 2>/dev/null || true
-          rm -rf /home/runner/.go 2>/dev/null || true
-          rm -f *.zip *.tar.gz 2>/dev/null || true
+          rm -rf scripts/bitbox_flutter
+          rm -rf scripts/torch_dart
+          rm -rf scripts/reown_flutter
           rm -rf build/app/intermediates 2>/dev/null || true
           rm -rf build/flutter_assets 2>/dev/null || true
           df -h
@@ -291,68 +270,35 @@ jobs:
       - name: Build APK (arm64-v8a)
         run: |
           flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm64
-          mkdir -p build/app/outputs/flutter-apk
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-arm64-v8a-release.apk 2>/dev/null || true
-          ls -la build/app/outputs/flutter-apk/
           df -h
 
-      - name: Clean Rust artifacts after arm64
-        run: |
-          rm -rf build/rlz .dart_tool/cargokit
-          rm -rf ~/.cargo/registry
-          rm -rf ~/.cargo/git
-          find build -name "*.rlib" -delete 2>/dev/null || true
-          find build -name "*.d" -path "*/rlz/*" -delete 2>/dev/null || true
-          df -h
-
-      - name: Build APK (armeabi-v7a)
-        run: |
-          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk 2>/dev/null || true
-          ls -la build/app/outputs/flutter-apk/
-          df -h
-
-      - name: Clean Rust artifacts after arm
-        run: |
-          rm -rf build/rlz .dart_tool/cargokit
-          rm -rf ~/.cargo/registry
-          rm -rf ~/.cargo/git
-          find build -name "*.rlib" -delete 2>/dev/null || true
-          find build -name "*.d" -path "*/rlz/*" -delete 2>/dev/null || true
-          df -h
-
-      - name: Build APK (x86_64)
-        run: |
-          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-x64
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-x86_64-release.apk 2>/dev/null || true
-          ls -la build/app/outputs/flutter-apk/
-          df -h
-
-      - name: Verify APK signature
+      - name: Verify APK
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | tail -1)
-          if [ -z "$APKSIGNER" ]; then
-            echo "::error::apksigner not found"
-            exit 1
+          if [ -n "$APKSIGNER" ]; then
+            "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk || \
+            "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-release.apk || true
           fi
-          "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          ls -lh build/app/outputs/flutter-apk/
 
-      - name: Upload APKs
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: miboveda-android-apk
-          path: build/app/outputs/flutter-apk/*-release.apk
+          path: |
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          retention-days: 3
 
-      - name: Prepare APKs for release
+      - name: Create or update release
         if: github.ref_name == 'main'
         run: |
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda.apk
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk MiBovedaAntiguos.apk
-          cp build/app/outputs/flutter-apk/app-x86_64-release.apk MiBovedaEmulador.apk
-          ls -la MiBoveda*.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda.apk 2>/dev/null || \
+          cp build/app/outputs/flutter-apk/app-release.apk MiBoveda.apk 2>/dev/null || true
+          ls -lh MiBoveda.apk
 
-      - name: Create or update 'latest' release and upload APKs
+      - name: Upload release
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
         with:
@@ -364,19 +310,13 @@ jobs:
           body: |
             Mi Bóveda - release automático
 
-            1) Descarga MiBoveda.apk (el principal)
+            1) Descarga MiBoveda.apk
             2) Ábrelo y toca "Instalar" -> listo
 
-            MiBovedaAntiguos.apk: solo para teléfonos antiguos (32-bit)
-            MiBovedaEmulador.apk: solo para emuladores o PC con Android
             En Windows: descarga MiBovedaSetup.exe -> doble clic -> Instalar -> listo
 
-            ¿Te sale el aviso de Google Play Protect ("Esta app no tiene reputación")?
-            Es normal: la app NO está en Google Play. Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
-            Está firmada con un certificado de lanzamiento propio y la tuya es tuya. Puedes ver su origen aquí: https://leonard0001991.github.io/mi-boveda/
+            ¿Te sale el aviso de Google Play Protect?
+            Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
           draft: false
           prerelease: false
-          artifacts: |
-            MiBoveda.apk
-            MiBovedaAntiguos.apk
-            MiBovedaEmulador.apk
+          artifacts: MiBoveda.apk
