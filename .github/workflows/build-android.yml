@@ -260,9 +260,6 @@ jobs:
           rm -rf scripts/monero_c/release
           rm -rf scripts/monero_c/.git
           rm -rf scripts/bitbox_flutter/.git
-          rm -rf scripts/bitbox_flutter
-          rm -rf scripts/torch_dart
-          rm -rf scripts/reown_flutter
           rm -rf build/app/intermediates 2>/dev/null || true
           rm -rf build/flutter_assets 2>/dev/null || true
           df -h
