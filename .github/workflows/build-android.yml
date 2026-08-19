@@ -266,12 +266,19 @@ jobs:
 
       - name: Create swap space
         run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          echo "Swap created:"
-          free -h
+          if [ "$(free -m | awk '/^Swap:/{print $2}')" -gt 0 ]; then
+            echo "Swap already available:"
+            free -h
+          else
+            sudo swapoff /swapfile 2>/dev/null || true
+            sudo rm -f /swapfile
+            sudo dd if=/dev/zero of=/swapfile bs=1M count=8192 status=progress
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+            echo "Swap created:"
+            free -h
+          fi
 
       - name: Build APK (arm64-v8a)
         env:
