@@ -264,8 +264,22 @@ jobs:
           rm -rf build/flutter_assets 2>/dev/null || true
           df -h
 
-      - name: Build APK (arm64-v8a)
+      - name: Create swap space
         run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          echo "Swap created:"
+          free -h
+
+      - name: Build APK (arm64-v8a)
+        env:
+          CARGO_BUILD_JOBS: "2"
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m" > android/gradle.properties.local
+          cat android/gradle.properties android/gradle.properties.local > android/gradle.properties.tmp
+          mv android/gradle.properties.tmp android/gradle.properties
           flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm64
           df -h
 
