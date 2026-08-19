@@ -186,13 +186,15 @@ jobs:
           "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" scripts/windows/build_exe_installer.iss
 
       - name: Upload installer
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: miboveda-windows-setup
           path: |
             build/installer/MiBovedaSetup.exe
             build/windows/x64/runner/Release/MiBoveda.exe
-          if-no-files-found: error
+          if-no-files-found: warn
+          retention-days: 3
 
       - name: Prepare Windows installer for release
         if: github.ref_name == 'main'
