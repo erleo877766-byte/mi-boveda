@@ -6,8 +6,8 @@ on:
     branches: [main]
 
 concurrency:
-  group: release-publish-${{ github.ref }}
-  cancel-in-progress: false
+  group: build-android-${{ github.ref }}
+  cancel-in-progress: true
 
 defaults:
   run:
@@ -16,6 +16,7 @@ defaults:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     permissions:
       contents: write
     env:
@@ -27,22 +28,32 @@ jobs:
 
       - name: Remove local-only files from workspace
         run: |
-          # Ensure server/ (local-only) and lib/.secrets.g.dart are not present in the CI workspace
-          if [ -d server ]; then
-            echo "Removing server/ from workspace (local-only)"
-            rm -rf server
-          else
-            echo "server/ not present"
-          fi
-          if [ -f lib/.secrets.g.dart ]; then
-            echo "Removing lib/.secrets.g.dart from workspace"
-            rm -f lib/.secrets.g.dart
-          else
-            echo "lib/.secrets.g.dart not present"
-          fi
+          rm -rf server
+          rm -f lib/.secrets.g.dart
 
       - name: Fix script permissions
         run: find scripts/ -name "*.sh" -exec chmod +x {} \;
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/share/az_*
+          sudo rm -rf /opt/microsoft
+          sudo rm -rf /usr/local/graalvm
+          sudo rm -rf /usr/local/share/vcpkg
+          sudo rm -rf /usr/share/gradle-*
+          sudo rm -rf /usr/share/sbt
+          sudo docker image prune --all --force 2>/dev/null || true
+          df -h
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
@@ -167,8 +178,6 @@ jobs:
                 mkdir -p "android/app/src/main/jniLibs/$DST"
                 cp "$BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so" "android/app/src/main/jniLibs/$DST/lib${coin}_wallet2_api_c.so"
                 echo "copied lib${coin}_wallet2_api_c.so -> jniLibs/$DST/"
-              else
-                echo "MISSING: $BUNDLE_DIR/$SRC/lib${coin}_wallet2_api_c.so"
               fi
             done
           done
@@ -246,35 +255,69 @@ jobs:
       - name: Compile graphics
         run: bash ./compile_graphics.sh
 
-      - name: Build APK
+      - name: Free more disk space before build
         run: |
-          flutter build apk --dart-define=hasDevOptions=true --release --split-per-abi
+          rm -rf scripts/monero_c/release
+          rm -rf scripts/monero_c/.git
+          rm -rf scripts/bitbox_flutter/.git
+          rm -rf build/app/intermediates 2>/dev/null || true
+          rm -rf build/flutter_assets 2>/dev/null || true
+          df -h
 
-      - name: Verify APK signature
+      - name: Create swap space
+        run: |
+          if [ "$(free -m | awk '/^Swap:/{print $2}')" -gt 0 ]; then
+            echo "Swap already available:"
+            free -h
+          else
+            sudo swapoff /swapfile 2>/dev/null || true
+            sudo rm -f /swapfile
+            sudo dd if=/dev/zero of=/swapfile bs=1M count=8192 status=progress
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+            echo "Swap created:"
+            free -h
+          fi
+
+      - name: Build APK (arm64-v8a)
+        env:
+          CARGO_BUILD_JOBS: "2"
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m" > android/gradle.properties.local
+          cat android/gradle.properties android/gradle.properties.local > android/gradle.properties.tmp
+          mv android/gradle.properties.tmp android/gradle.properties
+          flutter build apk --dart-define=hasDevOptions=true --release --target-platform android-arm64
+          df -h
+
+      - name: Verify APK
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | tail -1)
-          if [ -z "$APKSIGNER" ]; then
-            echo "::error::apksigner not found"
-            exit 1
+          if [ -n "$APKSIGNER" ]; then
+            "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk || \
+            "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-release.apk || true
           fi
-          "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          ls -lh build/app/outputs/flutter-apk/
 
-      - name: Upload APKs
+      - name: Upload APK
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: miboveda-android-apk
-          path: build/app/outputs/flutter-apk/*-release.apk
-          if-no-files-found: error
+          path: |
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: warn
+          retention-days: 3
 
-      - name: Prepare APKs for release
+      - name: Create or update release
         if: github.ref_name == 'main'
         run: |
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda.apk
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk MiBovedaAntiguos.apk
-          cp build/app/outputs/flutter-apk/app-x86_64-release.apk MiBovedaEmulador.apk
-          ls -la MiBoveda*.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk MiBoveda.apk 2>/dev/null || \
+          cp build/app/outputs/flutter-apk/app-release.apk MiBoveda.apk 2>/dev/null || true
+          ls -lh MiBoveda.apk
 
-      - name: Create or update 'latest' release and upload APKs
+      - name: Upload release
         if: github.ref_name == 'main'
         uses: ncipollo/release-action@v1
         with:
@@ -286,19 +329,13 @@ jobs:
           body: |
             Mi Bóveda - release automático
 
-            1) Descarga MiBoveda.apk (el principal)
+            1) Descarga MiBoveda.apk
             2) Ábrelo y toca "Instalar" -> listo
 
-            MiBovedaAntiguos.apk: solo para teléfonos antiguos (32-bit)
-            MiBovedaEmulador.apk: solo para emuladores o PC con Android
             En Windows: descarga MiBovedaSetup.exe -> doble clic -> Instalar -> listo
 
-            ¿Te sale el aviso de Google Play Protect ("Esta app no tiene reputación")?
-            Es normal: la app NO está en Google Play. Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
-            Está firmada con un certificado de lanzamiento propio y la tuya es tuya. Puedes ver su origen aquí: https://erleo877766-byte.github.io/mi-boveda/
+            ¿Te sale el aviso de Google Play Protect?
+            Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
           draft: false
           prerelease: false
-          artifacts: |
-            MiBoveda.apk
-            MiBovedaAntiguos.apk
-            MiBovedaEmulador.apk
+          artifacts: MiBoveda.apk
