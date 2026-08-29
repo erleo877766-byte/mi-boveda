@@ -30,7 +30,7 @@ Basado en el código de [Cake Wallet](https://github.com/cake-tech/cake_wallet) 
 |---|---|---|
 | 📱 Android (principal) | MiBoveda.apk | [Descargar APK](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBoveda.apk) |
 | 📱 Android antiguo (32-bit) | MiBovedaAntiguos.apk | [Descargar](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaAntiguos.apk) |
-| 📱 Android (emulador / PC) | MiBovedaEmulador.apk | [Descargar](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaEmulador.apk) |
+
 | 🖥️ Windows (instalador) | MiBovedaSetup.exe | [Descargar EXE](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaSetup.exe) |
 
 **Instalación:**
