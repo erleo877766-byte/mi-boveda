@@ -32,7 +32,7 @@ jobs:
       - name: Descargar los instaladores del ultimo release
         uses: robinraju/release-downloader@v1.10
         with:
-          repository: leonard0001991/mi-boveda
+          repository: erleo877766-byte/mi-boveda
           latest: true
           fileName: "*"
           out-file-path: dist

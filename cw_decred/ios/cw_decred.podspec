@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.version          = '0.0.1'
   s.summary          = 'Mi Bóveda Decred'
   s.description      = 'Mi Bóveda wrapper over Decred project'
-  s.homepage         = 'https://github.com/leonard0001991/mi-boveda'
+  s.homepage         = 'https://github.com/erleo877766-byte/mi-boveda'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Leonardo Noel Salazar Mendoza' => 'erleo877766@gmail.com' }
   s.source           = { :path => '.' }

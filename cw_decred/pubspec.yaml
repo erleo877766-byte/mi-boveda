@@ -3,7 +3,7 @@ description: A new Flutter plugin project.
 version: 0.0.1
 publish_to: none
 author: Leonardo Noel Salazar Mendoza
-homepage: https://github.com/leonard0001991/mi-boveda
+homepage: https://github.com/erleo877766-byte/mi-boveda
 
 environment:
   sdk: ">=3.2.0-0 <4.0.0"

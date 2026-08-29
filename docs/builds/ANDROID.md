@@ -15,11 +15,11 @@ You can find the latest instructions for installing Docker on your given OS on t
 In order to build the latest version of Mi Bóveda, simply run the following:
 
 ```bash
-git clone --branch main https://github.com/leonard0001991/mi-boveda.git
-# NOTE: Replace `main` with the latest release tag available at https://github.com/leonard0001991/mi-boveda/releases/latest.
+git clone --branch main https://github.com/erleo877766-byte/mi-boveda.git
+# NOTE: Replace `main` with the latest release tag available at https://github.com/erleo877766-byte/mi-boveda/releases/latest.
 cd mi-boveda
-# docker build -t ghcr.io/leonard0001991/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly . # Uncomment to build the docker image yourself instead of pulling it from the registry
-docker run -v$(pwd):$(pwd) -w $(pwd) -i --rm ghcr.io/leonard0001991/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly bash -x << EOF
+# docker build -t ghcr.io/erleo877766-byte/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly . # Uncomment to build the docker image yourself instead of pulling it from the registry
+docker run -v$(pwd):$(pwd) -w $(pwd) -i --rm ghcr.io/erleo877766-byte/mi-boveda:debian13-flutter3.41.9-ndkr28-go1.24.1-ruststablenightly bash -x << EOF
 set -x -e
 git config --global --add safe.directory '*'
 pushd scripts/android

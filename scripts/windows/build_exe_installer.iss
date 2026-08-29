@@ -1,7 +1,7 @@
 #define MyAppName "Mi Bóveda"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Leonardo Noel Salazar Mendoza"
-#define MyAppURL "https://github.com/leonard0001991/mi-boveda"
+#define MyAppURL "https://github.com/erleo877766-byte/mi-boveda"
 #define MyAppExeName "MiBoveda.exe"
 
 [Setup]

@@ -6,7 +6,7 @@ our users seriously and welcome reports from security researchers.
 > **Mi Bóveda is not affiliated with CAKE.com, Clockify, or security.cake.com.**
 > Those services belong to unrelated companies. The only official vulnerability
 > disclosure channels for Mi Bóveda are the ones listed on this page and at
-> https://github.com/leonard0001991/mi-boveda/security.
+> https://github.com/erleo877766-byte/mi-boveda/security.
 
 ## Reporting a vulnerability
 
@@ -16,12 +16,12 @@ funds and privacy at risk. Use one of the private channels below and we will
 coordinate a fix and disclosure with you.
 
 1. **GitHub private security advisory (preferred).**
-   [Report a vulnerability](https://github.com/leonard0001991/mi-boveda/security/advisories/new).
+   [Report a vulnerability](https://github.com/erleo877766-byte/mi-boveda/security/advisories/new).
    This gives you a private, structured thread with the maintainers and is the
    fastest way to reach us.
-2. **Encrypted email.** Send details to **security@github.com/leonard0001991/mi-boveda**. For sensitive
+2. **Encrypted email.** Send details to **security@github.com/erleo877766-byte/mi-boveda**. For sensitive
    reports, please encrypt with our PGP key:
-   - Key: https://github.com/leonard0001991/mi-boveda/.well-known/cakewallet-security.asc
+   - Key: https://github.com/erleo877766-byte/mi-boveda/.well-known/cakewallet-security.asc
    - Fingerprint: `DC91 6520 0271 AC6A 0533  3D3C BFE7 D9A5 0E4D 3A0A`
 
 Both channels are monitored and automatically raise an alert in our internal
@@ -48,7 +48,7 @@ authorized. We will not pursue or support legal action against researchers who:
 - give us a reasonable opportunity to fix an issue before disclosing it publicly.
 
 If in doubt about whether an action is authorized, ask us first at
-security@github.com/leonard0001991/mi-boveda.
+security@github.com/erleo877766-byte/mi-boveda.
 
 ## What to expect
 
@@ -81,7 +81,7 @@ At our **sole discretion**, we may offer a reward for a valid report. To be
 eligible, a report must:
 
 - be submitted **privately** through one of the channels above (a GitHub private
-  security advisory or `security@github.com/leonard0001991/mi-boveda`) â€” anything disclosed publicly or
+  security advisory or `security@github.com/erleo877766-byte/mi-boveda`) â€” anything disclosed publicly or
   sent through other channels is not eligible; and
 - identify a genuine vulnerability with real impact on users â€” typically loss of
   funds, exposure of keys or seeds, a privacy leak, or a failed or incorrect

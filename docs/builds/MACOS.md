@@ -67,11 +67,11 @@ Doctor summary (to see all details, run flutter doctor -v):
 Download the latest release tag of Mi Bóveda and enter the source code directory:
 
 ```zsh
-git clone https://github.com/leonard0001991/mi-boveda.git --branch main
+git clone https://github.com/erleo877766-byte/mi-boveda.git --branch main
 cd mi-boveda/scripts/macos/
 ```
 
-NOTE: Replace `main` with the latest release tag available at <https://github.com/leonard0001991/mi-boveda/releases/latest>.
+NOTE: Replace `main` with the latest release tag available at <https://github.com/erleo877766-byte/mi-boveda/releases/latest>.
 
 ### 7. Setup and build Mi Bóveda from source
 

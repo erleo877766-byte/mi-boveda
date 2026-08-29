@@ -73,8 +73,8 @@ abstract class WalletKitServiceBase with Store {
       metadata: const PairingMetadata(
 name: 'Mi Bóveda',
     description: 'Mi Bóveda',
-        url: 'https://github.com/leonard0001991/mi-boveda',
-        icons: ['https://github.com/leonard0001991/mi-boveda/assets/logo.png'],
+        url: 'https://github.com/erleo877766-byte/mi-boveda',
+        icons: ['https://github.com/erleo877766-byte/mi-boveda/assets/logo.png'],
         redirect: Redirect(native: 'miboveda://'),
       ),
     );

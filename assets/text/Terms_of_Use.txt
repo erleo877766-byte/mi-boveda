@@ -185,4 +185,4 @@ Your Comments and Concerns
 ==========================
 
 	This App is operated by Leonardo Noel Salazar Mendoza.
-	All feedback, comments, and other communications relating to the App should be directed to info@github.com/leonard0001991/mi-boveda. All requests for technical support should be directed to support@github.com/leonard0001991/mi-boveda.
+	All feedback, comments, and other communications relating to the App should be directed to info@github.com/erleo877766-byte/mi-boveda. All requests for technical support should be directed to support@github.com/erleo877766-byte/mi-boveda.

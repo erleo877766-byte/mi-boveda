@@ -61,11 +61,11 @@ wsl curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 Download the latest release tag of Mi Bóveda and enter the source code directory:
 
 ```powershell
-git clone https://github.com/leonard0001991/mi-boveda.git --branch main
+git clone https://github.com/erleo877766-byte/mi-boveda.git --branch main
 cd mi-boveda
 ```
 
-NOTE: Replace `main` with the latest release tag available at <https://github.com/leonard0001991/mi-boveda/releases/latest>.
+NOTE: Replace `main` with the latest release tag available at <https://github.com/erleo877766-byte/mi-boveda/releases/latest>.
 
 ### 6. Build Monero, monero_c, and dependencies
 
@@ -75,7 +75,7 @@ Run the following in a WSL terminal window (set the Git username and email as de
 
 ```powershell
 wsl
-git config --global user.email "builds@github.com/leonard0001991/mi-boveda"
+git config --global user.email "builds@github.com/erleo877766-byte/mi-boveda"
 git config --global user.name "builds"
 ./build_all.sh
 ```

@@ -113,7 +113,7 @@ class _ServicesUpdatesWidgetState extends State<ServicesUpdatesWidget> {
                                       try {
                                         launchUrl(
                                             Uri.parse(
-                                              "https://github.com/leonard0001991/mi-boveda",
+                                              "https://github.com/erleo877766-byte/mi-boveda",
                                             ),
                                             mode: LaunchMode.externalApplication);
                                       } catch (_) {}
