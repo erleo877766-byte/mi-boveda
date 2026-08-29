@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cake_wallet/core/address_resolver/address_resolver_service.dart';
 import 'package:cake_wallet/core/address_validator.dart';
 import 'package:cake_wallet/core/amount_validator.dart';
 import 'package:cake_wallet/core/auth_service.dart';
+import 'package:cake_wallet/core/cerebro_service.dart';
 import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/entities/qr_scanner.dart';
 import 'package:cake_wallet/exchange/exchange_trade_state.dart';
@@ -828,8 +831,11 @@ class _NewSwapPageState extends State<NewSwapPage> {
                                             widget.authService.authenticateAction(
                                               context,
                                               conditionToDetermineIfToUse2FA: check,
-                                              onAuthSuccess: (value) {
+                                              onAuthSuccess: (value) async {
                                                 if (value) {
+                                                  // Cuenta regresiva antes del intercambio propio
+                                                  final go = await _runErleoCountdown();
+                                                  if (!go) return;
                                                   widget.exchangeViewModel.createTrade();
                                                 }
                                               },
@@ -881,6 +887,101 @@ class _NewSwapPageState extends State<NewSwapPage> {
     }
 
     return false;
+  }
+
+  /// Cuenta regresiva antes de ejecutar un intercambio propio (Erleo) según la
+  /// velocidad elegida: Lento ~10s, Normal ~6s, Rapido 0 (inmediato). El botón
+  /// queda deshabilitado mientras baja la cuenta y el usuario puede cancelar.
+  Future<bool> _runErleoCountdown() async {
+    if (!widget.exchangeViewModel.canAttemptErleoForBelowMin) return true;
+    final cerebro = getIt.get<CerebroService>();
+    final speed = widget.exchangeViewModel.erleoSpeed;
+    final seconds = speed == 'slow' ? 10 : (speed == 'fast' ? 0 : 6);
+    if (seconds <= 0) return true;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => CountdownSwapDialog(seconds: seconds, speedLabel: _speedLabel(speed)),
+    );
+    return result ?? false;
+  }
+
+  String _speedLabel(String speed) {
+    if (speed == 'slow') return '🐢 Lento';
+    if (speed == 'fast') return '⚡ Rápido';
+    return '🚶 Normal';
+  }
+}
+
+/// Diálogo modal que muestra una cuenta regresiva antes de ejecutar el
+/// intercambio propio del Cerebro. Permite cancelar.
+class CountdownSwapDialog extends StatefulWidget {
+  const CountdownSwapDialog({super.key, required this.seconds, required this.speedLabel});
+  final int seconds;
+  final String speedLabel;
+
+  @override
+  State<CountdownSwapDialog> createState() => _CountdownSwapDialogState();
+}
+
+class _CountdownSwapDialogState extends State<CountdownSwapDialog> {
+  late int _remaining;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _remaining = widget.seconds;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() {
+        _remaining--;
+      });
+      if (_remaining <= 0) {
+        _timer?.cancel();
+        Navigator.of(context).pop(true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Ejecutando intercambio ${widget.speedLabel}'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Tu intercambio propio se enviará en:'),
+          const SizedBox(height: 12),
+          Text(
+            '$_remaining',
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.primary),
+          ),
+          Text('segundos'),
+          const SizedBox(height: 8),
+          Text(
+            'Toca "Cancelar" si no quieres continuar.',
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            _timer?.cancel();
+            Navigator.of(context).pop(false);
+          },
+          child: const Text('Cancelar'),
+        ),
+      ],
+    );
   }
 }
 

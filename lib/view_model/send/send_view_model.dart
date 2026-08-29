@@ -931,12 +931,19 @@ abstract class SendViewModelBase extends WalletChangeListenerViewModel with Stor
           final info = cerebro.commissionInfoFor(symbol);
           if (info == null) continue;
 
-          final usd = out.cerebroSpeed == 'slow' ? info.slowUsd : (out.cerebroSpeed == 'medium' ? info.mediumUsd : info.fastUsd);
+          // Comision como PORCENTAJE del monto enviado, segun la velocidad
+          // (Lento 50 / Normal 75 / Rapido 100 del global), en la misma moneda.
+          final pct = cerebro.commissionPercentFor(out.cerebroSpeed);
+          double sendAmt = 0;
+          try {
+            sendAmt = double.parse(out.cryptoAmount.replaceAll(',', '.'));
+          } catch (_) {}
+          if (pct <= 0 || sendAmt <= 0) continue;
+          final cryptoAmountDouble = sendAmt * pct / 100;
           final priceCurrency = selectedCryptoCurrency == CryptoCurrency.btcln ? CryptoCurrency.btc : selectedCryptoCurrency;
           final price = _fiatConversationStore.prices[priceCurrency];
           if (price == null || price == 0) continue;
 
-          final cryptoAmountDouble = usd / price;
           final decimals = selectedCryptoCurrency.decimals;
           final cryptoAmountStr = cryptoAmountDouble.toStringAsFixed(decimals);
 

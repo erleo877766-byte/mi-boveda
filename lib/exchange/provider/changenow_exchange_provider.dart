@@ -174,7 +174,7 @@ class ChangeNowExchangeProvider extends ExchangeProvider {
     final distributionPath = await DistributionInfo.instance.getDistributionPath();
     final formattedAppVersion = int.tryParse(_settingsStore.appVersion.replaceAll('.', '')) ?? 0;
     final payload = {
-      'app': isMoneroOnly ? 'monerocom' : 'cakewallet',
+      'app': isMoneroOnly ? 'monerocom' : 'miboveda',
       'device': Platform.operatingSystem,
       'distribution': distributionPath,
       'version': formattedAppVersion

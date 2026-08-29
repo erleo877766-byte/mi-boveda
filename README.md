@@ -1,124 +1,88 @@
 # Mi Bóveda
 
-Billetera de criptomonedas descentralizada para Android y Windows. Tus claves, tus fondos, tu control.
+Billetera de criptomonedas independiente, sin custodia, privada, para Android y Windows.
 
-Fork de [Cake Wallet](https://github.com/cake-tech/cake_wallet) — Copyright (c) 2018-2025 Cake Labs LLC. Licencia MIT.
-
----
-
-## Descargas
-
-Descarga la ultima version desde la release automatica:
-
-| Plataforma | Archivo | Tamano | Descarga |
-|---|---|---|---|
-| Android (arm64) | MiBoveda.apk | ~265 MB | [Descargar APK](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBoveda.apk) |
-| Windows (instalador) | MiBovedaSetup.exe | ~70 MB | [Descargar EXE](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaSetup.exe) |
-
-### Instalacion en Android
-
-1. Descarga el APK desde el boton de arriba.
-2. Abrilo y toca **Instalar**.
-3. Si aparece Google Play Protect: toca **Mas detalles** > **Instalar de todos modos**.
-4. La app se conecta automaticamente al servidor Cerebro para nodos, precios e intercambios.
-
-### Instalacion en Windows
-
-1. Descarga `MiBovedaSetup.exe` desde el boton de arriba.
-2. Ejecutalo y segui los pasos del instalador.
-3. Se crean accesos directos en el Escritorio y Menu Inicio.
-4. La app se conecta automaticamente al servidor Cerebro.
-
-### Intercambios Erleo
-
-La wallet incluye el sistema de intercambios Erleo integrado. Podes intercambiar entre monedas directamente desde la app sin crear cuenta. El servidor Cerebro calcula comisiones, tiempos de confirmacion y ejecuta los intercambios de forma segura.
-
----
+Basado en el código de [Cake Wallet](https://github.com/cake-tech/cake_wallet) © 2018-2023 Cake Labs LLC, bajo Licencia MIT.
 
 ## Criptomonedas soportadas
 
-Mas de 60 criptomonedas incluyendo:
+* Monero (XMR)
+* Bitcoin (BTC)
+* Ethereum (ETH)
+* Litecoin (LTC)
+* Bitcoin Cash (BCH)
+* Polygon (POL)
+* Base (BASE)
+* Arbitrum (ARB)
+* Solana (SOL)
+* Tron (TRX)
+* Nano (XNO)
+* Zano (ZANO)
+* Decred (DCR)
 
-| Red | Simbolo | Redes |
+## 📥 Descargas — Última versión automática
+
+### Tienda oficial
+
+👉 **https://erleo877766-byte.github.io/mi-boveda/** — descargas e instrucciones paso a paso.
+
+| Plataforma | Archivo | Enlace de descarga |
 |---|---|---|
-| Monero | XMR | Mainnet |
-| Bitcoin | BTC | Mainnet, Lightning |
-| Ethereum | ETH | Mainnet, Base, Arbitrum |
-| Litecoin | LTC | Mainnet |
-| Bitcoin Cash | BCH | Mainnet |
-| Solana | SOL | Mainnet |
-| Tron | TRX | Mainnet |
-| Nano | XNO | Mainnet |
-| Polygon | POL | Mainnet |
-| BNB Chain | BNB | Mainnet |
-| Dogecoin | DOGE | Mainnet |
-| Dash | DASH | Mainnet |
-| Zcash | ZEC | Mainnet |
-| Decred | DCR | Mainnet |
-| Avalanche | AVAX | Mainnet |
-| Ripple | XRP | Mainnet |
-| Cardano | ADA | Mainnet |
-| USDT | USDT | ERC-20, TRC-20, BSC, Polygon, Solana, Arbitrum |
-| USDC | USDC | ERC-20, TRC-20, Polygon, Solana, Arbitrum |
+| 📱 Android (principal) | MiBoveda.apk | [Descargar APK](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBoveda.apk) |
+| 📱 Android antiguo (32-bit) | MiBovedaAntiguos.apk | [Descargar](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaAntiguos.apk) |
+| 📱 Android (emulador / PC) | MiBovedaEmulador.apk | [Descargar](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaEmulador.apk) |
+| 🖥️ Windows (instalador) | MiBovedaSetup.exe | [Descargar EXE](https://github.com/erleo877766-byte/mi-boveda/releases/latest/download/MiBovedaSetup.exe) |
 
-Y muchos tokens ERC-20/BEP-20 adicionales: AAVE, COMP, DAI, ENOS, GRT, LDO, MKR, PEPE, SHIB, UNI, WBTC, WETH, y mas.
+**Instalación:**
 
----
+- **Android:** descarga el APK, ábrelo y toca "Instalar". Si sale el aviso de Google Play Protect ("Esta app no tiene reputación"), toca **"Más detalles" → "Instalar de todos modos" → "Instalar"**. Es normal: la app no está en Google Play.
+- **Windows:** abre `MiBovedaSetup.exe` → "Siguiente" → "Instalar". Crea accesos directos en el Escritorio y el Menú Inicio (no hay que descomprimir nada).
 
-## Caracteristicas
+Todas las versiones se generan automáticamente con cada cambio en `main` y quedan publicadas en la [release `latest`](https://github.com/erleo877766-byte/mi-boveda/releases/tag/latest).
 
-- Multiples monederos con claves privadas locales
-- Precios en tiempo real via Binance/CoinGecko
-- Envio y recepcion de criptomonedas
-- Libreta de direcciones
-- Codigos QR
-- Notas de transacciones locales
-- Control de tarifas de red
-- Conexiones Tor para privacidad
-- Autenticacion de dos factores (2FA)
-- Intercambios Erleo integrados (sin registro, sin cuenta)
-- 60+ criptomonedas soportadas
-- Nodos sincronizados automaticamente desde el servidor
-- Notificaciones en tiempo real desde el servidor
+## Características
 
-### Monero (XMR)
+* Tus claves, tus fondos — nadie más tiene acceso
+* Soporte para múltiples criptomonedas
+* Conexión a nodos públicos independientes
+* Precios en tiempo real vía CoinGecko
+* Envío y recepción de criptomonedas
+* Múltiples monederos
+* Libreta de direcciones
+* Códigos QR
+* Notas de transacciones locales
+* Configuración de tarifas de red
+* Privacidad: conexiones Tor
+* Seguridad: autenticación de dos factores
 
-- Clave de vista retenida en el dispositivo
-- Subdirecciones y cuentas
-- Altura de restauracion configurable
-- Envio a multiples destinatarios
+### Monero
 
-### Bitcoin (BTC)
+* La clave de vista se mantiene en el dispositivo
+* Soporte completo para subdirecciones y cuentas
+* Altura de restauración configurable
+* Envío a múltiples destinatarios
 
-- Control de monedas (coin control)
-- Generacion automatica de direcciones
-- Envio a multiples destinatarios
+### Bitcoin
 
-### Ethereum (ETH)
+* Control de monedas (coin control)
+* Generación automática de direcciones
+* Envío a múltiples destinatarios
 
-- Almacenar ETH y tokens ERC-20
-- Tokens personalizados por direccion de contrato
+### Ethereum
 
----
+* Almacenar ETH y todos los tokens ERC-20
+* Agregar tokens personalizados por dirección de contrato
 
-## Compilacion
+## Compilación
 
-Instrucciones en `scripts/` y `.github/workflows/`.
+Para instrucciones de compilación, consulta los archivos en `scripts/` y `.github/workflows/`.
 
 ## Contribuir
 
-Las traducciones estan en `res/values/strings_XX.arb`.
-
----
+Las traducciones se encuentran en `res/values/strings_XX.arb`.
 
 ## Licencia
 
-Este proyecto esta licenciado bajo la Licencia MIT.
+Basado en código de Cake Wallet © 2018-2023 Cake Labs LLC, bajo Licencia MIT.
 
-Basado en el codigo fuente de [Cake Wallet](https://github.com/cake-tech/cake_wallet) por Cake Labs LLC.
-
-Copyright (c) 2018-2025 Cake Labs LLC. Todos los derechos reservados.
-
-Las condiciones completas de la licencia se encuentran en [LICENSE.md](LICENSE.md).
-
-Modificaciones realizadas por Leonardo Noel Salazar Mendoza, 2026.
+Modificaciones realizadas por Leonardo Noel Salazar Mendoza © 2026.

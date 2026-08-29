@@ -20,21 +20,21 @@ class CerebroSpeedSelector extends StatelessWidget {
             key: 'slow',
             emoji: '🐢',
             label: 'Lento',
-            usd: cerebro.commissionSlowUsd,
+            pct: cerebro.commissionPercentFor('slow'),
             color: const Color(0xFF00C853),
           ),
           (
             key: 'medium',
             emoji: '🚶',
             label: 'Normal',
-            usd: cerebro.commissionMediumUsd,
+            pct: cerebro.commissionPercentFor('medium'),
             color: const Color(0xFFFFAB00),
           ),
           (
             key: 'fast',
             emoji: '⚡',
             label: 'Rápido',
-            usd: cerebro.commissionFastUsd,
+            pct: cerebro.commissionPercentFor('fast'),
             color: const Color(0xFFFF5252),
           ),
         ];
@@ -48,7 +48,7 @@ class CerebroSpeedSelector extends StatelessWidget {
                     selected: value == s.key,
                     emoji: s.emoji,
                     label: s.label,
-                    price: '\$${s.usd.toStringAsFixed(2)}',
+                    price: formatPercent(s.pct),
                     color: s.color,
                     onTap: () => onChanged(s.key),
                   ),
@@ -59,6 +59,20 @@ class CerebroSpeedSelector extends StatelessWidget {
       },
     );
   }
+}
+
+/// Da formato al porcentaje de comisión conservando decimales profundos
+/// (0.5 -> "0.5%", 0.0005 -> "0.0005%"). No redondea los ceros significativos.
+String formatPercent(double pct) {
+  if (pct == 0) return '0%';
+  final s = pct.toString();
+  // Si ya viene en notación simple, recorta ceros finales pero conserva los
+  // decimales significativos (0.0005 no debe convertirse en 0.001).
+  if (s.contains('.') && !s.contains('e')) {
+    final trimmed = s.replaceFirst(RegExp(r'0+$'), '').replaceFirst(RegExp(r'\.$'), '');
+    return '${trimmed.isEmpty ? '0' : trimmed}%';
+  }
+  return '${s.replaceFirst('e-', 'e-')}%';
 }
 
 class _SpeedCard extends StatelessWidget {

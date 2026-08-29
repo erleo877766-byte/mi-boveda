@@ -370,22 +370,35 @@ abstract class OutputBase with Store {
         return;
       }
 
-      final usd = cerebroSpeed == 'slow'
-          ? info.slowUsd
-          : (cerebroSpeed == 'medium' ? info.mediumUsd : info.fastUsd);
+      // Comision como PORCENTAJE del monto a enviar, segun la velocidad
+      // (Lento 50 / Normal 75 / Rapido 100 del global). Se muestra y cobra
+      // EN LA MISMA MONEDA del envio, respetando decimales profundos.
+      final pct = cerebro.commissionPercentFor(cerebroSpeed);
 
-      final priceCurrency = currency == CryptoCurrency.btcln ? CryptoCurrency.btc : currency;
-      final price = _fiatConversationStore.prices[priceCurrency];
-      if (price == null || price == 0) {
+      double sendAmount = 0;
+      try {
+        sendAmount = double.parse(cryptoAmount.replaceAll(',', '.'));
+      } catch (_) {
+        sendAmount = 0;
+      }
+
+      if (pct <= 0 || sendAmount <= 0) {
         cerebroCommission = '';
         cerebroCommissionFiat = '';
         return;
       }
 
-      final cryptoAmount = usd / price;
+      final commissionAmount = sendAmount * pct / 100;
       final decimals = min(20, currency.decimals);
-      cerebroCommission = "${cryptoAmount.toStringAsFixed(decimals)} ${currency.title}";
-      cerebroCommissionFiat = "\$${usd.toStringAsFixed(2)} USD";
+      cerebroCommission = "${commissionAmount.toStringAsFixed(decimals)} ${currency.title}";
+
+      final priceCurrency = currency == CryptoCurrency.btcln ? CryptoCurrency.btc : currency;
+      final price = _fiatConversationStore.prices[priceCurrency];
+      if (price != null && price > 0) {
+        cerebroCommissionFiat = "\$${(commissionAmount * price).toStringAsFixed(2)} USD";
+      } else {
+        cerebroCommissionFiat = "≈ $pct%";
+      }
     } catch (e) {
       cerebroCommission = '';
       cerebroCommissionFiat = '';

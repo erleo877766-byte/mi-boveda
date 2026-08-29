@@ -3,7 +3,6 @@ import 'package:cake_wallet/routes.dart';
 import 'package:cake_wallet/src/screens/base_page.dart';
 import 'package:cake_wallet/src/widgets/cake_image_widget.dart';
 import 'package:cake_wallet/src/widgets/option_tile.dart';
-import 'package:cake_wallet/utils/device_info.dart';
 import 'package:cake_wallet/view_model/support_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,10 +62,13 @@ class SupportPage extends BasePage {
       );
 
   void _onPressedSupportChat(BuildContext context) {
-    if (DeviceInfo.instance.isDesktop) {
+    try {
+      launchUrl(
+          Uri.parse(
+              "mailto:${supportViewModel.contactEmail}?subject=Soporte%20Mi%20B%C3%B3veda"),
+          mode: LaunchMode.externalApplication);
+    } catch (e) {
       _launchUrl(supportViewModel.fetchUrl());
-    } else {
-      Navigator.of(context, rootNavigator: true).pushNamed(Routes.supportLiveChat);
     }
   }
 

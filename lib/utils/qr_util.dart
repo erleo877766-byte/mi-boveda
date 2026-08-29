@@ -39,7 +39,7 @@ String getQrImage(WalletType type) {
     case WalletType.banano:
     case WalletType.haven:
     case WalletType.none:
-      return 'assets/images/qr-cake.png';
+      return 'assets/images/miboveda_logo.png';
   }
 }
 

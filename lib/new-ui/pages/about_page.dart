@@ -69,8 +69,8 @@ class _AboutPageState extends State<AboutPage> {
                     GestureDetector(
                       onTap: _easterEgg,
                       child: CakeImageWidget(
-                        imageUrl: "assets/new-ui/cake_squircle_icon.svg",
-                        width: 128,
+                        imageUrl: "assets/images/miboveda_logo.png",
+                        width: 200,
                         height: 128,
                       ),
                     ),
@@ -134,14 +134,16 @@ class _AboutPageState extends State<AboutPage> {
                     ListItemRegularRow(
                         keyValue: "official website",
                         label: "Official Website",
-                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
+                        onTap: () => launchUrl(Uri.https(
+                            "github.com", "erleo877766-byte/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10),
                     ListItemRegularRow(
                         keyValue: "docs",
                         label: "Documentación",
-                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
+                        onTap: () => launchUrl(Uri.https(
+                            "github.com", "erleo877766-byte/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10)
@@ -150,21 +152,8 @@ class _AboutPageState extends State<AboutPage> {
                     ListItemRegularRow(
                         keyValue: "gh",
                         label: "GitHub",
-                        onTap: () => launchUrl(Uri.https("github.com", "leonard0001991/mi-boveda")),
-                        trailingIconPath: "assets/new-ui/link_arrow.svg",
-                        foregroundColor: Theme.of(context).colorScheme.primary,
-                        trailingIconSize: 10),
-                    ListItemRegularRow(
-                        keyValue: "twitter",
-                        label: "X (Twitter)",
-                        onTap: () => launchUrl(Uri.https("twitter.com", "miboveda")),
-                        trailingIconPath: "assets/new-ui/link_arrow.svg",
-                        foregroundColor: Theme.of(context).colorScheme.primary,
-                        trailingIconSize: 10),
-                    ListItemRegularRow(
-                        keyValue: "tg",
-                        label: "Telegram",
-                        onTap: () => launchUrl(Uri.https("t.me", "miboveda")),
+                        onTap: () => launchUrl(Uri.https(
+                            "github.com", "erleo877766-byte/mi-boveda")),
                         trailingIconPath: "assets/new-ui/link_arrow.svg",
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         trailingIconSize: 10)

@@ -26,7 +26,7 @@ class QrImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imagePath = embeddedImagePath ?? 'assets/images/qr-cake.png';
+    final imagePath = embeddedImagePath ?? 'assets/images/miboveda_logo.png';
     final qrSize = size ?? 100.0;
     final logoSize = qrSize * 0.30;
 

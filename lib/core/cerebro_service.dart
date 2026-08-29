@@ -19,6 +19,7 @@ class CerebroConfig {
     required this.commissionMediumUsd,
     required this.commissionFastUsd,
     required this.commissionPercent,
+    required this.commissionBySpeed,
     required this.adminCommissionExemption,
     required this.minAppVersion,
     required this.coins,
@@ -35,6 +36,7 @@ class CerebroConfig {
   final double commissionMediumUsd;
   final double commissionFastUsd;
   final double commissionPercent;
+  final Map<String, double> commissionBySpeed;
   final bool adminCommissionExemption;
   final String minAppVersion;
   final Map<String, Map<String, dynamic>> coins;
@@ -57,6 +59,7 @@ class CerebroConfig {
       commissionMediumUsd: (json['commissionMediumUsd'] as num?)?.toDouble() ?? 0.25,
       commissionFastUsd: (json['commissionFastUsd'] as num?)?.toDouble() ?? 0.75,
       commissionPercent: (json['commissionPercent'] as num?)?.toDouble() ?? 1.0,
+      commissionBySpeed: _parseCommissionBySpeed(json['commissionBySpeed']),
       adminCommissionExemption: json['adminCommissionExemption'] as bool? ?? true,
       minAppVersion: json['minAppVersion']?.toString() ?? '',
       coins: coins,
@@ -83,6 +86,16 @@ class CerebroConfig {
           ? Map<String, dynamic>.from(json['downloads'] as Map)
           : <String, dynamic>{},
     );
+  }
+  static Map<String, double> _parseCommissionBySpeed(dynamic raw) {
+    final out = <String, double>{};
+    if (raw is Map) {
+      for (final key in ['global', 'slow', 'medium', 'fast']) {
+        final v = raw[key];
+        if (v is num) out[key] = v.toDouble();
+      }
+    }
+    return out;
   }
 }
 
@@ -256,7 +269,7 @@ class CerebroService extends ChangeNotifier {
     try {
       if (Platform.isAndroid) {
         final info = await DeviceInfoPlugin().androidInfo;
-        return info.id ?? '';
+        return info.fingerprint;
       } else if (Platform.isIOS) {
         final info = await DeviceInfoPlugin().iosInfo;
         return info.identifierForVendor ?? '';
@@ -398,6 +411,32 @@ class CerebroService extends ChangeNotifier {
     return id;
   }
 
+  /// Verifica en el Cerebro si hay liquidez suficiente para un intercambio.
+  /// Devuelve un mapa con { sufficient, available, required, enabled, error? }.
+  Future<Map<String, dynamic>> checkCerebroLiquidity({
+    required String toSymbol,
+    required double toAmount,
+    String toNetwork = '',
+  }) async {
+    final base = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    final uri = Uri.parse('${base}api/v1/orders/check-liquidity');
+    final res = await http
+        .post(
+          uri,
+          headers: {'Content-Type': 'application/json', ..._authHeaders},
+          body: jsonEncode({
+            'toSymbol': toSymbol,
+            'toAmount': toAmount,
+            'toNetwork': toNetwork,
+          }),
+        )
+        .timeout(const Duration(seconds: 12));
+    if (res.statusCode != 200 && res.statusCode != 201) {
+      throw Exception('Cerebro: liquidez HTTP ${res.statusCode}');
+    }
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
   /// Consulta el estado de una orden Erleo. Devuelve un mapa con el JSON
   /// completo o lanza excepción.
   Future<Map<String, dynamic>> fetchErleoOrder(String orderId) async {
@@ -493,6 +532,24 @@ class CerebroService extends ChangeNotifier {
   double get commissionPercent {
     final source = (connected && config != null) ? config! : _cachedConfig;
     return source?.commissionPercent ?? 1.0;
+  }
+
+  /// Porcentaje de comisión del reparto Lento/Normal/Rápido (del Cerebro).
+  /// clave: 'slow' | 'medium' | 'fast'. Fallback al reparto 50/75/100 del global.
+  double commissionPercentFor(String speed) {
+    final source = (connected && config != null) ? config! : _cachedConfig;
+    if (source != null && source.commissionBySpeed.containsKey(speed)) {
+      return source.commissionBySpeed[speed]!;
+    }
+    final global = source?.commissionPercent ?? 1.0;
+    switch (speed) {
+      case 'slow':
+        return global * 0.5;
+      case 'fast':
+        return global * 1.0;
+      default:
+        return global * 0.75;
+    }
   }
 
   /// Comisión fija (USD) para la velocidad lenta.

@@ -45,8 +45,11 @@ void startAuthenticationStateChange(
         if (!(await requireHardwareWalletConnection())) await loadCurrentWallet();
       } catch (error, stack) {
         loginError = error;
-        await ExceptionHandler.resetLastPopupDate();
-        await ExceptionHandler.onError(FlutterErrorDetails(exception: error, stack: stack));
+        // SECURITY: Wallet load failed after install/login — the wallet
+        // data was already cleaned up by loadCurrentWallet/WalletCleanup.
+        // Reset auth state so the user sees the clean welcome screen.
+        debugPrint('[AuthStateChange] Wallet load failed, resetting to welcome: $error');
+        authenticationStore.state = AuthenticationState.uninitialized;
       }
       return;
     }

@@ -146,9 +146,9 @@ class VersionNumberHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             CakeImageWidget(
-              imageUrl: "assets/images/cake_logo_dark.svg",
+              imageUrl: "assets/images/miboveda_logo.png",
               height: 32,
-              width: 32,
+              width: 60,
               colorFilter:
                   ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
             ),

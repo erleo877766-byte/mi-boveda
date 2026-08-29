@@ -37,33 +37,6 @@ class CerebroNode {
         isDefault: json['isDefault'] as bool? ?? false,
         autoSwitch: json['autoSwitch'] as bool? ?? false,
       );
-
-  /// Extrae solo host:port de una URL completa.
-  /// "https://xmr-node.cakewallet.com" -> "xmr-node.cakewallet.com"
-  /// "https://blockstream.info:443" -> "blockstream.info:443"
-  /// "xmr-node.cakewallet.com" -> "xmr-node.cakewallet.com" (sin cambio)
-  String get hostPort {
-    final u = uri;
-    if (u.startsWith('http://')) {
-      final rest = u.substring(7);
-      final slashIdx = rest.indexOf('/');
-      final host = slashIdx >= 0 ? rest.substring(0, slashIdx) : rest;
-      return host;
-    }
-    if (u.startsWith('https://')) {
-      final rest = u.substring(8);
-      final slashIdx = rest.indexOf('/');
-      final host = slashIdx >= 0 ? rest.substring(0, slashIdx) : rest;
-      return host;
-    }
-    if (u.startsWith('tcp://')) {
-      final rest = u.substring(6);
-      final slashIdx = rest.indexOf('/');
-      final host = slashIdx >= 0 ? rest.substring(0, slashIdx) : rest;
-      return host;
-    }
-    return u;
-  }
 }
 
 WalletType? cerebroSymbolToWalletType(String symbol) {
@@ -167,14 +140,13 @@ Future<void> syncBuiltinNodesFromCerebro(List<CerebroNode> nodes) async {
   for (final entry in byType.entries) {
     final type = entry.key;
     final desired = entry.value;
-    // Mapa por host:port (no por URL completa) para matching correcto
-    final desiredByHost = {for (final n in desired) n.hostPort: n};
+    final desiredByUri = {for (final n in desired) n.uri: n};
 
     final existing = await Node.getAllForWalletType(type);
 
     for (final dbNode in existing) {
       if (!dbNode.isBuiltin) continue;
-      final match = desiredByHost[dbNode.uriRaw];
+      final match = desiredByUri[dbNode.uriRaw];
       if (match == null) {
         await dbNode.delete();
       } else {
@@ -191,11 +163,10 @@ Future<void> syncBuiltinNodesFromCerebro(List<CerebroNode> nodes) async {
 
     final existingUris = existing.map((e) => e.uriRaw).toSet();
     for (final node in desired) {
-      final hp = node.hostPort;
-      if (existingUris.contains(hp)) continue;
+      if (existingUris.contains(node.uri)) continue;
       await Node(
         label: node.name.isEmpty ? null : node.name,
-        uri: hp,
+        uri: node.uri,
         type: type,
         useSSL: node.useSsl,
         trusted: node.trusted,

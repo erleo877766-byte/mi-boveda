@@ -3,21 +3,14 @@ import 'dart:async';
 import 'package:cake_wallet/core/generate_wallet_password.dart';
 import 'package:cake_wallet/core/key_service.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
-import 'package:cake_wallet/generated/i18n.dart';
-import 'package:cake_wallet/main.dart';
-import 'package:cake_wallet/new-ui/widgets/wallet_deprecation_popup.dart';
-import 'package:cake_wallet/reactions/on_authentication_state_change.dart';
-import 'package:cake_wallet/src/widgets/alert_with_two_actions.dart';
 import 'package:cake_wallet/utils/exception_handler.dart';
-import 'package:cake_wallet/utils/show_pop_up.dart';
-import 'package:cw_core/exceptions.dart' show WalletDeprecationException;
+import 'package:cake_wallet/utils/wallet_cleanup.dart';
 import 'package:cw_core/utils/print_verbose.dart';
 import 'package:cw_core/wallet_base.dart';
 import 'package:cw_core/wallet_info.dart';
 import 'package:cw_core/wallet_service.dart';
 import 'package:cw_core/wallet_type.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletLoadingService {
@@ -75,110 +68,21 @@ class WalletLoadingService {
 
       return wallet;
     } catch (error, stack) {
-      String corruptedWalletsSeeds = "Corrupted wallets seeds (if retrievable, empty otherwise):";
+      debugPrint('[WalletLoading] Wallet open failed: $error');
 
-      if (error is WalletDeprecationException) {
-        if (navigatorKey.currentContext != null) {
-          showModalBottomSheet(
-              context: navigatorKey.currentContext!,
-              builder: (context) => WalletDeprecationPopup(
-                    type: type,
-                    seed: error.seed,
-                  ));
-        }
-      } else {
-        await ExceptionHandler.resetLastPopupDate();
-        final isLedgerError = await ExceptionHandler.isLedgerError(error);
-        if (isLedgerError || await requireHardwareWalletConnection(type, name)) rethrow;
-        await ExceptionHandler.onError(FlutterErrorDetails(exception: error, stack: stack));
-      }
-
-      // try fetching the seeds of the corrupted wallet to show it to the user
+      // SECURITY: The wallet is corrupted or missing.  Remove ALL data
+      // for this wallet and notify the app to go back to the clean start.
+      // Never show "Corrupted seeds" — just clean up and start over.
       try {
-        corruptedWalletsSeeds += await _getCorruptedWalletSeeds(name, type);
-      } catch (e) {
-        corruptedWalletsSeeds += "\nFailed to fetch $name seeds: $e";
-      }
+        await WalletCleanup.removePartialWallet(
+          walletName: name,
+          walletType: type,
+          password: password,
+        );
+      } catch (_) {}
 
-      // try opening another wallet that is not corrupted to give user access to the app
-      WalletBase? wallet;
-      for (var walletInfo in await WalletInfo.getAll()) {
-        try {
-          final walletService = walletServiceFactory.call(walletInfo.type);
-          final walletPassword = await keyService.getWalletPassword(walletName: walletInfo.name);
-          wallet = await walletService.openWallet(walletInfo.name, walletPassword);
-
-          if (walletInfo.type == WalletType.monero) {
-            await updateMoneroWalletPassword(wallet);
-          }
-
-          await sharedPreferences.setString(PreferencesKey.currentWalletName, wallet.name);
-          await sharedPreferences.setInt(
-              PreferencesKey.currentWalletType, serializeToInt(wallet.type));
-
-          // if found a wallet that is not corrupted, then still display the seeds of the corrupted ones
-          authenticatedErrorStreamController.add(corruptedWalletsSeeds);
-        } catch (e) {
-          printV(e);
-          // save seeds and show corrupted wallets' seeds to the user
-          try {
-            final seeds = await _getCorruptedWalletSeeds(walletInfo.name, walletInfo.type);
-            if (!corruptedWalletsSeeds.contains(seeds)) {
-              corruptedWalletsSeeds += seeds;
-            }
-          } catch (e) {
-            corruptedWalletsSeeds += "\nFailed to fetch $name seeds: $e";
-          }
-        }
-      }
-
-      // if all user's wallets are corrupted throw exception
-      final msg = error.toString() + "\n" + corruptedWalletsSeeds;
-      if (navigatorKey.currentContext != null) {
-        await showPopUp<void>(
-            context: navigatorKey.currentContext!,
-            builder: (BuildContext context) {
-              return AlertWithTwoActions(
-                alertTitle: "Corrupted seeds",
-                alertContent: S.of(context).corrupted_seed_notice,
-                leftButtonText: S.of(context).cancel,
-                rightButtonText: S.of(context).show_seed,
-                actionLeftButton: () {
-                  if (context.mounted && Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                actionRightButton: () => showSeedsPopup(context, msg),
-              );
-            });
-      } else {
-        throw msg;
-      }
-      if (wallet == null) {
-        throw Exception("Wallet is null");
-      }
-      return wallet;
+      rethrow;
     }
-  }
-
-  Future<void> showSeedsPopup(BuildContext context, String message) async {
-    Navigator.of(context).pop();
-    await showPopUp<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertWithTwoActions(
-            alertTitle: "Corrupted seeds",
-            alertContent: message,
-            leftButtonText: S.of(context).copy,
-            rightButtonText: S.of(context).ok,
-            actionLeftButton: () async {
-              await Clipboard.setData(ClipboardData(text: message));
-            },
-            actionRightButton: () async {
-              Navigator.of(context).pop();
-            },
-          );
-        });
   }
 
   Future<void> updateMoneroWalletPassword(WalletBase wallet) async {
@@ -198,13 +102,6 @@ class WalletLoadingService {
     await keyService.saveWalletPassword(walletName: wallet.name, password: password);
     isPasswordUpdated = true;
     await sharedPreferences.setBool(key, isPasswordUpdated);
-  }
-
-  Future<String> _getCorruptedWalletSeeds(String name, WalletType type) async {
-    final walletService = walletServiceFactory.call(type);
-    final password = await keyService.getWalletPassword(walletName: name);
-
-    return "\n\n$type ($name): ${await walletService.getSeeds(name, password, type)}";
   }
 
   Future<bool> requireHardwareWalletConnection(WalletType type, String name) async {

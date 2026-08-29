@@ -49,7 +49,11 @@ GOARCH=arm \
 CC=${NDK_BIN}/armv7a-linux-androideabi21-clang \
 go build -v -buildmode=c-shared -o ${ANDROID_OUT}/armeabi-v7a/libmweb.so .
 cd ../
-dart run ffigen --config ffigen_config.yaml
+if [ ! -f lib/generated_bindings.g.dart ]; then
+  dart run ffigen --config ffigen_config.yaml
+else
+  echo "bindings ya generados, salto ffigen"
+fi
 
 # Fix Dart 3 class modifiers: ffigen generates plain classes that extend base Opaque/Struct
 # ffigen uses ffi.Opaque and ffi.Struct which are 'base' types in Dart 3

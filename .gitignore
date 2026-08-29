@@ -245,3 +245,9 @@ server/.env
 *.jks
 *.keystore
 android/key.properties
+
+# Java heap dumps
+*.hprof
+
+# Cerebro (backend) no se sube aqui
+server/

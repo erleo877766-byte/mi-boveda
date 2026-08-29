@@ -139,6 +139,8 @@ import 'package:cake_wallet/src/screens/settings/security_backup_page.dart';
 import 'package:cake_wallet/src/screens/settings/silent_payments_logs_page.dart';
 import 'package:cake_wallet/src/screens/settings/silent_payments_settings.dart';
 import 'package:cake_wallet/src/screens/settings/trocador_providers_page.dart';
+import 'package:cake_wallet/src/screens/support/support_page.dart';
+import 'package:cake_wallet/src/screens/support_other_links/support_other_links_page.dart';
 import 'package:cake_wallet/src/screens/setup_2fa/modify_2fa_page.dart';
 import 'package:cake_wallet/src/screens/setup_2fa/setup_2fa.dart';
 import 'package:cake_wallet/src/screens/setup_2fa/setup_2fa_enter_code_page.dart';
@@ -241,6 +243,7 @@ import 'package:cake_wallet/view_model/settings/privacy_settings_view_model.dart
 import 'package:cake_wallet/view_model/settings/security_settings_view_model.dart';
 import 'package:cake_wallet/view_model/settings/silent_payments_settings_view_model.dart';
 import 'package:cake_wallet/view_model/settings/trocador_providers_view_model.dart';
+import 'package:cake_wallet/view_model/support_view_model.dart';
 import 'package:cake_wallet/view_model/setup_pin_code_view_model.dart';
 import 'package:cake_wallet/view_model/start_tor_view_model.dart';
 import 'package:cake_wallet/view_model/transaction_details_view_model.dart';
@@ -1380,12 +1383,9 @@ Future<void> setup({
 
   getIt.registerFactory(() => RestoreFromBackupPage(getIt.get<RestoreFromBackupViewModel>()));
 
-  // getIt.registerFactory(() => SupportPage(SupportViewModel(getIt.get<AppStore>())));
+  getIt.registerFactory(() => SupportPage(SupportViewModel()));
 
-  // getIt.registerFactory(() =>
-  //     SupportChatPage(getIt.get<SupportViewModel>(), secureStorage: getIt.get<SecureStorage>()));
-
-  // getIt.registerFactory(() => SupportOtherLinksPage(getIt.get<SupportViewModel>()));
+  getIt.registerFactory(() => SupportOtherLinksPage(SupportViewModel()));
 
   getIt.registerFactoryParam<UnspentCoinsListViewModel, UnspentCoinType?, void>(
       (coinTypeToSpendFrom, _) {

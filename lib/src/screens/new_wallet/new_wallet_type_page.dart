@@ -38,7 +38,7 @@ class NewWalletTypePageHeader extends StatelessWidget {
             Positioned(
               left: 63,
               child: CakeImageWidget(
-                imageUrl: "assets/new-ui/cake_coin.svg",
+                imageUrl: "assets/images/miboveda_logo.png",
                 width: 75,
                 height: 75,
               ),

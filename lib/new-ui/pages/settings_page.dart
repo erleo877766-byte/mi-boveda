@@ -80,7 +80,7 @@ class SettingsSectionData {
   ]);
 
   static SettingsSectionData appSettings =
-      SettingsSectionData(S.current.app_settings, "assets/new-ui/cake-setting.svg", [
+      SettingsSectionData(S.current.app_settings, "assets/new-ui/options_slider.svg", [
     SettingsListItem(
         "assets/new-ui/settings_row_icons/connections.svg", S.current.connections,
         Routes.connectionSync),

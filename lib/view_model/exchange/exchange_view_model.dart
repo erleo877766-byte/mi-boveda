@@ -61,9 +61,9 @@ import 'package:cake_wallet/view_model/contact_list/contact_list_view_model.dart
 import 'package:cake_wallet/view_model/send/fees_view_model.dart';
 import 'package:cake_wallet/view_model/unspent_coins/unspent_coins_list_view_model.dart';
 import 'package:cw_core/crypto_amount_format.dart';
+import 'package:cw_core/erc20_token.dart';
 import 'package:cw_core/crypto_currency.dart';
 import 'package:cw_core/currencies_with_memo.dart';
-import 'package:cw_core/erc20_token.dart';
 import 'package:cw_core/spl_token.dart';
 import 'package:cw_core/sync_status.dart';
 import 'package:cw_core/transaction_priority.dart';
@@ -90,6 +90,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
 
   final List<ReactionDisposer> _disposers = [];
   Timer? _erleoPollTimer;
+  VoidCallback? _cerebroListener;
 
   // Moneda y monto bloqueados por la orden Erleo en curso (para desbloquear
   // cuando el admin confirme o cuando se cancele/desista).
@@ -111,6 +112,10 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     bestRateSync.cancel();
     _erleoPollTimer?.cancel();
     _unlockErleoCoin();
+    if (_cerebroListener != null) {
+      try { getIt.get<CerebroService>().removeListener(_cerebroListener!); } catch (_) {}
+      _cerebroListener = null;
+    }
     for (final disposer in _disposers) {
       disposer();
     }
@@ -229,6 +234,7 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     _injectUserEthTokensIntoCurrencyLists();
     _injectUserSplTokensIntoCurrencyLists();
     _injectUserTronTokensIntoCurrencyLists();
+    _listenCerebroConfigChanges();
     _defineIsReceiveAmountEditable();
     loadLimits();
     _disposers.add(reaction((_) => isFixedRateMode, (Object _) {
@@ -1478,6 +1484,20 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
     final estReceive = double.parse(receiveAmountCanonical);
     tradeState = TradeIsErleoPending(orderId: '');
     try {
+      // Valida con el Cerebro que haya liquidez para la moneda de destino antes
+      // de crear la orden; si no hay, bloquea con un mensaje claro.
+      final liq = await cerebro.checkCerebroLiquidity(
+        toSymbol: receiveCurrency.title,
+        toAmount: estReceive,
+      );
+      if (liq['sufficient'] != true || liq['enabled'] == false) {
+        _unlockErleoCoin();
+        final msg = (liq['error'] is String && (liq['error'] as String).isNotEmpty)
+            ? 'Sin liquidez: ${liq['error']}'
+            : 'El Cerebro no tiene liquidez ahora para ${receiveCurrency.title}. Inténtalo más tarde.';
+        tradeState = TradeIsErleoError(error: msg);
+        return false;
+      }
       final orderId = await cerebro.submitErleoOrder(
         fromSymbol: depositCurrency.title,
         fromNetwork: '',
@@ -2098,6 +2118,56 @@ abstract class ExchangeViewModelBase extends WalletChangeListenerViewModel with 
   // Adding user's Erc20 tokens to the list of currencies
 
   @action
+  /// Inyecta las monedas personalizadas registradas en el Cerebro para que
+  /// aparezcan en Intercambiar aunque el usuario no tenga abierta una
+  /// billetera EVM. Asi una moneda creada en el panel llega a TODAS las
+  /// billeteras sin actualizar la app.
+  Future<void> _injectCerebroCustomTokensIntoCurrencyLists() async {
+    try {
+      final cerebro = getIt.get<CerebroService>();
+      final tokens = cerebro.customTokens;
+      if (tokens.isEmpty) return;
+      const tagByNetwork = {
+        'ethereum': 'ETH',
+        'erc20': 'ETH',
+        'bep20': 'BSC',
+        'base': 'BASE',
+        'arbitrum': 'ARB',
+        'polygon': 'POL',
+      };
+      for (final raw in tokens) {
+        final network = (raw['network'] as String? ?? '').toLowerCase();
+        final tag = tagByNetwork[network];
+        if (tag == null) continue;
+        final contract = ((raw['contractAddress'] as String?) ?? '').trim();
+        if (contract.isEmpty) continue;
+        final symbol = ((raw['symbol'] as String?) ?? '').trim().toUpperCase();
+        if (symbol.isEmpty) continue;
+        final name = ((raw['name'] as String?) ?? '').trim();
+        final token = Erc20Token(
+          name: name.isNotEmpty ? name : symbol,
+          symbol: symbol,
+          contractAddress: contract,
+          decimal: 18,
+          enabled: true,
+          tag: tag,
+        );
+        if (!_listContainsToken(receiveCurrencies, token)) receiveCurrencies.add(token);
+        if (!_listContainsToken(depositCurrencies, token)) depositCurrencies.add(token);
+      }
+    } catch (e) {
+      log('Cerebro inject error: $e');
+    }
+  }
+
+  void _listenCerebroConfigChanges() {
+    _injectCerebroCustomTokensIntoCurrencyLists();
+    final cerebro = getIt.get<CerebroService>();
+    void _onCerebroChange() => _injectCerebroCustomTokensIntoCurrencyLists();
+    cerebro.addListener(_onCerebroChange);
+    _cerebroListener = _onCerebroChange;
+  }
+
   Future<void> _injectUserEthTokensIntoCurrencyLists() async {
     final tokens = await TokenUtilities.loadEvmTokensForSwap();
     final toAddReceive = <CryptoCurrency>[];

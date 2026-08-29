@@ -8,6 +8,7 @@ import 'package:cake_wallet/generated/i18n.dart';
 import 'package:cake_wallet/nano/nano.dart';
 import 'package:cake_wallet/store/app_store.dart';
 import 'package:cake_wallet/store/settings_store.dart';
+import 'package:cake_wallet/utils/wallet_cleanup.dart';
 import 'package:cake_wallet/view_model/restore/restore_wallet.dart';
 import 'package:cake_wallet/view_model/seed_settings_view_model.dart';
 import 'package:cw_core/exceptions.dart';
@@ -137,6 +138,16 @@ abstract class WalletCreationVMBase with Store {
     } catch (e, s) {
       printV("error: $e");
       printV("stack: $s");
+
+      // SECURITY: Rollback ALL persisted data from this failed attempt.
+      // Nothing partial must survive — clean slate, always.
+      try {
+        await WalletCleanup.removePartialWallet(
+          walletName: name,
+          walletType: type,
+        );
+      } catch (_) {}
+
       String message = e.toString();
       if (e is RestoreFromSeedException) {
         message = e.message;

@@ -1,5 +1,6 @@
 import 'package:cake_wallet/di.dart';
 import 'package:cake_wallet/store/settings_store.dart';
+import 'package:cake_wallet/utils/wallet_cleanup.dart';
 import 'package:cw_core/wallet_info.dart';
 import 'package:cake_wallet/entities/preferences_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,17 +59,26 @@ class WalletCreationService {
     await keyService.saveWalletPassword(
         password: credentials.password!, walletName: credentials.name);
 
-    if (_hasSeedPhraseLengthOption) {
-      credentials.seedPhraseLength = settingsStore.seedPhraseLength.value;
-    }
-    final wallet = await _service!.create(credentials, isTestnet: isTestnet);
+    try {
+      if (_hasSeedPhraseLengthOption) {
+        credentials.seedPhraseLength = settingsStore.seedPhraseLength.value;
+      }
+      final wallet = await _service!.create(credentials, isTestnet: isTestnet);
 
-    if (wallet.type == WalletType.monero) {
-      await sharedPreferences.setBool(
-          PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
-    }
+      if (wallet.type == WalletType.monero) {
+        await sharedPreferences.setBool(
+            PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      }
 
-    return wallet;
+      return wallet;
+    } catch (e) {
+      // SECURITY: Wallet creation failed — remove the password we just saved.
+      await WalletCleanup.removePartialWallet(
+        walletName: credentials.name,
+        walletType: type,
+      );
+      rethrow;
+    }
   }
 
   bool get _hasSeedPhraseLengthOption {
@@ -107,14 +117,22 @@ class WalletCreationService {
     await keyService.saveWalletPassword(
         password: credentials.password!, walletName: credentials.name);
 
-    final wallet = await _service!.restoreFromKeys(credentials, isTestnet: isTestnet);
+    try {
+      final wallet = await _service!.restoreFromKeys(credentials, isTestnet: isTestnet);
 
-    if (wallet.type == WalletType.monero) {
-      await sharedPreferences.setBool(
-          PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      if (wallet.type == WalletType.monero) {
+        await sharedPreferences.setBool(
+            PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      }
+
+      return wallet;
+    } catch (e) {
+      await WalletCleanup.removePartialWallet(
+        walletName: credentials.name,
+        walletType: type,
+      );
+      rethrow;
     }
-
-    return wallet;
   }
 
   Future<WalletBase> restoreFromSeed(WalletCredentials credentials, {bool? isTestnet}) async {
@@ -126,14 +144,22 @@ class WalletCreationService {
     await keyService.saveWalletPassword(
         password: credentials.password!, walletName: credentials.name);
 
-    final wallet = await _service!.restoreFromSeed(credentials, isTestnet: isTestnet);
+    try {
+      final wallet = await _service!.restoreFromSeed(credentials, isTestnet: isTestnet);
 
-    if (wallet.type == WalletType.monero) {
-      await sharedPreferences.setBool(
-          PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      if (wallet.type == WalletType.monero) {
+        await sharedPreferences.setBool(
+            PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      }
+
+      return wallet;
+    } catch (e) {
+      await WalletCleanup.removePartialWallet(
+        walletName: credentials.name,
+        walletType: type,
+      );
+      rethrow;
     }
-
-    return wallet;
   }
 
   Future<WalletBase> restoreFromHardwareWallet(WalletCredentials credentials) async {
@@ -141,13 +167,22 @@ class WalletCreationService {
     final password = generateWalletPassword();
     credentials.password = password;
     await keyService.saveWalletPassword(password: password, walletName: credentials.name);
-    final wallet = await _service!.restoreFromHardwareWallet(credentials);
 
-    if (wallet.type == WalletType.monero) {
-      await sharedPreferences.setBool(
-          PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+    try {
+      final wallet = await _service!.restoreFromHardwareWallet(credentials);
+
+      if (wallet.type == WalletType.monero) {
+        await sharedPreferences.setBool(
+            PreferencesKey.moneroWalletUpdateV1Key(wallet.name), _isNewMoneroWalletPasswordUpdated);
+      }
+
+      return wallet;
+    } catch (e) {
+      await WalletCleanup.removePartialWallet(
+        walletName: credentials.name,
+        walletType: type,
+      );
+      rethrow;
     }
-
-    return wallet;
   }
 }

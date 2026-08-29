@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: build-windows-${{ github.ref }}
+  group: release-publish-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -186,15 +186,13 @@ jobs:
           "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" scripts/windows/build_exe_installer.iss
 
       - name: Upload installer
-        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: miboveda-windows-setup
           path: |
             build/installer/MiBovedaSetup.exe
             build/windows/x64/runner/Release/MiBoveda.exe
-          if-no-files-found: warn
-          retention-days: 3
+          if-no-files-found: error
 
       - name: Prepare Windows installer for release
         if: github.ref_name == 'main'
@@ -212,13 +210,16 @@ jobs:
           body: |
             Mi Bóveda - release automático
 
-            1) Descarga MiBoveda.apk (Android arm64)
+            1) Descarga MiBoveda.apk (el principal)
             2) Ábrelo y toca "Instalar" -> listo
+
+            MiBovedaAntiguos.apk: solo para teléfonos antiguos (32-bit)
+            MiBovedaEmulador.apk: solo para emuladores o PC con Android
             En Windows: descarga MiBovedaSetup.exe -> doble clic -> Instalar -> listo
 
-            ¿Te sale el aviso de Google Play Protect?
-            Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
-            Está firmada con un certificado de lanzamiento propio. Puedes ver su origen aquí: https://leonard0001991.github.io/mi-boveda/
+            ¿Te sale el aviso de Google Play Protect ("Esta app no tiene reputación")?
+            Es normal: la app NO está en Google Play. Toca "Más detalles" -> "Instalar de todos modos" -> "Instalar".
+            Está firmada con un certificado de lanzamiento propio y la tuya es tuya. Puedes ver su origen aquí: https://leonard0001991.github.io/mi-boveda/
           draft: false
           prerelease: false
           artifacts: MiBovedaSetup.exe

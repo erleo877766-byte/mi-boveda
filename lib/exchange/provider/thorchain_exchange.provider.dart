@@ -20,7 +20,7 @@ class ThorChainExchangeProvider extends ExchangeProvider {
   static const _baseURL = 'midgard.ninerealms.com';
   static const _quotePath = '/thorchain/quote/swap';
   static const _txInfoPath = '/thorchain/tx/status/';
-  static const _affiliateName = 'cakewallet';
+  static const _affiliateName = 'miboveda';
   static const _affiliateBps = '175';
   static const _nameLookUpPath = 'v2/thorname/lookup/';
 
